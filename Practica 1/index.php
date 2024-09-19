@@ -13,7 +13,7 @@
     <p>Apellidos</p>
     <input type="text" name="apellidos" id="apellidos">
     <p>Contraseña</p>
-    <input type="password" name="pass" id="pass">
+    <input type="password" name="pass" id="pass" required>
     <p>DNI</p>
     <input type="text" name="dni" id="dni">
     <p>Sexo</p>
