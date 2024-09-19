@@ -6,11 +6,10 @@
     <title>Práctica 1</title>
 </head>
 <body>
-<form action="post">
-    <h1>Rellena tu CV</h1>
-
+<h1>Rellena tu CV</h1>
+<form action="recogida_datos.php" method="get" enctype="multipart/form-data">
     <p>Nombre</p>
-    <input type="text" name="nombre" id="nombre">
+    <input type="text" name="nombre" id="nombre" placeholder="Introduzca su nombre" required>
     <p>Apellidos</p>
     <input type="text" name="apellidos" id="apellidos">
     <p>Contraseña</p>
@@ -28,7 +27,7 @@
     </select>
     <p>Comentarios:</p><textarea name="coment" id="coment"></textarea><br>
     <input type="checkbox" name="suscribir" id="suscribir"><p>Suscribirse al boletín de Novedades</p>
-    <input type="submit" value="Guardar Cambios"> <input type="button" value="Borrar los datos introducidos">
+    <input type="submit" value="Guardar Cambios"> <input type="reset" value="Borrar los datos introducidos">
 </form>
     
 </body>
