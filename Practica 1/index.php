@@ -28,6 +28,7 @@
     <p>Comentarios:</p><textarea name="coment" id="coment"></textarea><br>
     <input type="checkbox" name="suscribir" id="suscribir"><p>Suscribirse al boletín de Novedades</p>
     <input type="submit" value="Guardar Cambios"> <input type="reset" value="Borrar los datos introducidos">
+
 </form>
     
 </body>
