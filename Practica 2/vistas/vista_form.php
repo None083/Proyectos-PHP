@@ -20,10 +20,10 @@
         echo "<span class='error'> * Campo obligatorio * </span>";
     }
     ?>
-    <p>Aficiones: <label for="deportes">Deportes</label><input type="checkbox" name="aficiones[]" value="Deportes" <?php if (isset($_POST["aficiones"])) echo "checked" ?>>
-        <label for="lectura">Lectura</label><input type="checkbox" name="aficiones[]" value="Lectura" <?php if (isset($_POST["aficiones"])) echo "checked" ?>>
-        <label for="otros">Otros</label><input type="checkbox" name="aficiones[]" value="Otros" <?php if (isset($_POST["aficiones"])) echo "checked" ?>>
+    <p>Aficiones: <label for="deportes">Deportes</label><input type="checkbox" name="aficiones[]" value="Deportes" <?php if (isset($_POST["aficiones"]) && in_array("Deportes", $_POST["aficiones"])) echo "checked" ?>>
+        <label for="lectura">Lectura</label><input type="checkbox" name="aficiones[]" value="Lectura" <?php if (isset($_POST["aficiones"]) && in_array("Lectura", $_POST["aficiones"])) echo "checked" ?>>
+        <label for="otros">Otros</label><input type="checkbox" name="aficiones[]" value="Otros" <?php if (isset($_POST["aficiones"]) && in_array("Otros", $_POST["aficiones"])) echo "checked" ?>>
     </p>
-    <p>Comentarios:</p><textarea name="coment" id="coment" cols="45" rows="8"><?php if(isset($_POST["coment"])) echo $_POST["coment"];?></textarea><br>
+    <p>Comentarios:</p><textarea name="coment" id="coment" cols="45" rows="8"><?php if (isset($_POST["coment"])) echo $_POST["coment"]; ?></textarea><br>
     <input type="submit" name="enviar" value="Enviar">
 </form>
