@@ -15,7 +15,7 @@ if (!isset($_POST["aficiones"])) {
     echo "</ol>";
 }
 
-if (!isset($_POST["coment"]) || isset($_POST["coment"]) == "" || !isset($_POST["coment"]) == "") {
+if (!isset($_POST["coment"]) || empty($_POST["coment"])) {
     echo "<p><strong>No has hecho un comentario</strong></p>";
 } else {
     echo "<p><strong>El comentario enviado ha sido: </strong>", $_POST["coment"] . "</p>";
