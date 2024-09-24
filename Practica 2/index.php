@@ -1,9 +1,15 @@
 <?php
-if (isset($_POST["borrar"])) {
-    header("Location:index.php");
-    exit;
+function mi_in_array($elemento, $array)
+{
+    $esta = false;
+    for ($i = 0; $i < count($array); $i++) {
+        if ($array[$i] == $elemento) {
+            $esta = true;
+            break;
+        }
+    }
+    return $esta;
 }
-
 if (isset($_POST["enviar"])) {
     #compruebo errores formulario
     $error_nombre = $_POST["nombre"] == "";
@@ -17,6 +23,11 @@ if (isset($_POST["enviar"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .error {
+            color: red
+        }
+    </style>
     <title>Mi primera página PHP</title>
 </head>
 
