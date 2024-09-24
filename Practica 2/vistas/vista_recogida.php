@@ -20,3 +20,4 @@ if (!isset($_POST["coment"]) || empty($_POST["coment"])) {
 } else {
     echo "<p><strong>El comentario enviado ha sido: </strong>", $_POST["coment"] . "</p>";
 }
+?>
