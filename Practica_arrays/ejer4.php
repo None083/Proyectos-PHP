@@ -9,7 +9,11 @@
 
 <body>
     <?php
-    ª
+    $array[] = "Pedro";
+    $array[] = "Ana";
+    $array[] = 34;
+    $array[] = 1;
+    print_r($array);
     ?>
 </body>
 
