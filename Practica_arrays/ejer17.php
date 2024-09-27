@@ -9,29 +9,30 @@
 
 <body>
     <?php
-    $familias = array(
-        "Los Simpsons" => array(
+    $familias = [
+        "Los Simpsons" => [
             "Padre" => "Homer",
             "Madre" => "Marge",
-            "Hijos" => array("Bart", "Lisa", "Maggie")
-        ),
-        "Los Griffin" => array(
+            "Hijos" => ["Bart", "Lisa", "Maggie"]
+        ],
+        "Los Griffin" => [
             "Padre" => "Peter",
             "Madre" => "Lois",
-            "Hijos" => array("Chris", "Meg", "Stewie")
-        )
-    );
+            "Hijos" => ["Chris", "Meg", "Stewie"]
+        ]
+
+    ];
     echo "<ul>";
     foreach ($familias as $familia => $roles) {
         echo "<li>" . $familia . "</li>";
         echo "<ul>";
         foreach ($roles as $rol => $nombres) {
+
             if (is_array($nombres)) {
-                $contador = 0;
+                echo "<li>".$rol.":</li>";
                 echo "<ul>";
-                foreach ($nombres as $nombre) {
-                    $contador++;
-                    echo "<li>Hijo" . $contador . ": " . $nombre . "</li>";
+                foreach ($nombres as $nombre => $value) {
+                    echo "<li>Hijo" . $nombre+1 . ": " . $value . "</li>";
                 }
                 echo "</ul>";
             } else {

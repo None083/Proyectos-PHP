@@ -108,6 +108,14 @@
     echo "</table>";
     /*$variable = 0;
     unset($variable); //destruye variable*/
+    
+    //strlen, substr
+    $texto1 = "Hola me llamo Juan";
+    echo "<p>".$texto1[0]."</p>";
+    echo "<p>".substr($texto1, 7, 2)."</p>";
+    echo "<p>".substr($texto1, -3, 2)."</p>";
+    echo "<p>".substr($texto1, 7)."</p>";
+    echo "<p>".substr($texto1, -3)."</p>";
     ?>
 </body>
 
