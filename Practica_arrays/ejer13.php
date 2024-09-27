@@ -13,7 +13,7 @@
     $numeros = array("12", "34", "45", "52", "12");
     $cosas = array("Sauce", "Pino", "Naranjo", "Chopo", "Perro", "34");
     $todo = array_merge($animales, $numeros, $cosas);
-    print_r(array_reverse($todo));
+    print_r(array_reverse($todo));//no usar esto
     ?>
 </body>
 </html>
