@@ -47,6 +47,20 @@
             ]
         ]
     ];
+    echo "<dl>";
+        foreach ($gente as $ciudades => $ciudad) {
+            echo "<dt>Amigos en ".$ciudades.":</dt>";
+            echo "<dd><ol>";
+            foreach ($ciudad as $info => $datos) {
+                echo "<li>";
+                foreach ($datos as $dato => $valor) {
+                    echo "<strong>".$dato.": </strong>".$valor.". ";
+                }
+                echo "</li>";
+            }
+            echo "</ol></dd>";
+        }
+    echo "</dl>";
     ?>
 </body>
 
