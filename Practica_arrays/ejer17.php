@@ -27,12 +27,11 @@
         echo "<li>" . $familia . "</li>";
         echo "<ul>";
         foreach ($roles as $rol => $nombres) {
-
             if (is_array($nombres)) {
-                echo "<li>".$rol.":</li>";
+                echo "<li>" . $rol . ":</li>";
                 echo "<ul>";
                 foreach ($nombres as $nombre => $value) {
-                    echo "<li>Hijo" . $nombre+1 . ": " . $value . "</li>";
+                    echo "<li>Hijo" . $nombre + 1 . ": " . $value . "</li>";
                 }
                 echo "</ul>";
             } else {

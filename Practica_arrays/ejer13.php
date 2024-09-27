@@ -13,7 +13,13 @@
     $numeros = array("12", "34", "45", "52", "12");
     $cosas = array("Sauce", "Pino", "Naranjo", "Chopo", "Perro", "34");
     $todo = array_merge($animales, $numeros, $cosas);
-    print_r(array_reverse($todo));//no usar esto
+    echo "<h1>Arrays unidos</h1>";
+    print_r($todo);
+    echo "<h2>Array reverso</h2>";
+    echo "<p>".end($todo)."</p>";
+    for ($i=0; $i < count($todo)-1; $i++) { 
+        echo "<p>".prev($todo)."</p>";
+    }
     ?>
 </body>
 </html>
