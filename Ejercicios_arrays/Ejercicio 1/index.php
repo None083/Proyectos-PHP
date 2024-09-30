@@ -1,9 +1,28 @@
 <?php
+function todo_letras($texto)
+{
+    $todo_l = true;
+    for ($i = 0; $i < strlen($texto); $i++) {
+        if (ord($texto[$i]) < ord("A") || ord($texto[$i]) > ord("z")) {
+            $todo_l = false;
+            break;
+        }
+    }
+    return $todo_l;
+}
 if (isset($_POST["comparar"])) {
     #compruebo errores formulario
-    $error_primera = $_POST["primera"] == "";
-    $error_segunda = $_POST["segunda"] == "";
-    $errores_form = $error_primera || $error_segunda;
+    $primera = trim($_POST["primera"]);
+    $segunda = trim($_POST["segunda"]);
+    $error_primera = $primera == "";
+    $error_segunda = $segunda == "";
+    $error_longitud_minima_primera = strlen($primera) < 3;
+    $error_longitud_minima_segunda = strlen($segunda) < 3;
+    $error_todo_letras_primera = !todo_letras($primera);
+    $error_todo_letras_segunda = !todo_letras($segunda);
+    $errores_form = $error_primera || $error_segunda
+        || $error_longitud_minima_primera || $error_longitud_minima_segunda
+        || $error_todo_letras_primera || $error_todo_letras_segunda;
 }
 ?>
 <!DOCTYPE html>
