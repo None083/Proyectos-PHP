@@ -1,20 +1,10 @@
 <?php
-function todo_num($texto)
-{
-    $todo_n = true;
-    for ($i = 0; $i < strlen($texto); $i++) {
-        if (!is_numeric($texto[$i])) {
-            $todo_n = false;
-            break;
-        }
-    }
-    return $todo_n;
-}
 function todo_letras($texto)
 {
-    $todo_l = true;
+   
     for ($i = 0; $i < strlen($texto); $i++) {
-        if (ord($texto[$i]) < ord("A") || ord($texto[$i]) > ord("z")) {
+        $todo_l = true;
+        if ((ord($texto[$i]) < ord("A") || ord($texto[$i]) > ord("z"))) {
             $todo_l = false;
             break;
         }
@@ -23,12 +13,12 @@ function todo_letras($texto)
 }
 if (isset($_POST["comprobar"])) {
     #compruebo errores formulario
-    $string = trim($_POST["string"]);
+    $frase = trim($_POST["string"]);
+    $string = str_replace(" ", "", $frase);
     $error_string = $string == "";
     $error_longitud_minima = strlen($string) < 3;
-    $error_todo_num = !todo_num($string);
     $error_todo_letras = !todo_letras($string);
-    $errores_form = $error_string || $error_longitud_minima || ($error_todo_num && $error_todo_letras);
+    $errores_form = $error_string || $error_longitud_minima || $error_todo_letras;
 }
 ?>
 <!DOCTYPE html>
@@ -73,7 +63,7 @@ if (isset($_POST["comprobar"])) {
             margin-top: 0.5rem;
         }
     </style>
-    <title>Ejercicio 2</title>
+    <title>Ejercicio 3</title>
 </head>
 
 <body>
