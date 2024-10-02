@@ -14,10 +14,10 @@ function todo_letras($texto)
 if (isset($_POST["comprobar"])) {
     #compruebo errores formulario
     $frase = trim($_POST["string"]);
-    $string = str_replace(" ", "", $frase);
-    $error_string = $string == "";
-    $error_longitud_minima = strlen($string) < 3;
-    $error_todo_letras = !todo_letras($string);
+    $string_sin_espacios = str_replace(" ", "", $frase);
+    $error_string = $string_sin_espacios == "";
+    $error_longitud_minima = strlen($string_sin_espacios) < 3;
+    $error_todo_letras = !todo_letras($string_sin_espacios);
     $errores_form = $error_string || $error_longitud_minima || $error_todo_letras;
 }
 ?>
@@ -53,8 +53,7 @@ if (isset($_POST["comprobar"])) {
 
         p,
         button {
-            margin-left: 1rem;
-            margin-bottom: 1rem;
+            margin: 1rem;
         }
 
         #contenedor-resp {
