@@ -10,7 +10,7 @@
                 } else if ($error_longitud_minima) {
                     echo "<span class='error'> Debe introducir al menos tres caracteres </span>";
                 } else {
-                    echo "<span class='error'> Debe introducir sólo letras </span>";
+                    echo "<span class='error'> Debe introducir sólo números romanos </span>";
                 }
             }
             ?>

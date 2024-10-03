@@ -1,14 +1,51 @@
 <?php
-function todo_letras($texto)
+const VALORES = array("M" => 1000, "D" => 500, "C" => 100, "L" => 50, "X" => 10, "V" => 5, "I" => 1);
+
+function letras_correctas($texto)
 {
-    $todo_l = true;
+    $correcto = true;
     for ($i = 0; $i < strlen($texto); $i++) {
-        if (ord($texto[$i]) < ord("A") || ord($texto[$i]) > ord("z")) {
-            $todo_l = false;
+        if (!isset(VALORES[$texto[$i]])) {
+            $correcto = false;
             break;
         }
     }
-    return $todo_l;
+    return $correcto;
+}
+
+function orden_bueno($texto){
+    $bueno = true;
+    for ($i=0; $i < strlen($texto)-1; $i++) { 
+        if (VALORES[$texto[$i]] < VALORES[$texto[$i+1]]) {
+            $bueno = false;
+            break;
+        }
+    }
+    return $bueno;
+}
+
+function repite_bien($texto){
+    $contador["M"] = 4;
+    $contador["D"] = 1;
+    $contador["C"] = 4;
+    $contador["L"] = 1;
+    $contador["X"] = 4;
+    $contador["V"] = 1;
+    $contador["I"] = 4;
+
+    $bueno = true;
+
+    for ($i=0; $i < strlen($texto); $i++) { 
+        $contador[$texto[$i]]--;
+        if ($contador[$texto[$i]] < 0) {
+            $bueno = false;
+        }
+    }
+    return $bueno;
+}
+
+function bien_escrito_romano($texto){
+    return letras_correctas($texto) && orden_bueno($texto) && repite_bien($texto);
 }
 
 if (isset($_POST["convertir"])) {
@@ -17,8 +54,8 @@ if (isset($_POST["convertir"])) {
     $string_sin_espacios = str_replace(" ", "", $numero_romano);
     $error_string = $string_sin_espacios == "";
     $error_longitud_minima = strlen($string_sin_espacios) < 3;
-    $error_todo_letras = !todo_letras($string_sin_espacios);
-    $errores_form = $error_string || $error_longitud_minima || $error_todo_letras;
+    $error_escrito_mal = !bien_escrito_romano($string_sin_espacios);
+    $errores_form = $error_string || $error_longitud_minima || $error_escrito_mal;
 }
 ?>
 <!DOCTYPE html>
