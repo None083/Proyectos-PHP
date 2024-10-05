@@ -77,16 +77,17 @@ if (isset($_POST["calcular"])) {
 
         $arrayFecha1 = explode("-", $_POST["primera"]);
         $segFecha1 = mktime(0, 0, 0, $arrayFecha1[1], $arrayFecha1[2], $arrayFecha1[0]);
+
         $arrayFecha2 = explode("-", $_POST["segunda"]);
         $segFecha2 = mktime(0, 0, 0, $arrayFecha2[1], $arrayFecha2[2], $arrayFecha2[0]);
 
-        $diferenciaFechasSeg = $segFecha1 - $segFecha2;
-        $diferenciaFechasDias = date("d", abs($diferenciaFechasSeg));
+        $diferenciaFechasSeg = abs($segFecha1 - $segFecha2);
+
+        //86400 es la cantidad de segundos en un día
+        $diferenciaFechasDias = $diferenciaFechasSeg / 86400; 
 
         echo "<div id='contenedor-resp'>";
         echo "<h1>Fechas - Resultado</h1>";
-        echo "<p>".$_POST["primera"]."</p>";
-        echo "<p>".$segFecha1."</p>";
         echo "<p>La diferencia en días entre las dos fechas es de: ".$diferenciaFechasDias."</p>";
         echo "</div>";
     }
