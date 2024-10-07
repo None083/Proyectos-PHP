@@ -1,4 +1,32 @@
 <?php
+/* errores clase
+function buenos_separadores($texto){
+    return substr($texto, 2, 1) == "/" && substr($texto, 5, 1) == "/";
+}
+
+function buenos_numeros($texto){
+    return is_numeric(substr($texto, 0, 2)) && is_numeric(substr($texto, 3, 2)) && is_numeric(substr($texto, 6, 4));
+}
+
+function fecha_valida($texto){
+    return checkdate(substr($texto, 3, 2), substr($texto, 0, 2), substr($texto, 6, 4));
+}
+
+
+if (isset($_POST["calcular"])) {
+    
+    $error_fecha1 = $_POST["primera"] == 0 || strlen($_POST["primera"]) != 10 
+    || !buenos_separadores($_POST["primera"]) || !buenos_numeros($_POST["primera"])
+    || !fecha_valida($_POST["primera"]);
+
+    $error_fecha2 = $_POST["segunda"] == 0 || strlen($_POST["segunda"]) != 10 
+    || !buenos_separadores($_POST["segunda"]) || !buenos_numeros($_POST["segunda"])
+    || !fecha_valida($_POST["segunda"]);
+
+    $errores_form = $error_fecha1 || $error_fecha2;
+}
+*/
+
 function esFormatoValido($fecha)
 {
     // Expresión regular para validar el formato DD/MM/YYYY
@@ -41,6 +69,7 @@ if (isset($_POST["calcular"])) {
     $error_fecha_valida2 = !esFechaValida($_POST["segunda"]);
     $errores_form = $error_primera || $error_segunda || $error_fecha_valida1 || $error_fecha_valida2 || $error_formato_valido1 || $error_formato_valido2;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
