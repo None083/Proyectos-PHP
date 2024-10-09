@@ -58,18 +58,33 @@ if (isset($_POST["fecha"])) {
         //fijo siempre: tabla vacia de horario
 
         if (isset($_POST["cambiar"])) {
-            
-            $fecha_recogida = strtotime($_POST["fecha"]);
-            
-            
 
-        
-            echo "<p>Semana del". " al ". "</p>";
+            $fecha = $_POST["fecha"];
+
+            function obtenerSemana($fecha)
+            {
+                $timestamp = strtotime($fecha);
+
+                // Si el día es domingo, se ajusta al lunes anterior
+                $dia = date('w', $timestamp);
+                if ($dia == 0) {
+                    $dia = 7;
+                }
+
+                // Calcular el lunes y domingo de la semana
+                $lunes = date('Y-m-d', strtotime("-" . ($dia - 1) . " days", $timestamp));
+                $domingo = date('Y-m-d', strtotime("+" . (7 - $dia) . " days", $timestamp));
+
+                return [$lunes, $domingo];
+            }
+
+            $semana = obtenerSemana($_POST["fecha"]);
+            echo "<p>Semana del " . date('d/m/Y', strtotime($semana[0])) . " al " . date('d/m/Y', strtotime($semana[1])) . "</p>";
         }
         ?>
     </div>
 
-    
+
 </body>
 
 </html>
