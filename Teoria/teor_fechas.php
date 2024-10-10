@@ -8,10 +8,17 @@
 <body>
     <h1>Teoría de Fechas</h1>
     <?php
+
+    //date() te devuelve un string, se puede poner el formato sólo, o el formato y los segundos de la fecha
+    //mktime() 
+    //checkdate()
+    //strtotime()
+
     echo "<p>".time()."</p>"; //segundos desde 1970
     //si no le pongo segundo argumento coge time()
     $fecha = date("d/m/Y H:i:s"); //Y 4 digitos, y 2 digitos
     $fecha2 = date("d/m/Y H:i:s", time());
+    
     echo "<p>".$fecha."</p>";
     echo "<p>".$fecha2."</p>";
 

@@ -37,11 +37,43 @@ if (isset($_POST["fecha"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: lightgrey;
+        }
+
+        #contenedor-form {
+            background-color: lightblue;
+            border: 2px solid black;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        p,
+        button {
+            margin-left: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        #contenedor-resp {
+            background-color: lightgreen;
+            border: 2px solid black;
+            margin-top: 0.5rem;
+        }
+    </style>
     <title>Reservar aula</title>
 </head>
 
 <body>
-    <div>
+    <div id="contenedor-form">
         <h1>RESERVAR AULA</h1>
         <form action="index.php" method="post">
             <p>
@@ -63,17 +95,17 @@ if (isset($_POST["fecha"])) {
 
             function obtenerSemana($fecha)
             {
-                $timestamp = strtotime($fecha);
+                $fecha_seg = strtotime($fecha);
 
                 // Si el día es domingo, se ajusta al lunes anterior
-                $dia = date('w', $timestamp);
+                $dia = date('w', $fecha_seg);
                 if ($dia == 0) {
                     $dia = 7;
                 }
 
                 // Calcular el lunes y domingo de la semana
-                $lunes = date('Y-m-d', strtotime("-" . ($dia - 1) . " days", $timestamp));
-                $domingo = date('Y-m-d', strtotime("+" . (7 - $dia) . " days", $timestamp));
+                $lunes = date('Y-m-d', strtotime("-" . ($dia - 1) . " days", $fecha_seg));
+                $domingo = date('Y-m-d', strtotime("+" . (7 - $dia) . " days", $fecha_seg));
 
                 return [$lunes, $domingo];
             }
