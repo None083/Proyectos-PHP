@@ -21,7 +21,7 @@ function dni_valido($dni)
         } else {
             $numero_dni = substr($dni, 0, -1);
             $letra_dni = strtoupper(substr($dni, -1));
-            
+
             if (!is_numeric($numero_dni)) {
                 return false;
             }
@@ -36,6 +36,17 @@ function dni_valido($dni)
     return $valido;
 }
 
+function tiene_extension($extension)
+{
+    $array_nombre = explode(".", $extension);
+    if (count($array_nombre) <= 1) {
+        $respuesta = false;
+    } else {
+        $respuesta = end($array_nombre);
+    }
+    return $respuesta;
+}
+
 if (isset($_POST["enviar"])) {
     #compruebo errores formulario
     $error_nombre = $_POST["nombre"] == "";
@@ -43,8 +54,12 @@ if (isset($_POST["enviar"])) {
     $error_clave = $_POST["pass"] == "";
     $error_dni = !dni_valido($_POST["dni"]);
     $error_sexo = !isset($_POST["sexo"]);
+    $error_foto = $_FILES["foto"]["error"]
+        || !tiene_extension($_FILES["foto"]["name"])
+        || !getimagesize($_FILES["foto"]["tmp_name"])
+        || $_FILES["foto"]["size"] > 500 * 1024;
     $error_comentarios = $_POST["coment"] == "";
-    $errores_form = $error_nombre || $error_apellido || $error_clave || $error_dni || $error_sexo || $error_comentarios;
+    $errores_form = $error_nombre || $error_apellido || $error_clave || $error_dni || $error_sexo || $error_foto || $error_comentarios;
 }
 ?>
 

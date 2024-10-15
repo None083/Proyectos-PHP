@@ -38,7 +38,24 @@
         echo "<span class='error'> * Debes elegir un sexo * </span>";
     }
     ?>
-    <p>Incluir mi foto: </p> <input type="file" name="Seleccionar archivo" id="foto" accept="image/*">
+    <p>Incluir mi foto (Máx 500KB): </p>
+    <p><input type="file" name="foto" id="foto" accept="image/*">
+        <?php
+        if (isset($_POST["enviar"]) && $error_foto) {
+            if ($_FILES["foto"]["name"] == "") {
+                echo "<span class='error'>* Debes seleccionar un fichero *</span>";
+            } elseif ($_FILES["foto"]["name"]) {
+                echo "<span class='error'>* No se ha subido el archivo seleccionado al servidor *</span>";
+            } else if (!tiene_extension($_FILES["foto"]["name"])) {
+                echo "<span class='error'>* Has elegido un fichero sin extensión *</span>";
+            } else if (!getimagesize($_FILES["foto"]["tmp_name"])) {
+                echo "<span class='error'>* No has seleccionado un fichero de tipo imagen *</span>";
+            } else {
+                echo "<span class='error'>* El fichero seleccionado es mayor de 500kb *</span>";
+            }
+        }
+        ?>
+    </p>
     <p>Nacido en: </p> <select name="ciudad" id="ciudad">
         <option value="malaga" <?php if (isset($_POST["ciudad"]) && $_POST["ciudad"] == "malaga") echo "selected" ?>>Málaga</option>
         <option value="marbella" <?php if (isset($_POST["ciudad"]) && $_POST["ciudad"] == "marbella") echo "selected" ?>>Marbella</option>
