@@ -4,16 +4,34 @@ if (isset($_POST["borrar"])) {
     exit;
 }
 
-function LetraNIF($dni) {  
-    return substr("TRWAGMYFPDXBNJZSQVHLCKEO", $dni % 23, 1); 
+function LetraNIF($dni)
+{
+    return substr("TRWAGMYFPDXBNJZSQVHLCKEO", $dni % 23, 1);
 }
 
-function error_dni($dni) {
+function dni_valido($dni)
+{
     $valido = true;
-    if (count($dni) != 9) {
+
+    if (strlen($dni) != 9) {
         $valido = false;
-    }else{
-        $num_dni = 
+    } else {
+        if (!ctype_alpha($dni[strlen($dni) - 1])) {
+            $valido = false;
+        } else {
+            $numero_dni = substr($dni, 0, -1);
+            $letra_dni = strtoupper(substr($dni, -1));
+            
+            if (!is_numeric($numero_dni)) {
+                return false;
+            }
+
+            $letra_valida_dni = LetraNIF((int)$numero_dni);
+
+            if ($letra_dni != $letra_valida_dni) {
+                return false;
+            }
+        }
     }
     return $valido;
 }
@@ -23,7 +41,7 @@ if (isset($_POST["enviar"])) {
     $error_nombre = $_POST["nombre"] == "";
     $error_apellido = $_POST["apellidos"] == "";
     $error_clave = $_POST["pass"] == "";
-    $error_dni = $_POST["dni"] == "";
+    $error_dni = !dni_valido($_POST["dni"]);
     $error_sexo = !isset($_POST["sexo"]);
     $error_comentarios = $_POST["coment"] == "";
     $errores_form = $error_nombre || $error_apellido || $error_clave || $error_dni || $error_sexo || $error_comentarios;
@@ -48,7 +66,6 @@ if (isset($_POST["enviar"])) {
     <?php
     if (isset($_POST["enviar"]) && !$errores_form) {
         require "vistas/vistaphp.php";
-        
     } else {
         require "vistas/vistaform.php";
     }
