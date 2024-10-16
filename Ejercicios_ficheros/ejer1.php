@@ -1,8 +1,13 @@
 <?php
 
 
-function errores_form(){
+if (isset($_POST["crear"])) {
     
+    $error_vacio = $_POST["crear"] == "";
+    $error_es_numero = !is_numeric($_POST["crear"]);
+    $error_num_valido = $_POST["crear"] < 1 || $_POST["crear"] > 10;
+
+    $errores_form = $error_vacio || $error_es_numero || $error_num_valido;
 }
 
 ?>
