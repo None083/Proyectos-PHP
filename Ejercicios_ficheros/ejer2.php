@@ -52,6 +52,7 @@ if (isset($_POST["mostrar"])) {
         $numero = (int)$_POST["numero"];
 
         if (file_exists("Tablas/tabla_" . $numero . ".txt")) {
+            echo "<h2>Tabla del ".$numero."</h2>";
             @$file = fopen("Tablas/tabla_" . $numero . ".txt", "r");
             while (!feof($file)) {
                 $linea = fgets($file);
