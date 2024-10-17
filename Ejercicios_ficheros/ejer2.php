@@ -27,7 +27,7 @@ if (isset($_POST["mostrar"])) {
 </head>
 
 <body>
-    <h1>Ejercicio 1</h1>
+    <h1>Ejercicio 2</h1>
     <form action="ejer2.php" method="post">
         <p>Muestra una tabla de multiplicar:
             <input type="text" name="numero" id="numero">
