@@ -10,7 +10,7 @@
 <body>
     <form action="ejer1.php" method="post">
         <p>Cuenta los caracteres del texto introducido:</p>
-        <textarea name="texto" id="texto"></textarea>
+        <input type="text" name="texto" id="texto" value="<?php if(isset($_POST["texto"])) echo $_POST["texto"] ?>">
         <button type="submit" name="contar">Contar</button>
     </form>
     <?php
