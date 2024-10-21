@@ -1,0 +1,229 @@
+header.white{
+    background-color: #EEECE8;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+}
+header.white > a{
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+}
+header.white > a > span.title{
+    color: #D83C2D;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 5px;
+    flex: 10%;
+}
+
+main{
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+}
+main > div{
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+}
+main form{
+    display: flex;
+    flex-flow: column;
+    width: 80%;
+}
+main form > div > span.h1{
+    font-size: 24px;
+    font-weight: 700;
+    margin: 5px 0;
+}
+main form > button {
+    background-color: #E9A431;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 3px;
+}
+main form > label{
+    font-weight: bold;
+    margin: 5px 0;
+}
+main form  input, main > form > div{
+    margin: 10px 0;
+}
+main  form > input[type="text"],main form > input[type="password"]{
+    height: 40px;
+    background-color: #E1DBD5;
+    border: #2A2121 2px solid;
+    border-radius: 3px;
+}
+main form > input[type="text"]:focus, main form > input[type="password"]:focus{
+    border: #E9A431 2px solid;
+    outline: none; 
+}
+main form > span.warning{
+    color: red;
+    visibility: hidden;
+}
+
+main form input[type="checkbox"]{
+    
+    display: none;
+}
+main form input[type="checkbox"] + label{
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+}
+main form input[type="checkbox"] + label > div{
+    width: 18px;
+    height: 18px;
+    margin-right: 5px;
+    background-image: url(https://imagenes-tulipart.s3.amazonaws.com/imagenes/icons/square-unchecked.svg);
+}
+main form input[type="checkbox"]:checked + label > div{
+    background-image: url(https://imagenes-tulipart.s3.amazonaws.com/imagenes/icons/square-checked.svg);
+}
+main form > button{
+    height: 40px;
+}
+main form > div#checkform {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+}
+main form > div#checkform > a{
+    color: #2A2121;
+}
+main form > div#checkform > label {
+    text-align: left;
+}
+section.contactWith{
+    width: 80%;
+}
+section.contactWith > a > div{
+    display: flex;
+    border: 1px solid #2A2121;
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 3px;
+}
+section.contactWith > a > div >span{
+    margin: auto;
+    color: #2A2121;
+}
+main > div.terms{
+    margin-top: 110px;
+    width: 80%;
+}
+main > div.terms >span > a{
+    color: #2A2121;
+}
+main div.or{
+    display: flex;
+    flex-flow: row nowrap;
+    width: 80%;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+main div.or>div{
+    width: 45%;
+    border-top: 1px solid black;
+}
+a.close-desktop{
+    display: none;
+}
+.small{
+    font-size: 14px;
+}
+
+.smaller{
+    font-size: 12px;
+}
+.orange{
+    color:#E9A431;
+}
+.underlined{
+    text-decoration: underline;
+}
+
+main form, main section.contactWith, main div.or{
+    min-width: 325px;
+    max-width: 425px;
+}
+
+@media(width > 500px){
+    main form, main section.contactWith, main div.or{
+        width: 60%;
+    }
+}
+@media(width > 1024px) {
+    header.white > a > span.title{
+        color: #EEECE8;
+    }
+    main{
+        flex-flow: row wrap;
+    }
+    main >div.containForm{
+        flex-flow: column nowrap;
+        width: 40%;
+        max-width: 382px;
+        background-color: #EEECE8;
+        height: 696px;
+        padding: 20px 30px;
+    }
+    div.flower{
+        height: auto;
+        width: 509px;
+        
+        height: 696px;
+        background-color: #EEECE8;
+        background-image: url(https://imagenes-tulipart.s3.amazonaws.com/imagenes/tulips/LogoTulipArt1.webp);
+        background-image: no-repeat;
+        background-image: fixed;
+        background-image: center;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+    }
+
+    div.dsk-orange{
+        top:0;
+        left: 0;
+        width: 100%;
+        height: max-content;
+        z-index: -1;
+        position: absolute;
+        background: linear-gradient(#E9A431, #D83C2D);
+    }
+
+    header.white{
+        background: linear-gradient(#E9A431, #e89c31);
+    }
+    main form, main section.contactWith, main div.or{
+        width: 90%;
+    }
+    header.white >a.close-mobil{
+        display: none;
+    }
+    main > div > form > div.titulo{
+        display: flex;
+        flex-flow: row;
+        justify-content: space-between;
+    }
+    main > div > form > div.titulo >a.close-desktop{
+        display: block;
+    }
+    main > div.terms>span ,main > div.terms>span>a {
+        color:white
+    }
+    main > div.terms {
+        margin-top: 50px;
+        margin-bottom: 30px;
+    }
+}
