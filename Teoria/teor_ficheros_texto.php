@@ -58,6 +58,8 @@
     echo nl2br($web);
     //file_exists("Tablas/".);
 
+    //sudo chmod 777 -R '/opt/lampp/htdocs/Proyectos' permisos
+
     ?>
 </body>
 
