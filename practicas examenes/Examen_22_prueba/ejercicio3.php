@@ -48,21 +48,19 @@ if (isset($_POST["contar"])) {
         for ($i = 0; $i < strlen($texto); $i++) {
             if ($texto[$i] != $separador) {
                 $palabra .= $texto[$i];
-            } else {
-                if (isset($palabra[0])) {
-                    $array[] = $palabra;
-                    $palabra = "";
-                    $cont++;
-                }
+            } else if (!empty($palabra)) { //también se puede usar isset($palabra[0])
+                $array[] = $palabra;
+                $palabra = "";
+                $cont++;
             }
         }
-        if (isset($palabra[0])) {
+        if (!empty($palabra)) {
             $array[] = $palabra;
             $cont++;
         }
-        
+
         //var_dump($array);
-        echo "<p><strong>El texto contiene ".$cont." palabras.</strong></p>";
+        echo "<p><strong>El texto contiene " . $cont . " palabras.</strong></p>";
     }
     ?>
 </body>
