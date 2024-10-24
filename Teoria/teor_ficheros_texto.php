@@ -13,6 +13,7 @@
     //abrir fichero, r lectura, w escritura, a añadir
     //w: si existe borra el contenido y empieza a escribir en la primera linea
     //si no existe crea un archivo nuevo
+    //r+ lee y sirve para escribir también
     if (!$file) {
         die("<p>No se ha podido abrir el fichero 'prueba.txt'</p>");
     }
