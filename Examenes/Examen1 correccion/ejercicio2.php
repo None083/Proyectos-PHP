@@ -1,21 +1,13 @@
 <?php
-function mi_explode($texto, $separador)
+function esta($linea_buscar, $fd)
 {
-    $array = [];
-    $palabra = "";
-    for ($i = 0; $i < strlen($texto); $i++) {
-        if ($texto[$i] != $separador) {
-            $palabra .= $texto[$i];
-        } else if ($palabra != "") {
-            $array[] = $palabra;
-            $palabra = "";
+    $respuesta = false;
+    while ($linea=fgets($fd)) {
+        if ($linea_buscar == $linea) {
+            $respuesta = true;
         }
     }
-    if ($palabra != "") {
-        $array[] = $palabra;
-        $palabra = "";
-    }
-    return $array;
+    return $respuesta;
 }
 if (isset($_POST["agregar"])) {
     $error_form = $_FILES["archivo"]["error"] || $_FILES["archivo"]["type"] != "text/plain" || $_FILES["archivo"]["size"] > 500 * 1024;
@@ -45,7 +37,11 @@ if (isset($_POST["agregar"])) {
             <input type="file" name="archivo" id="archivo" accept="text/plain">
             <?php
             if (isset($_POST["agregar"]) && $error_form) {
-                if ($_FILES["archivo"]["type"] != "text/plain") {
+                if ($_FILES["archivo"]["name"] == "") {
+                    echo "<span class='error'>No has selccionado ningún archivo</span>";
+                } else if ($_FILES["archivo"]["error"]) {
+                    echo "<span class='error'>Error en la suvida del fichero al servidor</span>";
+                } else if ($_FILES["archivo"]["type"] != "text/plain") {
                     echo "<span class='error'>Este tipo de archivo no está permitido</span>";
                 } else if ($_FILES["archivo"]["size"] > 500 * 1024) {
                     echo "<span class='error'>El archivo no debe pesar más de 500KB</span>";
@@ -60,23 +56,17 @@ if (isset($_POST["agregar"])) {
     </form>
     <?php
     if (isset($_POST["agregar"]) && !$error_form) {
-        @$file = fopen("Aulas/aulas.txt", "a");
+        @$file = fopen("Aulas/aulas.txt", "r+");
+        
         if (!$file) {
             die("<p><strong>No se ha podido leer el fichero aulas.txt</strong></p>");
         }
-        $array_file = mi_explode(file_get_contents("Aulas/aulas.txt"), ";");
-        $array_archivo = mi_explode(file_get_contents($_FILES["archivo"]["tmp_name"]), ";");
-
-        if ($array_file[0] != $array_archivo[0]) {
-            $archivo = file_get_contents($_FILES["archivo"]["tmp_name"]);
-            for ($i = 0; $i < strlen($archivo); $i++) {
-                fwrite($file, $archivo[$i]);
-
-                if ($archivo[$i] == strlen($archivo) - 1) {
-                    fwrite($file, "\n");
-                }
-            }
-            fwrite($file, "\n\n");
+        @$file2 = fopen($_FILES["archivo"]["tmp_name"], "r");
+        $linea_buscar = fgets($file2);
+        fclose($file2);
+        
+        if (!esta($linea_buscar, $file)) {
+            fputs($file,file_get_contents($_FILES["archivo"]["tmp_name"]).PHP_EOL);
         }
 
         echo "<h2>El fichero 'aulas.txt' tras esta operación tiene el siguiente contenido:</h2>";
@@ -85,12 +75,11 @@ if (isset($_POST["agregar"])) {
         fclose($file);
     }
     if (isset($_POST["cv"])) {
-        @$file = fopen("Aulas/aulas.txt", "r");
+        @$file = fopen("Aulas/aulas.txt", "w");
         if (!$file) {
-            @$file = fopen("Aulas/aulas.txt", "w");
+            echo "<h2>No tienes permisos en el servidor para crear <em>aulas.txt</em></h2>";
         } else {
-            @$file = fopen("Aulas/aulas.txt", "w");
-            fwrite($file, "");
+            echo "<h2>Se ha creado con éxito el archivo <em>aulas.txt</em></h2>";
         }
 
         fclose($file);
