@@ -89,11 +89,13 @@ mysqli_close($conexion);
             color: red;
             font-weight: bold;
         }
-        .volver{
+
+        .volver {
             background-color: lightblue;
-            
+
         }
-        .borrar{
+
+        .borrar {
             background-color: lightcoral;
             margin-right: 1rem;
         }
@@ -140,24 +142,24 @@ mysqli_close($conexion);
     if (isset($_POST["btnBorrar"])) {
         if (mysqli_num_rows($detalle_usuario) > 0) {
             $tupla_detalles = mysqli_fetch_assoc($detalle_usuario);
-            echo "<h2>¿Desea borrar a ".$tupla_detalles["nombre"]."?</h2>";
+            echo "<h2>¿Desea borrar a " . $tupla_detalles["nombre"] . "?</h2>";
             echo "<form action='index.php' method='post'><button type='submit' class='borrar' name='btn_borrar_def'>Borrar</button>";
             echo "<button type='submit' class='volver' name='btn_volver'>Volver</button></form>";
-            if (isset($_POST["btn_borrar_def"])) {
-                /*try {
-                    $consulta = "select * from usuarios where id_usuario='" . $_POST["btnBorrar"] . "'";
-                    $detalle_usuario = mysqli_query($conexion, $consulta);
-                } catch (Exception $e) {
-                    mysqli_close($conexion);
-                    die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
-                }*/
-            }
         } else {
             echo "<p>El usuario ya no se encuentra registrado en la BD</p>";
         }
         mysqli_free_result($detalle_usuario);
     }
-    
+    if (isset($_POST["btn_borrar_def"])) {
+        echo "<p>Hola</p>";
+        /*try {
+            $consulta = "select * from usuarios where id_usuario='" . $_POST["btnBorrar"] . "'";
+            $detalle_usuario = mysqli_query($conexion, $consulta);
+        } catch (Exception $e) {
+            mysqli_close($conexion);
+            die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        }*/
+    }
 
     ?>
 </body>
