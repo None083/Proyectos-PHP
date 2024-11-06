@@ -19,6 +19,6 @@
     </p>
     <p>
         <button type="submit" name="btnContAgregar">Continuar</button> 
-        <button type="submit">Atrás</button>
-    </p>    
+        <button type="submit">Volver</button>
+    </p>
 </form>
