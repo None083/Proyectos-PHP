@@ -26,14 +26,6 @@ try {
     die(error_page("Primer CRUD", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
 }
 
-if(isset($_POST["btnAgregar"]))
-{
-    //Compruebo errores
-    //Si no los hay inserto en la tabla e informo de la acción
-    require "vistas/vista_errores.php";
-    
-}
-
 if (isset($_POST["btnDetalles"]) || isset($_POST["btnBorrar"])) {
     if (isset($_POST["btnDetalles"])) {
         $id_usuario = $_POST["btnDetalles"];
@@ -52,7 +44,7 @@ if (isset($_POST["btnDetalles"]) || isset($_POST["btnBorrar"])) {
 if (isset($_POST["btnBorrarDef"])) {
     try {
         $consulta = "delete from usuarios where id_usuario='" . $_POST["btnBorrarDef"] . "'";
-        mysqli_query( $conexion, $consulta);
+        mysqli_query($conexion, $consulta);
         $mensaje_accion = "Usuario borrado con exito";
     } catch (Exception $e) {
         mysqli_close($conexion);
@@ -66,6 +58,40 @@ try {
 } catch (Exception $e) {
     mysqli_close($conexion);
     die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+}
+
+if (isset($_POST["btnContAgregar"])) {
+    //Compruebo errores
+    //Si no los hay inserto en la tabla e informo de la acción
+    $error_nombre_vacio = $_POST["nombre"] == "";
+    $error_usuario_vacio = $_POST["usuario"] == "";
+    $error_clave_vacio = $_POST["clave"] == "";
+    $error_email_vacio = $_POST["email"] == "";
+    $errores_form = $error_clave_vacio || $error_usuario_vacio || $error_email_vacio || $error_nombre_vacio;
+
+    if (!$errores_form) {
+        try {
+            $consulta = "INSERT INTO usuarios (nombre, usuario, clave, email) VALUES (?, ?, ?, ?)";
+            $stmt = mysqli_prepare($conexion, $consulta);
+            
+            // Escapamos los datos para evitar inyección SQL
+            $nombre = mysqli_real_escape_string($conexion, $_POST["nombre"]);
+            $usuario = mysqli_real_escape_string($conexion, $_POST["usuario"]);
+            $clave = password_hash($_POST["clave"], PASSWORD_DEFAULT); // Hashear la contraseña
+            $email = mysqli_real_escape_string($conexion, $_POST["email"]);
+            
+            // Enlazamos y ejecutamos la consulta
+            mysqli_stmt_bind_param($stmt, 'ssss', $nombre, $usuario, $clave, $email);
+            mysqli_stmt_execute($stmt);
+            
+            $mensaje_accion = "Usuario agregado con éxito";
+            mysqli_stmt_close($stmt);
+        } catch (Exception $e) {
+            // Mostrar mensaje de error en caso de fallo
+            die(error_page("Error al agregar usuario", "<p>Error al insertar en la base de datos: " . $e->getMessage() . "</p>"));
+        }
+    }
+
 }
 
 mysqli_close($conexion);
@@ -99,7 +125,6 @@ mysqli_close($conexion);
 
         .enlace:hover {
             color: darkblue;
-            font-weight: 600;
         }
 
         .btn_imagen {
@@ -112,7 +137,6 @@ mysqli_close($conexion);
 
         .btn_imagen:hover {
             color: darkred;
-            font-weight: 900;
         }
 
         .volver {
@@ -135,7 +159,10 @@ mysqli_close($conexion);
 
         .btn_agregar:hover {
             color: darkgreen;
-            font-weight: 900;
+        }
+
+        .error{
+            color: red;
         }
     </style>
     <title>Document</title>
@@ -144,7 +171,7 @@ mysqli_close($conexion);
 <body>
     <h1>Listado de los usuarios</h1>
     <?php
-    
+
     require "vistas/vista_tabla.php";
 
     if (isset($_POST["btnDetalles"])) {
@@ -155,7 +182,7 @@ mysqli_close($conexion);
         require "vistas/vista_borrar.php";
     }
 
-    if (isset($_POST["btnAgregar"])) {
+    if (isset($_POST["btnAgregar"]) || (isset($_POST["btnContAgregar"]) && $errores_form)) {
         require "vistas/vista_agregar.php";
     }
 
