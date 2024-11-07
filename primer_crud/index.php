@@ -26,11 +26,13 @@ try {
     die(error_page("Primer CRUD", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
 }
 
-if (isset($_POST["btnDetalles"]) || isset($_POST["btnBorrar"])) {
+if (isset($_POST["btnDetalles"]) || isset($_POST["btnBorrar"]) || isset($_POST["btnEditar"])) {
     if (isset($_POST["btnDetalles"])) {
         $id_usuario = $_POST["btnDetalles"];
-    } else {
+    } else if (isset($_POST["btnBorrar"])) {
         $id_usuario = $_POST["btnBorrar"];
+    } else {
+        $id_usuario = $_POST["btnEditar"];
     }
     try {
         $consulta = "select * from usuarios where id_usuario='" . $id_usuario . "'";
@@ -52,46 +54,88 @@ if (isset($_POST["btnBorrarDef"])) {
     }
 }
 
+
+
+if (isset($_POST["btnContAgregar"])) {
+    //Compruebo errores
+    //Si no los hay inserto en la tabla e informo de la acción
+    $error_nombre = $_POST["nombre"] == "";
+    $error_usuario = $_POST["usuario"] == "";
+    if (!$error_usuario) {
+        try {
+            $consulta = "select usuario from usuarios where usuario='" . $_POST["usuario"] . "'";
+            $usuario_repetido = mysqli_query($conexion, $consulta);
+            $error_usuario = (mysqli_num_rows($usuario_repetido) > 0);
+        } catch (Exception $e) {
+            mysqli_close($conexion);
+            die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        }
+    }
+    $error_clave = $_POST["clave"] == "";
+    $error_email = $_POST["email"] == "" || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
+    if (!$error_email) {
+        try {
+            $consulta = "select email from usuarios where email='" . $_POST["email"] . "'";
+            $email_repetido = mysqli_query($conexion, $consulta);
+            $error_email = (mysqli_num_rows($email_repetido) > 0);
+        } catch (Exception $e) {
+            mysqli_close($conexion);
+            die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        }
+    }
+    $errores_form_agregar = $error_clave || $error_usuario || $error_email || $error_nombre;
+
+    if (!$errores_form_agregar) {
+        try {
+            $consulta = "INSERT INTO usuarios (nombre, usuario, clave, email) VALUES ('" . $_POST["nombre"] . "', '" . $_POST["usuario"] . "', '" . md5($_POST["clave"]) . "', '" . $_POST["email"] . "')";
+
+            $resultado_agregar = mysqli_query($conexion, $consulta);
+            $mensaje_accion = "Usuario insertado con éxito";
+        } catch (Exception $e) {
+            // Mostrar mensaje de error en caso de fallo
+            die(error_page("Error al agregar usuario", "<p>Error al insertar en la base de datos: " . $e->getMessage() . "</p>"));
+        }
+    }
+}
+
+if (isset($_POST["btnContEditar"])) {
+    //Compruebo errores
+    //Si no los hay inserto en la tabla e informo de la acción
+    $error_nombre = $_POST["nombre"] == "";
+    $error_usuario = $_POST["usuario"] == "";
+    if (!$error_usuario) {
+        try {
+            $consulta = "select usuario from usuarios where usuario='" . $_POST["usuario"] . "' AND id_usuario=";
+            $usuario_repetido = mysqli_query($conexion, $consulta);
+            $error_usuario = (mysqli_num_rows($usuario_repetido) > 0);
+        } catch (Exception $e) {
+            mysqli_close($conexion);
+            die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        }
+    }
+    $error_clave = $_POST["clave"] == "";
+    $error_email = $_POST["email"] == "" || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
+    if (!$error_email) {
+        try {
+            $consulta = "select email from usuarios where email='" . $_POST["email"] . "'";
+            $email_repetido = mysqli_query($conexion, $consulta);
+            $error_email = (mysqli_num_rows($email_repetido) > 0);
+        } catch (Exception $e) {
+            mysqli_close($conexion);
+            die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        }
+    }
+    $errores_form_editar = $error_clave || $error_usuario || $error_email || $error_nombre;
+
+}
+
+
 try {
     $consulta = "select * from usuarios";
     $datos_usuario = mysqli_query($conexion, $consulta);
 } catch (Exception $e) {
     mysqli_close($conexion);
     die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
-}
-
-if (isset($_POST["btnContAgregar"])) {
-    //Compruebo errores
-    //Si no los hay inserto en la tabla e informo de la acción
-    $error_nombre_vacio = $_POST["nombre"] == "";
-    $error_usuario_vacio = $_POST["usuario"] == "";
-    $error_clave_vacio = $_POST["clave"] == "";
-    $error_email_vacio = $_POST["email"] == "";
-    $errores_form = $error_clave_vacio || $error_usuario_vacio || $error_email_vacio || $error_nombre_vacio;
-
-    if (!$errores_form) {
-        try {
-            $consulta = "INSERT INTO usuarios (nombre, usuario, clave, email) VALUES (?, ?, ?, ?)";
-            $stmt = mysqli_prepare($conexion, $consulta);
-            
-            // Escapamos los datos para evitar inyección SQL
-            $nombre = mysqli_real_escape_string($conexion, $_POST["nombre"]);
-            $usuario = mysqli_real_escape_string($conexion, $_POST["usuario"]);
-            $clave = password_hash($_POST["clave"], PASSWORD_DEFAULT); // Hashear la contraseña
-            $email = mysqli_real_escape_string($conexion, $_POST["email"]);
-            
-            // Enlazamos y ejecutamos la consulta
-            mysqli_stmt_bind_param($stmt, 'ssss', $nombre, $usuario, $clave, $email);
-            mysqli_stmt_execute($stmt);
-            
-            $mensaje_accion = "Usuario agregado con éxito";
-            mysqli_stmt_close($stmt);
-        } catch (Exception $e) {
-            // Mostrar mensaje de error en caso de fallo
-            die(error_page("Error al agregar usuario", "<p>Error al insertar en la base de datos: " . $e->getMessage() . "</p>"));
-        }
-    }
-
 }
 
 mysqli_close($conexion);
@@ -161,7 +205,19 @@ mysqli_close($conexion);
             color: darkgreen;
         }
 
-        .error{
+        .btn_editar {
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: orange;
+            font-weight: 600;
+        }
+
+        .btn_editar:hover {
+            color: orangered;
+        }
+
+        .error {
             color: red;
         }
     </style>
@@ -174,6 +230,10 @@ mysqli_close($conexion);
 
     require "vistas/vista_tabla.php";
 
+    if (isset($mensaje_accion)) {
+        echo "<p>" . $mensaje_accion . "</p>";
+    }
+
     if (isset($_POST["btnDetalles"])) {
         require "vistas/vista_detalle.php";
     }
@@ -182,8 +242,74 @@ mysqli_close($conexion);
         require "vistas/vista_borrar.php";
     }
 
-    if (isset($_POST["btnAgregar"]) || (isset($_POST["btnContAgregar"]) && $errores_form)) {
+    if (isset($_POST["btnAgregar"]) || (isset($_POST["btnContAgregar"]) && $errores_form_egregar)) {
         require "vistas/vista_agregar.php";
+    }
+
+    if (isset($_POST["btnEditar"]) || (isset($_POST["btnContEditar"]) && $errores_form_editar)) {
+
+        if (mysqli_num_rows($detalle_usuario) > 0) {
+            $tupla_detalles = mysqli_fetch_assoc($detalle_usuario);
+            $nombre = $tupla_detalles["nombre"];
+            $usuario = $tupla_detalles["usuario"];
+            $email = $tupla_detalles["email"];
+    ?>
+            <h2>Editando el usuario <?php echo $id_usuario; ?></h2>
+
+            <form action="index.php" method="post">
+                <p>
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" name="nombre" id="nombre" value="<?php echo $nombre; ?>" />
+                    <?php
+                    if (isset($_POST["btnContEditar"]) && $error_nombre) {
+                        echo "<span class='error'> * Campo obligatorio * </span>";
+                    }
+                    ?>
+                </p>
+                <p>
+                    <label for="usuario">Usuario:</label>
+                    <input type="text" name="usuario" id="usuario" value="<?php echo $usuario; ?>" />
+                    <?php
+                    if (isset($_POST["btnContEditar"]) && $error_usuario) {
+                        if ($_POST["usuario"] == "") {
+                            echo "<span class='error'> * Campo obligatorio * </span>";
+                        } else {
+                            echo "<span class='error'> * Usuario repetido * </span>";
+                        }
+                    }
+                    ?>
+                </p>
+                <p>
+                    <label for="clave">Contraseña:</label>
+                    <input type="password" name="clave" id="clave" value="" placeholder="Cambiar clave" />
+                </p>
+                <p>
+                    <label for="email">Email:</label>
+                    <input type="text" name="email" id="email" value="<?php echo $email; ?>" />
+                    <?php
+                    if (isset($_POST["btnContEditar"]) && $error_email) {
+                        if ($_POST["email"] == "") {
+                            echo "<span class='error'> * Campo obligatorio * </span>";
+                        } else if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
+                            echo "<span class='error'> * Email sintácticamente incorrecto * </span>";
+                        } else {
+                            echo "<span class='error'> * Email repetido * </span>";
+                        }
+                    }
+                    ?>
+                </p>
+                <p>
+                    <button type="submit" name="btnContEditar" value="<?php echo $id_usuario; ?>">Continuar</button>
+                    <button type="submit">Volver</button>
+                </p>
+            </form>
+
+
+    <?php
+        } else {
+            echo "<p>El usuario ya no se encuentra registrado en la BD</p>";
+        }
+        mysqli_free_result($detalle_usuario);
     }
 
     ?>

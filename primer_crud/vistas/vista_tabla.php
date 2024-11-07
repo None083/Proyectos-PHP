@@ -14,7 +14,7 @@ echo "<table>";
         echo "<td>
             <form action='index.php' method='post'><button class='btn_imagen' type='submit' name='btnBorrar' value='" . $tupla["id_usuario"] . "'>Borrar</button></form>
         </td>";
-        echo "<td>Editar</td>";
+        echo "<td><form action='index.php' method='post'><button class='btn_editar' type='submit' name='btnEditar' value='" . $tupla["id_usuario"] . "'>Editar</button></form></td>";
         echo "</tr>";
     }
     echo "<tr>

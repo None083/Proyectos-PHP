@@ -1,4 +1,4 @@
-<h2>Agregando un nuevo usuario</h2>
+<h2>Editando usuario</h2>
 <form action="index.php" method="post">
     <p>
         <label for="nombre">Nombre:</label>
