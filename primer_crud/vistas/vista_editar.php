@@ -1,19 +1,39 @@
-<h2>Editando usuario</h2>
+<?php
+if (isset($_POST["btnEditar"])) {
+    if (mysqli_num_rows($detalle_usuario) > 0) {
+        $tupla_detalles = mysqli_fetch_assoc($detalle_usuario);
+        $nombre = $tupla_detalles["nombre"];
+        $usuario = $tupla_detalles["usuario"];
+        $email = $tupla_detalles["email"];
+    } else {
+        mysqli_free_result($detalle_usuario);
+        die("<p>El usuario ya no se encuentra registrado en la BD</p></body></html>");
+    }
+} else {
+    $id_usuario = $_POST["btnContEditar"];
+    $nombre = $_POST["nombre"];
+    $usuario = $_POST["usuario"];
+    $email = $_POST["email"];
+}
+?>
+
+<h2>Editando el usuario <?php echo $id_usuario; ?></h2>
+
 <form action="index.php" method="post">
     <p>
         <label for="nombre">Nombre:</label>
-        <input type="text" name="nombre" id="nombre" value="<?php if (isset($_POST["nombre"])) echo $_POST["nombre"]; ?>" />
+        <input type="text" name="nombre" id="nombre" value="<?php echo $nombre; ?>" />
         <?php
-        if (isset($_POST["btnContAgregar"]) && $error_nombre) {
+        if (isset($_POST["btnContEditar"]) && $error_nombre) {
             echo "<span class='error'> * Campo obligatorio * </span>";
         }
         ?>
     </p>
     <p>
         <label for="usuario">Usuario:</label>
-        <input type="text" name="usuario" id="usuario" value="<?php if (isset($_POST["usuario"])) echo $_POST["usuario"]; ?>" />
+        <input type="text" name="usuario" id="usuario" value="<?php echo $usuario; ?>" />
         <?php
-        if (isset($_POST["btnContAgregar"]) && $error_usuario) {
+        if (isset($_POST["btnContEditar"]) && $error_usuario) {
             if ($_POST["usuario"] == "") {
                 echo "<span class='error'> * Campo obligatorio * </span>";
             } else {
@@ -24,13 +44,13 @@
     </p>
     <p>
         <label for="clave">Contraseña:</label>
-        <input type="password" name="clave" id="clave" value="" />
+        <input type="password" name="clave" id="clave" value="" placeholder="Cambiar clave" />
     </p>
     <p>
         <label for="email">Email:</label>
-        <input type="text" name="email" id="email" value="<?php if (isset($_POST["email"])) echo $_POST["email"]; ?>" />
+        <input type="text" name="email" id="email" value="<?php echo $email; ?>" />
         <?php
-        if (isset($_POST["btnContAgregar"]) && $error_email) {
+        if (isset($_POST["btnContEditar"]) && $error_email) {
             if ($_POST["email"] == "") {
                 echo "<span class='error'> * Campo obligatorio * </span>";
             } else if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
@@ -42,7 +62,7 @@
         ?>
     </p>
     <p>
-        <button type="submit" name="btnContAgregar">Continuar</button>
+        <button type="submit" name="btnContEditar" value="<?php echo $id_usuario; ?>">Continuar</button>
         <button type="submit">Volver</button>
     </p>
 </form>
