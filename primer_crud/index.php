@@ -1,23 +1,7 @@
 <?php
-const SERVIDOR_BD = "localhost";
-//const USUARIO_BD = "jose";
-const USUARIO_BD = "root";
-//const CLAVE_BD = "josefa";
-const CLAVE_BD = "";
-const NOMBRE_BD = "bd_foro";
+session_start();
 
-function error_page($title, $body)
-{
-    return '<!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>' . $title . '</title>
-    </head>
-    <body>' . $body . '</body>
-    </html>';
-}
+require "vistas/funciones_ctes.php";
 
 try {
     @$conexion = mysqli_connect(SERVIDOR_BD, USUARIO_BD, CLAVE_BD, NOMBRE_BD);
@@ -26,93 +10,109 @@ try {
     die(error_page("Primer CRUD", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
 }
 
-if (isset($_POST["btnContEditar"])) {
+if(isset($_POST["btnContEditar"]))
+{
     //Compruebo errores
-    //Si no los hay inserto en la tabla e informo de la acción
-    $error_nombre = $_POST["nombre"] == "";
-    $error_usuario = $_POST["usuario"] == "";
-    if (!$error_usuario) {
-        try {
-            $consulta = "select usuario from usuarios where usuario='" . $_POST["usuario"] . "' AND id_usuario<>'" . $_POST["btnContEditar"] . "'";
-            $usuario_repetido = mysqli_query($conexion, $consulta);
-            $error_usuario = (mysqli_num_rows($usuario_repetido) > 0);
-        } catch (Exception $e) {
+    $error_nombre=$_POST["nombre"]=="";
+    $error_usuario=$_POST["usuario"]=="";
+    if(!$error_usuario)
+    {
+        $error_usuario=repetido($conexion,"usuarios","usuario",$_POST["usuario"],"id_usuario",$_POST["btnContEditar"]);
+        if(is_string($error_usuario))
+        {
             mysqli_close($conexion);
-            die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+            die(error_page("Primer CRUD","<p>".$error_usuario."</p>"));
         }
     }
 
-    $error_email = $_POST["email"] == "" || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
-    if (!$error_email) {
-        try {
-            $consulta = "select email from usuarios where email='" . $_POST["email"] . "' AND id_usuario<>'" . $_POST["btnContEditar"] . "'";
-            $email_repetido = mysqli_query($conexion, $consulta);
-            $error_email = (mysqli_num_rows($email_repetido) > 0);
-        } catch (Exception $e) {
+    $error_email=$_POST["email"]==""||!filter_var($_POST["email"],FILTER_VALIDATE_EMAIL);
+    if(!$error_email)
+    {
+        $error_email=repetido($conexion,"usuarios","email",$_POST["email"],"id_usuario",$_POST["btnContEditar"]);
+        if(is_string($error_email))
+        {
             mysqli_close($conexion);
-            die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+            die(error_page("Primer CRUD","<p>".$error_email."</p>"));
         }
     }
-    $errores_form_editar = $error_usuario || $error_email || $error_nombre;
+
+    $error_form_editar=$error_nombre||$error_usuario||$error_email;
 
     //Si no hay errores edito en la tabla e informo de la acción
-    if (!$errores_form_editar) {
+    if(!$error_form_editar)
+    {
         //Edito y mensaje
-        try {
-            if ($_POST["clave"] == "")
-                $consulta = "update usuarios set nombre='" . $_POST["nombre"] . "', usuario='" . $_POST["usuario"] . "', email='" . $_POST["email"] . "' where id_usuario='" . $_POST["btnContEditar"] . "'";
+        try
+        {
+            if($_POST["clave"]=="")
+                $consulta="update usuarios set nombre='".$_POST["nombre"]."', usuario='".$_POST["usuario"]."', email='".$_POST["email"]."' where id_usuario='".$_POST["btnContEditar"]."'";
             else
-                $consulta = "update usuarios set nombre='" . $_POST["nombre"] . "', usuario='" . $_POST["usuario"] . "', clave='" . md5($_POST["clave"]) . "', email='" . $_POST["email"] . "' where id_usuario='" . $_POST["btnContEditar"] . "'";
+                $consulta="update usuarios set nombre='".$_POST["nombre"]."', usuario='".$_POST["usuario"]."', clave='".md5($_POST["clave"])."', email='".$_POST["email"]."' where id_usuario='".$_POST["btnContEditar"]."'";
 
-            $resultado_editar = mysqli_query($conexion, $consulta);
-            $mensaje_accion = "Usuario editado con éxito";
-        } catch (Exception $e) {
+            mysqli_query($conexion,$consulta);
+            $_SESSION["mensaje_accion"]="Usuario editado con éxito";
+            header("Location:index.php");
+            exit;
+        }
+        catch(Exception $e)
+        {
             mysqli_close($conexion);
-            die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+            die(error_page("Primer CRUD","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
         }
     }
+
 }
 
-if (isset($_POST["btnContAgregar"])) {
+
+
+if(isset($_POST["btnContAgregar"]))
+{
     //Compruebo errores
-    //Si no los hay inserto en la tabla e informo de la acción
-    $error_nombre = $_POST["nombre"] == "";
-    $error_usuario = $_POST["usuario"] == "";
-    if (!$error_usuario) {
-        try {
-            $consulta = "select usuario from usuarios where usuario='" . $_POST["usuario"] . "'";
-            $usuario_repetido = mysqli_query($conexion, $consulta);
-            $error_usuario = (mysqli_num_rows($usuario_repetido) > 0);
-        } catch (Exception $e) {
+    $error_nombre=$_POST["nombre"]=="";
+    $error_usuario=$_POST["usuario"]=="";
+    if(!$error_usuario)
+    {
+        $error_usuario=repetido($conexion,"usuarios","usuario",$_POST["usuario"]);
+        if(is_string($error_usuario))
+        {
             mysqli_close($conexion);
-            die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+            die(error_page("Primer CRUD","<p>".$error_usuario."</p>"));
         }
+        
     }
-    $error_clave = $_POST["clave"] == "";
-    $error_email = $_POST["email"] == "" || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
-    if (!$error_email) {
-        try {
-            $consulta = "select email from usuarios where email='" . $_POST["email"] . "'";
-            $email_repetido = mysqli_query($conexion, $consulta);
-            $error_email = (mysqli_num_rows($email_repetido) > 0);
-        } catch (Exception $e) {
+    $error_clave=$_POST["clave"]=="";
+    $error_email=$_POST["email"]==""||!filter_var($_POST["email"],FILTER_VALIDATE_EMAIL);
+    if(!$error_email)
+    {
+        $error_email=repetido($conexion,"usuarios","email",$_POST["email"]);
+        if(is_string($error_email))
+        {
             mysqli_close($conexion);
-            die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+            die(error_page("Primer CRUD","<p>".$error_email."</p>"));
         }
     }
-    $errores_form_agregar = $error_clave || $error_usuario || $error_email || $error_nombre;
 
-    if (!$errores_form_agregar) {
-        try {
-            $consulta = "INSERT INTO usuarios (nombre, usuario, clave, email) VALUES ('" . $_POST["nombre"] . "', '" . $_POST["usuario"] . "', '" . md5($_POST["clave"]) . "', '" . $_POST["email"] . "')";
+    $error_form_agregar=$error_nombre||$error_usuario||$error_clave||$error_email;
 
-            $resultado_agregar = mysqli_query($conexion, $consulta);
-            $mensaje_accion = "Usuario insertado con éxito";
-        } catch (Exception $e) {
-            // Mostrar mensaje de error en caso de fallo
-            die(error_page("Error al agregar usuario", "<p>Error al insertar en la base de datos: " . $e->getMessage() . "</p>"));
+    //Si no hay errores inserto en la tabla e informo de la acción
+    if(!$error_form_agregar)
+    {
+        //inserto BD y mensaje de acción
+        try
+        {
+            $consulta="insert into usuarios (nombre,usuario,clave,email) values('".$_POST["nombre"]."','".$_POST["usuario"]."','".md5($_POST["clave"])."','".$_POST["email"]."')";
+            $resultado_agregar=mysqli_query($conexion,$consulta);
+            $_SESSION["mensaje_accion"]="Usuario insertado con éxito";
+            header("Location:index.php");
+            exit;
+        }
+        catch(Exception $e)
+        {
+            mysqli_close($conexion);
+            die(error_page("Primer CRUD","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
         }
     }
+
 }
 
 if (isset($_POST["btnDetalles"]) || isset($_POST["btnBorrar"]) || isset($_POST["btnEditar"])) {
@@ -136,7 +136,9 @@ if (isset($_POST["btnBorrarDef"])) {
     try {
         $consulta = "delete from usuarios where id_usuario='" . $_POST["btnBorrarDef"] . "'";
         mysqli_query($conexion, $consulta);
-        $mensaje_accion = "Usuario borrado con exito";
+        $_SESSION["mensaje_accion"] = "Usuario borrado con exito";
+        header("Location:index.php");
+        exit;
     } catch (Exception $e) {
         mysqli_close($conexion);
         die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
@@ -244,8 +246,11 @@ mysqli_close($conexion);
 
     require "vistas/vista_tabla.php";
 
-    if (isset($mensaje_accion)) {
-        echo "<p>" . $mensaje_accion . "</p>";
+    if (isset($_SESSION["mensaje_accion"])) {
+        //unset()
+        //session_unset()
+        session_destroy();
+        echo "<p>" . $_SESSION["mensaje_accion"] . "</p>";
     }
 
     if (isset($_POST["btnBorrar"])) {
