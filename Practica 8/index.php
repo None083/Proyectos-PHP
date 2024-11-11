@@ -7,16 +7,17 @@ try {
     @$conexion = mysqli_connect(SERVIDOR_BD, USUARIO_BD, CLAVE_BD, NOMBRE_BD);
     mysqli_set_charset($conexion, "utf8");
 } catch (Exception $e) {
+    mysqli_close($conexion);
+    session_destroy();
     die(error_page("Práctica 8", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
 }
+//a partir de aqui tengo conxion con mi bd
 
 if(isset($_POST["btnDetalles"]) || isset($_POST["btnEnviar"]) || isset($_POST["btnBorrar"])){
     if(isset($_POST["btnDetalles"])){
         $id_usuario= $_POST["btnDetalles"];
-    }else if(isset($_POST["btnBorrar"])){
-        $id_usuario= $_POST["btnBorrar"];
     }else{
-        $id_usuario= $_POST["btnEditar"];
+        $id_usuario= $_POST["id_usuario"];
     }
 
     try {
@@ -40,6 +41,7 @@ if (isset($_POST["btnContBorrar"])) {
     }
 }
 
+//consulta para listar usuarios
 try {
     $consulta = "select * from usuarios";
     $datos_usuario = mysqli_query($conexion, $consulta);
@@ -56,8 +58,8 @@ mysqli_close($conexion);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         table, td, th{border: 1px solid black;}
-        table{border-collapse: collapse; text-align: center; width: 100%;}
-        .enlace{background: none; color: blue; cursor: pointer; border: none; text-decoration: underline; display: contents; flex-flow: row nowrap; }
+        table{border-collapse: collapse; text-align: center; width: 90%; margin: 0 auto;}
+        .enlace{background: none; color: blue; cursor: pointer; border: none; text-decoration: underline;}
         .mensaje{font-size: 1.25rem; color: blue;}
     </style>
     <title>CRUD - PRÁCTICA 8</title>
@@ -79,7 +81,7 @@ mysqli_close($conexion);
         require "vistas/vista_borrar.php";
     }
 
-    if (isset($_POST["btnCrear"])){
+    if (isset($_POST["btnCrear"])|| isset($_POST["btnContCrear"]) && $errores_form_crear){
         require "vistas/vista_crear.php";
     }
 

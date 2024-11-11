@@ -38,13 +38,8 @@
     </p>
     <p>
         Sexo:</br>
-        <input type="radio" name="sexo" id="hombre" value="hombre"><label for="hombre">Hombre</label></br>
-        <input type="radio" name="sexo" id="mujer" value="mujer"><label for="mujer">Mujer</label>
-        <?php
-        if(isset($_POST["btnContCrear"]) && $errores_form_crear){
-
-        }
-        ?>
+        <input type="radio" name="sexo" id="hombre" value="hombre" checked><label for="hombre">Hombre</label></br>
+        <input type="radio" name="sexo" id="mujer" value="mujer" <?php if(isset($_POST["sexo"]) && $_POST["sexo"] == "mujer") echo "checked"; ?>><label for="mujer">Mujer</label>
     </p>
     <p>
         <label for="foto">Incluir mi foto (Max. 500KB):</label>
@@ -54,5 +49,9 @@
 
         }
         ?>
+    </p>
+    <p>
+        <button type="submit" name="btnContCrear">Guardar</button>
+        <button type="submit">Atrás</button>
     </p>
 </form>

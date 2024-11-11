@@ -16,3 +16,23 @@ function error_page($title, $body){
     </html>';
 }
 
+function repetido($conexion,$tabla,$columna,$valor,$columna_clave=null,$valor_clave=null)
+{
+    try
+    {
+        if(isset($columna_clave))
+            $consulta="select ".$columna." from ".$tabla." where ".$columna."='".$valor."' AND ".$columna_clave."<>'".$valor_clave."'";
+        else
+            $consulta="select ".$columna." from ".$tabla." where ".$columna."='".$valor."'";
+
+            
+        $usuario_repetido=mysqli_query($conexion,$consulta);
+        $respuesta=mysqli_num_rows($usuario_repetido)>0;
+    }
+    catch(Exception $e)
+    {
+        $respuesta="No se ha podido realizar la consulta: ".$e->getMessage();
+    }
+
+    return $respuesta;
+}
