@@ -4,8 +4,8 @@
         <label for="nombre">Nombre:</label></br>
         <input type="text" name="nombre" id="nombre" placeholder="Nombre..." value="<?php if(isset($_POST["nombre"])) echo $_POST["nombre"]; ?>">
         <?php
-        if(isset($_POST["btnContCrear"]) && $errores_form_crear){
-
+        if (isset($_POST["btnContCrear"]) && $error_nombre) {
+            echo "<span class='error'> * Campo obligatorio * </span>";
         }
         ?>
     </p>
@@ -13,8 +13,12 @@
         <label for="usuario">Usuario:</label></br>
         <input type="text" name="usuario" id="usuario" placeholder="Usuario..." value="<?php if(isset($_POST["usuario"])) echo $_POST["usuario"]; ?>">
         <?php
-        if(isset($_POST["btnContCrear"]) && $errores_form_crear){
-
+        if (isset($_POST["btnContCrear"]) && $error_usuario) {
+            if ($_POST["usuario"] == "") {
+                echo "<span class='error'> * Campo obligatorio * </span>";
+            } else {
+                echo "<span class='error'> * Usuario repetido * </span>";
+            }
         }
         ?>
     </p>
@@ -22,9 +26,7 @@
         <label for="clave">Clave:</label></br>
         <input type="text" name="clave" id="clave" placeholder="Clave..." value="<?php if(isset($_POST["clave"])) echo $_POST["clave"]; ?>">
         <?php
-        if(isset($_POST["btnContCrear"]) && $errores_form_crear){
-
-        }
+        
         ?>
     </p>
     <p>
@@ -32,7 +34,13 @@
         <input type="text" name="dni" id="dni" placeholder="DNI..." value="<?php if(isset($_POST["dni"])) echo $_POST["dni"]; ?>">
         <?php
         if(isset($_POST["btnContCrear"]) && $errores_form_crear){
+            /*if ($_POST["dni"] == "") {
 
+            }elseif(){
+                //dni bien escrito
+            }else if(!dni_valido($_POST["dni"])){
+
+            }*/
         }
         ?>
     </p>
@@ -46,7 +54,7 @@
         <input type="file" name="foto" id="foto" accept="image/*">
         <?php
         if(isset($_POST["btnContCrear"]) && $errores_form_crear){
-
+            
         }
         ?>
     </p>
