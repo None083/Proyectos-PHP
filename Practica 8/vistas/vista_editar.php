@@ -7,6 +7,7 @@ if(isset($_POST["btnEditar"]))
         $usuario=$detalle_usuario["usuario"];
         $dni=$detalle_usuario["dni"];
         $sexo=$detalle_usuario["sexo"];
+        $foto_bd = $detalle_usuario["foto"];
     }
     else
     {
@@ -21,6 +22,7 @@ else
     $usuario=$_POST["usuario"];
     $dni=$_POST["dni"];
     $sexo=$_POST["sexo"];
+    $foto_bd=$_POST["foto_bd"];
 }
 
 ?>
@@ -90,6 +92,7 @@ else
         }
         ?>
     </p>
+    <input type="hidden" name="foto_bd" value="<?php echo $foto_bd ?>">
     <p>
         <button type="submit" name="btnContEditar">Guardar</button>
         <button type="submit">Atrás</button>
