@@ -10,7 +10,7 @@ if (isset($_POST["btnCerrarSesion"])) {
 
 if (isset($_SESSION["usuario"])) {
     //control de baneo
-    
+    require "src/seguridad.php";
 
     //muestro vista después de login
     require "vistas/vista_logueado.php";
