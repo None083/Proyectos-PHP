@@ -1,5 +1,5 @@
 <?php
-session_name("Primer_Login");
+session_name("Pract_9");
 session_start();
 require "src/funciones.php";
 
@@ -14,8 +14,15 @@ if (isset($_SESSION["usuario"])) {
     require "src/seguridad.php";
 
     //muestro vista después de login
-    require "vistas/vista_logueado.php";
-    mysqli_close($conexion);
+
+    if ($datos_usuario_log["tipo"] == "normal") {
+        require "vistas/vista_normal.php";
+    }else{
+        require "vistas/vista_admin.php";
+    }
+
+    
+    //mysqli_close($conexion);
 }else{
     require "vistas/vista_login.php";
 }
