@@ -18,12 +18,13 @@ if (isset($_POST["btnLogin"])) {
             $consulta = "select usuario from usuarios where usuario='".$_POST["usuario"]."' AND clave='".md5($_POST["clave"])."'";
             $resultado = mysqli_query($conexion, $consulta);
             $n_tuplas = mysqli_num_rows($resultado);
-            //mysqli_free_result();
+            mysqli_free_result($resultado);
             if ($n_tuplas > 0) {
 
                 mysqli_close($conexion);
                 $_SESSION["usuario"] = $_POST["usuario"];
                 $_SESSION["clave"] = md5($_POST["clave"]);
+                $_SESSION["ultm_accion"]=time();
                 header("Location:index.php");
                 exit;
 
@@ -31,7 +32,9 @@ if (isset($_POST["btnLogin"])) {
                 $error_usuario = true;
             }
         } catch (Exception $e) {
-            die(error_page("Práctica 8", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+            mysqli_close($conexion);
+            session_destroy();
+            die(error_page("Primer Login", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
         }
     }
 }
@@ -46,33 +49,49 @@ if (isset($_POST["btnLogin"])) {
         .error {
             color: red;
         }
+        .mensaje{
+            color:blue;
+            font-size:1.25rem
+        }
     </style>
     <title>Primer Login</title>
 </head>
 
 <body>
     <h1>Primer Login</h1>
-    <form action="index.html" method="post">
+    <form action="index.php" method="post">
         <p>
             <label for="usuario">Usuario:</label>
-            <input type="text" name="usuario" id="usuario" value="">
+            <input type="text" name="usuario" id="usuario" value="<?php if(isset($_POST["usuario"])) echo $_POST["usuario"];?>">
             <?php
-            if (isset($error_usuario)) {
-                if ($_POST["usuario"] == "") {
-                    echo "<span class='error'> * Campo vacío * </span>";
-                }else{
-                    echo "<span class='error'> * Usuario y/o contraseña no encontrados * </span>";
-                }
-                
+            if(isset($_POST["btnLogin"]) && $error_usuario)
+            {
+                if($_POST["usuario"]=="")
+                    echo "<span class='error'>* Campo vacío *</span>";
+                else
+                    echo "<span class='error'>* Usuario y/o contraseña incorrectos  *</span>";
             }
             ?>
         </p>
         <p>
             <label for="clave">Clave:</label>
-            <input type="password" name="clave" id="clave" value="">
+            <input type="password" name="clave" id="clave">
+            <?php
+            if(isset($_POST["btnLogin"]) && $error_clave)
+            {
+                echo "<span class='error'>* Campo vacío *</span>";
+            }
+            ?>
         </p>
         <p><button type="submit" name="btnLogin">Login</button></p>
     </form>
+    <?php
+    if(isset($_SESSION["mensaje_seguridad"]))
+    {
+        echo "<p class='mensaje'>".$_SESSION["mensaje_seguridad"]."</p>";
+        session_destroy();
+    }
+    ?>
 </body>
 
 </html>

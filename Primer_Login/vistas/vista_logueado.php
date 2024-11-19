@@ -9,6 +9,7 @@
         }
         .enlace{
             background: none;
+            border:none;
             color: blue;
             text-decoration: underline;
             cursor: pointer;
@@ -19,11 +20,10 @@
 <body>
     <h1>Primer Login</h1>
     <div>
-        Bienvenido - <strong><?php $_SESSION["usuario"] ?></strong>
-        <form action="index.html" method="post">
-            <button type="submit" name="btnCerrarSesion">Cerrar sesión</button>
+        Bienvenido - <strong><?php echo $datos_usuario_log["usuario"]; ?></strong>
+        <form action="index.php" class="enlinea" method="post">
+            <button type="submit" class="enlace" name="btnCerrarSesion">Cerrar sesión</button>
         </form>
-
     </div>
 </body>
 </html>

@@ -14,6 +14,7 @@ if (isset($_SESSION["usuario"])) {
 
     //muestro vista después de login
     require "vistas/vista_logueado.php";
+    mysqli_close($conexion);
 }else{
     require "vistas/vista_login.php";
 }
