@@ -11,7 +11,7 @@
 <body>
     <p><b>Escribe el nombre de alguna ciudad d&oacute;nde quieres ir: </b></p>
     <form>
-        Ciudad: <input type="text" onkeyup="muestraSugerencia()">
+        Ciudad: <input type="text" onkeyup="muestraSugerencia(this.value)">
     </form>
     <p>Sugerencias: <span id="txtSugerencia"></span></p>
     <script>
@@ -26,7 +26,7 @@
                         document.getElementById("txtSugerencia").innerHTML = this.responseText;
                     }
                 };
-                xmlhttp.open("GET", "http://localhost/Proyectos/dwec/getSugerencia.php?param=" + str, true);
+                xmlhttp.open("GET", "http://localhost/Proyectos/dwec/Ajax/ArchivosProfe/getSugerencia.php?param=" + str, true);
                 xmlhttp.send();
             }
         }
