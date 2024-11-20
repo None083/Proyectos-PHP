@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validación</title>
+</head>
+
+<body>
+    <b>Introduzca un usuario y password:</b>
+    <form id="loginForm">
+        <input type="text" name="nombre" id="usuario" placeholder="usuario"><br>
+        <input type="password" name="password" id="password" placeholder="password"><br>
+        <button type="submit">Log In</button>
+    </form>
+    <p id="resultado"></p>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function (event) {
+            // Prevenir que el formulario recargue la página
+            event.preventDefault();
+
+            // Obtener los valores de los campos
+            const usuario = document.getElementById("usuario").value;
+            const password = document.getElementById("password").value;
+
+            // Verificar que los campos no estén vacíos
+            if (usuario === "" || password === "") {
+                document.getElementById("resultado").innerText = "Por favor, complete todos los campos.";
+                return;
+            }
+
+            // Enviar los datos al servidor mediante fetch
+            fetch("validar.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `nombre=${encodeURIComponent(usuario)}&password=${encodeURIComponent(password)}`,
+            })
+                .then((response) => response.text())
+                .then((data) => {
+                    // Mostrar la respuesta del servidor
+                    document.getElementById("resultado").innerText = data;
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    document.getElementById("resultado").innerText =
+                        "Hubo un error al procesar la solicitud.";
+                });
+        });
+    </script>
+</body>
+
+</html>
