@@ -9,48 +9,35 @@
 </head>
 
 <body>
-    <b>Introduzca un usuario y password:</b>
-    <form id="loginForm">
-        <input type="text" name="nombre" id="usuario" placeholder="usuario"><br>
-        <input type="password" name="password" id="password" placeholder="password"><br>
-        <button type="submit">Log In</button>
-    </form>
+    <b>Introduzca un usuario y password:</b><br>
+
+    <input type="text" id="usuario" placeholder="usuario"><br>
+    <input type="password" id="password" placeholder="password"><br>
+    <button type="button" id="login">Log In</button>
+
     <p id="resultado"></p>
 
     <script>
-        document.getElementById("loginForm").addEventListener("submit", function (event) {
-            // Prevenir que el formulario recargue la página
-            event.preventDefault();
+        const usuario = document.getElementById("usuario");
+        const password = document.getElementById("password");
+        const boton = document.getElementById("login");
 
-            // Obtener los valores de los campos
-            const usuario = document.getElementById("usuario").value;
-            const password = document.getElementById("password").value;
+        let loguear = () => {
+            var data = new FormData();
+            data.append("nombre", usuario.value);
+            data.append("password", password.value);
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("resultado").innerHTML = this.responseText;
+                }
+            };
+            xmlhttp.open("POST", "http://localhost/Proyectos/dwec/Ajax/login/validar.php", true);
+            xmlhttp.send(data);
+        }
 
-            // Verificar que los campos no estén vacíos
-            if (usuario === "" || password === "") {
-                document.getElementById("resultado").innerText = "Por favor, complete todos los campos.";
-                return;
-            }
+        boton.addEventListener("click", loguear);
 
-            // Enviar los datos al servidor mediante fetch
-            fetch("validar.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: `nombre=${encodeURIComponent(usuario)}&password=${encodeURIComponent(password)}`,
-            })
-                .then((response) => response.text())
-                .then((data) => {
-                    // Mostrar la respuesta del servidor
-                    document.getElementById("resultado").innerText = data;
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                    document.getElementById("resultado").innerText =
-                        "Hubo un error al procesar la solicitud.";
-                });
-        });
     </script>
 </body>
 
