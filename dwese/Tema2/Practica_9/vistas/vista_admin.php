@@ -110,14 +110,13 @@ if (isset($_POST["btnContCrear"])) {
 
 if (isset($_POST["btnContEditar"])) {
     $error_nombre = $_POST["nombre"] == "";
-
     $error_usuario = $_POST["usuario"] == "";
     if (!$error_usuario) {
         $error_usuario = repetido($conexion, "usuarios", "usuario", $_POST["usuario"], "id_usuario", $_POST["btnContEditar"]);
         if (is_string($error_usuario)) {
             mysqli_close($conexion);
             session_destroy();
-            die(error_page("Primer CRUD", "<p>" . $error_usuario . "</p>"));
+            die(error_page("Práctica 8", "<p>" . $error_usuario . "</p>"));
         }
     }
 
@@ -138,31 +137,36 @@ if (isset($_POST["btnContEditar"])) {
     if (!$errores_form_editar) {
         try {
             if ($_POST["clave"] == "") {
-                $consulta = "update usuarios set nombre='" . $_POST["nombre"] . "', usuario='" . $_POST["usuario"] . "', dni='" . strtoupper($_POST["dni"]) . "', sexo='" . $_POST["sexo"]["name"] . "' where id_usuario='" . $_POST["btnContEditar"] . "'";
+                $consulta = "update usuarios set nombre='" . $_POST["nombre"] . "', usuario='" . $_POST["usuario"] . "', dni='" . strtoupper($_POST["dni"]) . "', sexo='" . $_POST["sexo"] . "' where id_usuario='" . $_POST["btnContEditar"] . "'";
             } else {
                 $consulta = "update usuarios set nombre='" . $_POST["nombre"] . "', usuario='" . $_POST["usuario"] . "', clave='" . md5($_POST["clave"]) . "', dni='" . strtoupper($_POST["dni"]) . "', sexo='" . $_POST["sexo"] . "' where id_usuario='" . $_POST["btnContEditar"] . "'";
             }
-            $result_detalle_usuario = mysqli_query($conexion, $consulta);
-            mysqli_fetch_assoc($result_detalle_usuario);
+            mysqli_query($conexion, $consulta);
         } catch (Exception $e) {
             mysqli_close($conexion);
             session_destroy();
-            die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+            die(error_page("Practica 9", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
         }
-        if($_FILES["foto"]["name"]!=""){
+
+        if ($_FILES["foto"]["name"] != "") {
             $array_nombre = explode(".", $_FILES["foto"]["name"]);
             $ext = end($array_nombre);
             $nombre_nuevo = "img_" . $_POST["btnContEditar"] . "." . $ext;
             @$var = move_uploaded_file($_FILES["foto"]["tmp_name"], "Img/" . $nombre_nuevo);
             if ($var) {
-                if ($nombre_nuevo!=$_POST["foto_bd"]) {
-                    $consulta = "update usuarios set foto='" . $nombre_nuevo . "' where id_usuario='" . $_POST["btnContEditar"] . "'";
-                    mysqli_query($conexion, $consulta);
-                    
-                }else{
-                    unlink("Img/".$nombre_nuevo);
-                    $_SESSION["mensaje_accion"] = "Usuario editado con éxito, pero con la imagen por defecto";
+                if ($nombre_nuevo != $_POST["foto_bd"]) {
+                    try {
+                        $consulta = "update usuarios set foto='" . $nombre_nuevo . "' where id_usuario='" . $_POST["btnContEditar"] . "'";
+                        mysqli_query($conexion, $consulta);
+                        if ($_POST["foto_bd"] != NOMBRE_IMAGEN_DEFECTO_BD)
+                            unlink("Img/" . $_POST["foto_bd"]);
+                    } catch (Exception $e) {
+                        unlink("Img/" . $nombre_nuevo);
+                        $_SESSION["mensaje_accion"] = "Usuario insertado con éxito, pero con la imagen por defecto.";
+                    }
                 }
+            } else {
+                $_SESSION["mensaje_accion"] = "Usuario editado con éxito, pero con la imagen por defecto";
             }
         }
         $_SESSION["mensaje_accion"] = "Usuario editado con éxito";

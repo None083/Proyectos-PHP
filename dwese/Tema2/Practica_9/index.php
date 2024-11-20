@@ -21,8 +21,6 @@ if (isset($_SESSION["usuario"])) {
         require "vistas/vista_admin.php";
     }
 
-    
-    //mysqli_close($conexion);
 }else{
     require "vistas/vista_login.php";
 }

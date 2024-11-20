@@ -94,7 +94,7 @@ else
     </p>
     <input type="hidden" name="foto_bd" value="<?php echo $foto_bd ?>">
     <p>
-        <button type="submit" name="btnContEditar">Guardar</button>
+        <button type="submit" name="btnContEditar" value="<?php echo $id_usuario;?>">Guardar</button>
         <button type="submit">Atrás</button>
     </p>
 </form>
