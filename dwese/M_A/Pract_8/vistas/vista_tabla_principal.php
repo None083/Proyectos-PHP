@@ -8,7 +8,10 @@ while($tupla_datos_usuario=mysqli_fetch_assoc($result_datos_usuarios))
 {
     echo "<tr>";
     echo "<td>".$tupla_datos_usuario["id_usuario"]."</td>";
-    echo "<td><img src='Img/".$tupla_datos_usuario["foto"]."' alt='Foto' title='Foto'/></td>";
+    if($tupla_datos_usuario["foto"]==NOMBRE_IMAGEN_DEFECTO_BD)
+        echo "<td><img src='Img/".$tupla_datos_usuario["foto"]."' alt='Foto' title='Foto'/></td>";
+    else
+        echo "<td><form action='index.php' method='post'><input type='hidden' name='foto_bd' value='".$tupla_datos_usuario["foto"]."'/><button class='enlace' name='btnBorrarFoto' value='".$tupla_datos_usuario["id_usuario"]."' type='submit' ><img src='Img/".$tupla_datos_usuario["foto"]."' alt='Foto' title='Pulse para borrar foto'/></button></form></td>";
     echo "<td>";
     echo "<form action='index.php' method='post'><button title='Pulse para ver detalles' class='enlace' name='btnDetalles' value='".$tupla_datos_usuario["id_usuario"]."' type='submit' >".$tupla_datos_usuario["nombre"]."</button></form>";
     echo "</td>";
