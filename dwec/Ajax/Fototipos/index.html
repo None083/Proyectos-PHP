@@ -5,25 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        *{
+        * {
             margin: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         main {
             display: flex;
             flex-flow: row wrap;
         }
-        h1{
+
+        h1 {
             margin: 1rem;
+            color: rgb(20, 31, 22);
         }
+
         div.pregunta {
             background-color: rgb(226, 236, 228);
             margin: 1%;
             padding: 0.5rem;
             border-radius: 5px;
             width: 48%;
-
+            color: rgb(20, 31, 22);
         }
 
         div.pregunta>p {
@@ -31,9 +35,14 @@
             margin: 0.5rem;
         }
 
-        button{
+        button {
             border: none;
             background: none;
+        }
+
+        .contBotones{
+            display: flex;
+            flex-flow: row wrap;
         }
 
         .opcionResp {
@@ -43,12 +52,16 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: 600;
+            width: 31.5%;
+            height: auto;
         }
-        .opcionResp:hover{
+
+        .opcionResp:hover {
             background-color: rgb(132, 201, 147);
             color: white;
         }
-        #respuesta{
+
+        #respuesta {
             background-color: rgb(226, 236, 228);
             margin: 1%;
             padding: 0.5rem;
@@ -58,11 +71,15 @@
             color: rgb(67, 163, 88);
             width: 100%;
         }
-        #puntuacion{
+
+        #puntuacion {
             border-top: 1px solid rgb(132, 201, 147);
             padding-top: 0.5rem;
             margin-top: 0.5rem;
-            
+        }
+        div#respuesta > h2 {
+            color: rgb(46, 112, 61);
+            margin-bottom: 0.2rem;
         }
     </style>
     <title>Test Fototipo</title>
@@ -73,68 +90,83 @@
     <main>
         <div class="pregunta">
             <p>1. ¿Cuál es el color natural de su piel cuando no está bronceada?</p>
-            <button type="button" class="opcionResp" value="0">Rojiza, blanca</button>
-            <button type="button" class="opcionResp" value="2">Blanca-beige</button>
-            <button type="button" class="opcionResp" value="4">Beige</button>
-            <button type="button" class="opcionResp" value="8">Marrón clara</button>
-            <button type="button" class="opcionResp" value="12">Marrón</button>
-            <button type="button" class="opcionResp" value="16">Negra</button>
+            <div class="contBotones">
+                <button type="button" class="opcionResp" value="0">Rojiza, blanca</button>
+                <button type="button" class="opcionResp" value="2">Blanca-beige</button>
+                <button type="button" class="opcionResp" value="4">Beige</button>
+                <button type="button" class="opcionResp" value="8">Marrón clara</button>
+                <button type="button" class="opcionResp" value="12">Marrón</button>
+                <button type="button" class="opcionResp" value="16">Negra</button>
+            </div>
         </div>
         <div class="pregunta">
             <p>2. ¿De qué color natural es su pelo?</p>
-            <button type="button" class="opcionResp" value="0"> Pelirrojo, rubio claro</button>
-            <button type="button" class="opcionResp" value="2">Rubio, castaño claro</button>
-            <button type="button" class="opcionResp" value="4">Castaño</button>
-            <button type="button" class="opcionResp" value="8">Castaño oscuro</button>
-            <button type="button" class="opcionResp" value="12">Castaño oscuro-negro</button>
-            <button type="button" class="opcionResp" value="16">Negro</button>
+            <div class="contBotones">
+                <button type="button" class="opcionResp" value="0"> Pelirrojo, rubio claro</button>
+                <button type="button" class="opcionResp" value="2">Rubio, castaño claro</button>
+                <button type="button" class="opcionResp" value="4">Castaño</button>
+                <button type="button" class="opcionResp" value="8">Castaño oscuro</button>
+                <button type="button" class="opcionResp" value="12">Castaño oscuro-negro</button>
+                <button type="button" class="opcionResp" value="16">Negro</button>
+            </div>
         </div>
         <div class="pregunta">
             <p>3. ¿De qué color tiene los ojos?</p>
-            <button type="button" class="opcionResp" value="0">Azul claro, verde claro, gris claro</button>
-            <button type="button" class="opcionResp" value="2">Azules, verdes, grises</button>
-            <button type="button" class="opcionResp" value="4">Grises, marrón claro</button>
-            <button type="button" class="opcionResp" value="8">Marrones</button>
-            <button type="button" class="opcionResp" value="12">Marrón oscuro</button>
-            <button type="button" class="opcionResp" value="16">Negros</button>
+            <div class="contBotones">
+                <button type="button" class="opcionResp" value="0">Azul claro, verde claro, gris claro</button>
+                <button type="button" class="opcionResp" value="2">Azules, verdes, grises</button>
+                <button type="button" class="opcionResp" value="4">Grises, marrón claro</button>
+                <button type="button" class="opcionResp" value="8">Marrones</button>
+                <button type="button" class="opcionResp" value="12">Marrón oscuro</button>
+                <button type="button" class="opcionResp" value="16">Negros</button>
+            </div>
         </div>
 
         <div class="pregunta">
             <p>4. ¿Cuántas pecas tiene de manera natural en el cuerpo cuando no está bronceado?</p>
-            <button type="button" class="opcionResp" value="0">Muchas</button>
-            <button type="button" class="opcionResp" value="2">Algunas</button>
-            <button type="button" class="opcionResp" value="4">Unas cuantas</button>
-            <button type="button" class="opcionResp" value="8">Ninguna</button>
+            <div class="contBotones">
+                <button type="button" class="opcionResp" value="0">Muchas</button>
+                <button type="button" class="opcionResp" value="2">Algunas</button>
+                <button type="button" class="opcionResp" value="4">Unas cuantas</button>
+                <button type="button" class="opcionResp" value="8">Ninguna</button>
+            </div>
         </div>
 
         <div class="pregunta">
             <p>5. ¿Qué categoría describe mejor su herencia genética?</p>
-            <button type="button" class="opcionResp" value="0">Raza blanca de piel muy blanca</button>
-            <button type="button" class="opcionResp" value="2">Raza blanca de piel clara</button>
-            <button type="button" class="opcionResp" value="4">Raza blanca piel morena (Mediterráneo)</button>
-            <button type="button" class="opcionResp" value="8">Oriente Medio, hindú, asiático,
-                hispano-americano</button>
-            <button type="button" class="opcionResp" value="12">Aborigen, africano, afroamericano</button>
+            <div class="contBotones">
+                <button type="button" class="opcionResp" value="0">Raza blanca de piel muy blanca</button>
+                <button type="button" class="opcionResp" value="2">Raza blanca de piel clara</button>
+                <button type="button" class="opcionResp" value="4">Raza blanca piel morena (Mediterráneo)</button>
+                <button type="button" class="opcionResp" value="8">Oriente Medio, hindú, asiático,
+                    hispano-americano</button>
+                <button type="button" class="opcionResp" value="12">Aborigen, africano, afroamericano</button>
+            </div>
         </div>
 
         <div class="pregunta">
             <p>6. ¿Qué categoría describe mejor su potencial de QUEMADURA exponiéndose al sol una hora en verano?</p>
-            <button type="button" class="opcionResp" value="0">Siempre se quema y no se broncea nunca</button>
-            <button type="button" class="opcionResp" value="2">Habitualmente se quema, pero puede broncearse
-                ligeramente</button>
-            <button type="button" class="opcionResp" value="4">Se quema ocasionalmente, pero se broncea
-                moderadamente</button>
-            <button type="button" class="opcionResp" value="8">Nunca se quema y se broncea con facilidad</button>
-            <button type="button" class="opcionResp" value="10">Raramente se quema y se broncea profundamente</button>
-            <button type="button" class="opcionResp" value="12">Nunca se quema</button>
+            <div class="contBotones">
+                <button type="button" class="opcionResp" value="0">Siempre se quema y no se broncea nunca</button>
+                <button type="button" class="opcionResp" value="2">Habitualmente se quema, pero puede broncearse
+                    ligeramente</button>
+                <button type="button" class="opcionResp" value="4">Se quema ocasionalmente, pero se broncea
+                    moderadamente</button>
+                <button type="button" class="opcionResp" value="8">Nunca se quema y se broncea con facilidad</button>
+                <button type="button" class="opcionResp" value="10">Raramente se quema y se broncea
+                    profundamente</button>
+                <button type="button" class="opcionResp" value="12">Nunca se quema</button>
+            </div>
         </div>
 
         <div class="pregunta">
             <p>7. ¿Qué categoría describe mejor su potencial de BRONCEADO?</p>
-            <button type="button" class="opcionResp" value="0">Nunca se broncea</button>
-            <button type="button" class="opcionResp" value="2">Se puede broncear ligeramente</button>
-            <button type="button" class="opcionResp" value="4">Se puede broncear moderadamente</button>
-            <button type="button" class="opcionResp" value="8">Se puede broncear profundamente</button>
+            <div class="contBotones">
+                <button type="button" class="opcionResp" value="0">Nunca se broncea</button>
+                <button type="button" class="opcionResp" value="2">Se puede broncear ligeramente</button>
+                <button type="button" class="opcionResp" value="4">Se puede broncear moderadamente</button>
+                <button type="button" class="opcionResp" value="8">Se puede broncear profundamente</button>
+            </div>
         </div>
         <div id="respuesta"></div>
     </main>
@@ -143,7 +175,7 @@
         let pregActivas = Array.from(document.getElementsByClassName("pregunta")).length;
         let pulsarBtn = function () {
             resultado += parseInt(this.value);
-            this.parentNode.style.display = "none";
+            this.closest(".pregunta").style.display = "none";
             pregActivas--;
             if (pregActivas == 0) {
                 var xmlhttp = new XMLHttpRequest();
