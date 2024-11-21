@@ -9,13 +9,12 @@ if (isset($_POST["btnCerrarSesion"])) {
     exit;
 }
 
-if (isset($_SESSION["usuario"]) || isset($_POST["btnContRegistrar"])) {
+if (isset($_SESSION["usuario"])) {
     //control de baneo
     require "src/seguridad.php";
 
     //muestro vista después de login
-
-    if ($datos_usuario_log["tipo"] == "normal") {
+    if ($datos_usuario_log["tipo"] == "normal" || isset($_POST["btnContRegistrar"])) {
         require "vistas/vista_normal.php";
     } else {
         require "vistas/vista_admin.php";
