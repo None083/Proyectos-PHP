@@ -4,7 +4,7 @@ try {
     @$conexion = mysqli_connect(SERVIDOR_BD, USUARIO_BD, CLAVE_BD, NOMBRE_BD);
     mysqli_set_charset($conexion, "utf8");
 } catch (Exception $e) {
-    die(error_page("Práctica 8", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
+    die(error_page("Práctica 9", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
 }
 //a partir de aqui tengo conxion con mi bd
 
@@ -21,7 +21,7 @@ if (isset($_POST["btnContBorrar"])) {
     } catch (Exception $e) {
         mysqli_close($conexion);
         session_destroy();
-        die(error_page("Práctica 8", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        die(error_page("Práctica 9", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
 }
 
@@ -39,7 +39,7 @@ if (isset($_POST["btnDetalles"]) || isset($_POST["btnBorrar"]) || isset($_POST["
     } catch (Exception $e) {
         mysqli_close($conexion);
         session_destroy();
-        die(error_page("Práctica 8", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        die(error_page("Práctica 9", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
 }
 
@@ -52,7 +52,7 @@ if (isset($_POST["btnContCrear"])) {
         if (is_string($error_usuario)) {
             mysqli_close($conexion);
             session_destroy();
-            die(error_page("Primer CRUD", "<p>" . $error_usuario . "</p>"));
+            die(error_page("Práctica 9", "<p>" . $error_usuario . "</p>"));
         }
     }
     $error_clave = $_POST["clave"] == "";
@@ -62,7 +62,7 @@ if (isset($_POST["btnContCrear"])) {
         if (is_string($error_dni)) {
             mysqli_close($conexion);
             session_destroy();
-            die(error_page("Primer CRUD", "<p>" . $error_dni . "</p>"));
+            die(error_page("Práctica 9", "<p>" . $error_dni . "</p>"));
         }
     }
 
@@ -80,7 +80,7 @@ if (isset($_POST["btnContCrear"])) {
         } catch (Exception $e) {
             mysqli_close($conexion);
             session_destroy();
-            die(error_page("Práctica 8", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+            die(error_page("Práctica 9", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
         }
 
         $_SESSION["mensaje_accion"] = "Usuario insertado con éxito.";
@@ -116,7 +116,7 @@ if (isset($_POST["btnContEditar"])) {
         if (is_string($error_usuario)) {
             mysqli_close($conexion);
             session_destroy();
-            die(error_page("Práctica 8", "<p>" . $error_usuario . "</p>"));
+            die(error_page("Práctica 9", "<p>" . $error_usuario . "</p>"));
         }
     }
 
@@ -126,7 +126,7 @@ if (isset($_POST["btnContEditar"])) {
         if (is_string($error_dni)) {
             mysqli_close($conexion);
             session_destroy();
-            die(error_page("Primer CRUD", "<p>" . $error_dni . "</p>"));
+            die(error_page("Práctica 9", "<p>" . $error_dni . "</p>"));
         }
     }
 
@@ -180,7 +180,7 @@ try {
     $consulta = "select * from usuarios";
     $datos_usuario = mysqli_query($conexion, $consulta);
 } catch (Exception $e) {
-    die(error_page("Práctica 8", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+    die(error_page("Práctica 9", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
 }
 
 mysqli_close($conexion);
@@ -221,17 +221,33 @@ mysqli_close($conexion);
         .error {
             color: red;
         }
+        .enLinea{
+            display:inline
+        }
+        .enlace{
+            background: none;
+            border:none;
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+        }
     </style>
-    <title>CRUD - PRÁCTICA 8</title>
+    <title>CRUD - PRÁCTICA 9</title>
 </head>
 
 <body>
-    <h1>Práctica 8</h1>
+    <h1>Práctica 9</h1>
+    <div>
+        Bienvenido - <strong><?php echo $datos_usuario_log["usuario"]; ?></strong>
+        <form action="index.php" class="enlinea" method="post">
+            <button type="submit" class="enlace" name="btnCerrarSesion">Cerrar sesión</button>
+        </form>
+    </div>
     <?php
 
     if (isset($_SESSION["mensaje_accion"])) {
         echo "<p class='mensaje'>" . $_SESSION["mensaje_accion"] . "</p>";
-        session_destroy();
+        unset($_SESSION["mensaje_accion"]);
     }
 
     if (isset($_POST["btnDetalles"])) {
