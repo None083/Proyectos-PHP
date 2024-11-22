@@ -19,7 +19,8 @@ if (isset($_SESSION["usuario"])) {
     } else {
         require "vistas/vista_admin.php";
     }
-} elseif (isset($_POST["btnRegistrar"])) {
+} elseif (isset($_POST["btnRegistrar"]) || isset($_POST["btnContCrear"])) {
+
     require "vistas/vista_registro.php";
 } else {
     require "vistas/vista_login.php";
