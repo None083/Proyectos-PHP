@@ -14,6 +14,11 @@
             text-decoration: underline;
             cursor: pointer;
         }
+        .mensaje{
+            color: blue;
+            font-size: 1.25em;
+        }
+        
     </style>
     <title>Practica 9</title>
 </head>
@@ -25,5 +30,11 @@
             <button type="submit" class="enlace" name="btnCerrarSesion">Cerrar sesión</button>
         </form>
     </div>
+    <?php
+    if (isset($_SESSION["mensaje_registro"])) {
+        echo "<p class='mensaje'>".$_SESSION["mensaje_registro"]."</p>";
+        unset($_SESSION["mensaje_registro"]);
+    }
+    ?>
 </body>
 </html>
