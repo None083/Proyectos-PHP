@@ -1,4 +1,5 @@
 <?php
+session_name("Examen2_23_24");
 session_start();
 require "src/funciones_const.php";
 
@@ -10,30 +11,36 @@ try {
     die(error_page("Examen 2", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
 }
 
-// Consulta para obtener los datos del horario del profesor
-if (isset($_POST["verHorario"])) {
-    try {
-        $id_usuario = $_POST["select_usuarios"];
-        $consulta = "
-                select horario_lectivo.dia, horario_lectivo.hora, grupos.id_grupo, grupos.nombre, usuarios.id_usuario from usuarios
-                join horario_lectivo on horario_lectivo.usuario = usuarios.id_usuario
-                join grupos on grupos.id_grupo = horario_lectivo.grupo
-                where id_usuario = " . $id_usuario . ";";
-
-        $result_horario = mysqli_query($conexion, $consulta);
-    } catch (Exception $e) {
-        die(error_page("Práctica examen 2", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
-    }
-}
-
-
 // Consulta para listar usuarios
 try {
     $consulta = "select * from usuarios";
     $datos_usuario = mysqli_query($conexion, $consulta);
 } catch (Exception $e) {
-    die(error_page("Práctica 8", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+    session_destroy();
+    mysqli_close($conexion);
+    die(error_page("Práctica Examen 2", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
 }
+
+// Consulta para obtener los datos del horario del profesor
+if (isset($_POST["verHorario"])) {
+    try {
+        $id_usuario = $_POST["select_usuarios"];
+        $consulta = "
+                select horario_lectivo.dia, horario_lectivo.hora, grupos.id_grupo, grupos.nombre as nom_grupo, usuarios.id_usuario from usuarios
+                join horario_lectivo on horario_lectivo.usuario = usuarios.id_usuario
+                join grupos on grupos.id_grupo = horario_lectivo.grupo
+                where id_usuario = " . $id_usuario . ";";
+        //select dia, hora, nombre from horario_lectivo, grupos where horario_lectivo = grupos.id_grupo AND horario_lectivo.usuario
+
+        $result_horario = mysqli_query($conexion, $consulta);
+    } catch (Exception $e) {
+        session_destroy();
+        mysqli_close($conexion);
+        die(error_page("Práctica Examen 2", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+    }
+}
+
+mysqli_close($conexion);
 
 ?>
 <!DOCTYPE html>
@@ -48,6 +55,10 @@ try {
         td,
         th {
             border: 1px solid black;
+        }
+
+        th{
+            background-color: lightgrey;
         }
 
         table {
@@ -73,18 +84,20 @@ try {
     <form action="index.php" method="post">
         <p>
             Horario del profesor:
+            <select name='select_usuarios' id='select_usuarios'>
             <?php
-            echo "<select name='select_usuarios' id='select_usuarios'>";
             while ($tupla = mysqli_fetch_assoc($datos_usuario)) {
                 echo "<option value='" . $tupla["id_usuario"] . "'>" . $tupla["nombre"] . "</option>";
             }
-            echo "</select>";
+            mysqli_free_result($datos_usuario);
             ?>
+            </select>
             <button type="submit" name="verHorario">Ver Horario</button>
         </p>
     </form>
     <?php
     if (isset($_POST["verHorario"]) || isset($_POST["btnEditar"])) {
+        //echo "<h2>Horario del profesor: ".$."</h2>";
         $resultado = [];
         while ($tupla = mysqli_fetch_assoc($result_horario)) {
             $resultado[] = $tupla;
@@ -103,9 +116,9 @@ try {
                     foreach ($resultado as $value) {
                         if ($value["dia"] == $dia + 1 && $value["hora"] == $hora + 1) {
                             if ($grupos == "") {
-                                $grupos = $value["nombre"];
+                                $grupos = $value["nom_grupo"];
                             }else{
-                                $grupos .= " / " . $value["nombre"];
+                                $grupos .= " / " . $value["nom_grupo"];
                             }
                         }
                     }
