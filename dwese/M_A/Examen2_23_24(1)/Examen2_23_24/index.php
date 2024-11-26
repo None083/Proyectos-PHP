@@ -15,6 +15,62 @@ catch(Exception $e)
     die(error_page("Examen2 PHP","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
 }
 
+if(isset($_POST["btnAgregar"]))
+{
+    try
+    {
+        $consulta="insert into horario_lectivo (usuario, dia, hora, grupo) values('".$_POST["profesor"]."','".$_POST["dia"]."','".$_POST["hora"]."','".$_POST["grupo"]."')";
+        mysqli_query($conexion,$consulta);
+        
+    }
+    catch(Exception $e)
+    {
+        session_destroy();
+        mysqli_close($conexion);
+        die(error_page("Examen2 PHP","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+    }
+
+    $_SESSION["mensaje_accion"]="Grupo insertado con éxito";
+    $_SESSION["profesor"]=$_POST["profesor"];
+    $_SESSION["dia"]=$_POST["dia"];
+    $_SESSION["hora"]=$_POST["hora"];
+    header("Location:index.php");
+    exit;
+}
+
+if(isset($_POST["btnQuitar"]))
+{
+    try
+    {
+        $consulta="delete from horario_lectivo where id_horario='".$_POST["btnQuitar"]."'";
+        mysqli_query($conexion,$consulta);
+        
+    }
+    catch(Exception $e)
+    {
+        session_destroy();
+        mysqli_close($conexion);
+        die(error_page("Examen2 PHP","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+    }
+
+    $_SESSION["mensaje_accion"]="Grupo borrado con éxito";
+    $_SESSION["profesor"]=$_POST["profesor"];
+    $_SESSION["dia"]=$_POST["dia"];
+    $_SESSION["hora"]=$_POST["hora"];
+    header("Location:index.php");
+    exit;
+
+}
+
+if(isset($_SESSION["profesor"]))
+{
+    $_POST["dia"]=$_SESSION["dia"];
+    $_POST["hora"]=$_SESSION["hora"];
+    $_POST["profesor"]=$_SESSION["profesor"];
+    $mensaje_accion=$_SESSION["mensaje_accion"];
+    session_destroy();
+}
+
 try
 {
     $consulta="select id_usuario, nombre from usuarios";
@@ -55,6 +111,35 @@ if(isset($_POST["profesor"]))
 
 }
 
+if(isset($_POST["dia"]))
+{
+    try
+    {
+        $consulta="select id_horario, nombre from horario_lectivo, grupos where horario_lectivo.grupo=grupos.id_grupo AND horario_lectivo.dia='".$_POST["dia"]."' AND horario_lectivo.hora='".$_POST["hora"]."' AND horario_lectivo.usuario='".$_POST["profesor"]."'";
+        $result_horario_profe_dia_hora=mysqli_query($conexion,$consulta);
+        
+    }
+    catch(Exception $e)
+    {
+        session_destroy();
+        mysqli_close($conexion);
+        die(error_page("Examen2 PHP","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+    }
+
+    try
+    {
+        $consulta="select * from grupos where id_grupo not in (select grupo from horario_lectivo where dia='".$_POST["dia"]."' AND hora='".$_POST["hora"]."' AND usuario='".$_POST["profesor"]."')";
+        $result_grupos_libres_profesor_dia_hora=mysqli_query($conexion,$consulta);
+        
+    }
+    catch(Exception $e)
+    {
+        session_destroy();
+        mysqli_close($conexion);
+        die(error_page("Examen2 PHP","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+    }
+
+}
 
 
 
@@ -74,6 +159,7 @@ mysqli_close($conexion);
             table{border-collapse:collapse;margin:0 auto;width:90%}
             th{background-color:#CCC}
             .enlace{background:none;border:none;color:blue;text-decoration:underline;cursor:pointer}
+            .mensaje{font-size:1.25rem; color:blue}
         </style>
     </head>
     <body>
@@ -103,8 +189,6 @@ mysqli_close($conexion);
         <?php            
         if(isset($_POST["profesor"]))
         {
-
-
             echo "<h3 class='centrado'>Horario del Profesor:".$nombre_profesor."</h3>";
             echo "<table class='centrado'>";
             echo "<tr>";
@@ -151,7 +235,49 @@ mysqli_close($conexion);
                     echo "<h2>Editando la ".$_POST["hora"]."º hora (".HORAS[$_POST["hora"]].") del ".DIAS[$_POST["dia"]]."</h2>";
                 else
                     echo "<h2>Editando la ".($_POST["hora"]-1)."º hora (".HORAS[$_POST["hora"]].") del ".DIAS[$_POST["dia"]]."</h2>";
+
+                    if(isset($mensaje_accion))
+                        echo "<p class='mensaje'>".$mensaje_accion."</p>";
+
+
+                    echo "<table class='centrado'>";
+                    echo "<tr><th>Grupo</th><th>Acción</th></tr>";
+                    while($tupla=mysqli_fetch_assoc($result_horario_profe_dia_hora))
+                    {
+                        echo "<tr>";
+                        echo "<td>".$tupla["nombre"]."</td>";
+                        echo "<td>";
+                        echo "<form action='index.php' method='post'>";
+                        echo "<input type='hidden' name='dia' value='".$_POST["dia"]."'/>";
+                        echo "<input type='hidden' name='hora' value='".$_POST["hora"]."'/>";
+                        echo "<input type='hidden' name='profesor' value='".$_POST["profesor"]."'/>";
+                        echo "<button name='btnQuitar' class='enlace' value='".$tupla["id_horario"]."' type='submit'>Quitar</button>";
+                        echo "</form>";
+                        echo "</td>";
+                        echo "</tr>";
+                    }
+                    echo "</table>";
+                    mysqli_free_result($result_horario_profe_dia_hora);
+
+                    echo "<form action='index.php' method='post'>";
+                    echo "<input type='hidden' name='dia' value='".$_POST["dia"]."'/>";
+                    echo "<input type='hidden' name='hora' value='".$_POST["hora"]."'/>";
+                    echo "<input type='hidden' name='profesor' value='".$_POST["profesor"]."'/>";
+                    echo "<p>";
+                    echo "<select name='grupo'>";
+                    while($tupla=mysqli_fetch_assoc($result_grupos_libres_profesor_dia_hora))
+                    {
+                        echo "<option value='".$tupla["id_grupo"]."'>".$tupla["nombre"]."</option>";
+                    }
+                    echo "</select>";
+                    echo "<button type='submit' name='btnAgregar'>Añadir</button>";
+                    echo "</p>";
+                    echo "</form>";
+                
             }
+
+           
+
         }
         ?>
     </body>

@@ -12,6 +12,22 @@ try {
     die(error_page("Examen 2", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
 }
 
+// Quitar
+if (isset($_POST["btnQuitar"])) {
+    try
+    {
+        $consulta="delete from horario_lectivo where id_horario='".$_POST["btnQuitar"]."'";
+        mysqli_query($conexion,$consulta);
+        
+    }
+    catch(Exception $e)
+    {
+        session_destroy();
+        mysqli_close($conexion);
+        die(error_page("Práctica Examen 2","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+    }
+}
+
 // Consulta para listar usuarios
 try {
     $consulta = "select * from usuarios";
@@ -47,14 +63,22 @@ if (isset($_POST["profesor"])) {
 }
 
 if (isset($_POST["dia"])) {
+    //consulta para tabla de quitar grupo
     try {
-        $consulta = "select grupos.id_grupo, grupos.nombre from grupos
-                    join horario_lectivo on grupos.id_grupo = horario_lectivo.grupo
-                    where usuario = " . $_POST["profesor"] . "
-                    AND horario_lectivo.dia = ".$_POST["dia"]."
-                    AND horario_lectivo.hora = ".$_POST["hora"].";";
+        $consulta = "select id_horario, nombre from horario_lectivo, grupos where horario_lectivo.grupo=grupos.id_grupo AND horario_lectivo.dia='" . $_POST["dia"] . "' AND horario_lectivo.hora='" . $_POST["hora"] . "' AND horario_lectivo.usuario='" . $_POST["profesor"] . "'";
 
         $result_grupos = mysqli_query($conexion, $consulta);
+    } catch (Exception $e) {
+        session_destroy();
+        mysqli_close($conexion);
+        die(error_page("Práctica Examen 2", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+    }
+
+    //consulta para select de añadir grupo
+    try {
+        $consulta = "select * from grupos where id_grupo not in (select grupo from horario_lectivo where dia='" . $_POST["dia"] . "' and hora='" . $_POST["hora"] . "' and usuario='" . $_POST["profesor"] . "')";
+
+        $result_grupos_restantes = mysqli_query($conexion, $consulta);
     } catch (Exception $e) {
         session_destroy();
         mysqli_close($conexion);
@@ -102,9 +126,10 @@ mysqli_close($conexion);
             text-align: center
         }
 
-        #tabla_editar{
+        #tabla_editar {
             width: 30%;
             margin: 0;
+            margin-bottom: 1rem;
         }
     </style>
     <title>Examen2 PHP</title>
@@ -172,7 +197,7 @@ mysqli_close($conexion);
         if (isset($_POST["dia"])) {
             $dias_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
             if ($_POST["hora"] <= 3) {
-                echo "<h2>Editando la " . $_POST["hora"] . "ª hora (" . $horas[$_POST["hora"]] . ") del " . $dias_semana[$_POST["dia"]] . "</h2>";
+                echo "<h2>Editando la " . $_POST["hora"] . "ª hora (" . $horas[$_POST["hora"]] . ") del " . $dias_semana[($_POST["dia"] - 1)] . "</h2>";
             } else {
                 echo "<h2>Editando la " . ($_POST["hora"] - 1) . "ª hora (" . $horas[($_POST["hora"] - 1)] . ") del " . $dias_semana[($_POST["dia"] - 1)] . "</h2>";
             }
@@ -180,13 +205,23 @@ mysqli_close($conexion);
             echo "<table id='tabla_editar'>";
             echo "<tr><th>Grupo</th><th>Acción</th></tr>";
             while ($tupla = mysqli_fetch_assoc($result_grupos)) {
-                echo "<tr><td>".$tupla["nombre"]."</td><td><form action='index.php' method='post'>
-                    <button type='submit' class='enlace' name='btnQuitar' value='" . $tupla["id_grupo"] . "'>Quitar</button></form></td></tr>";
+                echo "<tr><td>" . $tupla["nombre"] . "</td><td>";
+                echo "<form action='index.php' method='post'>";
+                echo "<input type='hidden' name='dia' value='" . $_POST["dia"] . "'/>";
+                echo "<input type='hidden' name='hora' value='" . $_POST["hora"] . "'/>";
+                echo "<input type='hidden' name='profesor' value='" . $_POST["profesor"] . "'/>";
+                echo "<button type='submit' class='enlace' name='btnQuitar' value='" . $tupla["id_horario"] . "'>Quitar</button>";
+                echo "</form></td></tr>";
             }
             echo "</table>";
+            mysqli_free_result($result_grupos);
 
-            
-
+            echo "<select name='grupo' id='grupo'>";
+            while ($tupla = mysqli_fetch_assoc($result_grupos_restantes)) {
+                echo "<option value='" . $tupla["id_usuario"] . "'>" . $tupla["nombre"] . "</option>";
+            }
+            echo "</select>";
+            mysqli_free_result($result_grupos_restantes);
         }
     }
     ?>
