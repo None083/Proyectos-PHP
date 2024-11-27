@@ -12,11 +12,12 @@ try {
     die(error_page("Examen 2", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
 }
 
-// Quitar
-if (isset($_POST["btnQuitar"])) {
+// Añadir grupo al horario
+if(isset($_POST["btnAgregar"]))
+{
     try
     {
-        $consulta="delete from horario_lectivo where id_horario='".$_POST["btnQuitar"]."'";
+        $consulta="insert into horario_lectivo (usuario, dia, hora, grupo) values('".$_POST["profesor"]."','".$_POST["dia"]."','".$_POST["hora"]."','".$_POST["grupo"]."')";
         mysqli_query($conexion,$consulta);
         
     }
@@ -24,8 +25,42 @@ if (isset($_POST["btnQuitar"])) {
     {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Práctica Examen 2","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+        die(error_page("Examen2 PHP","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
     }
+
+    $_SESSION["mensaje_accion"]="Grupo insertado con éxito";
+    $_SESSION["profesor"]=$_POST["profesor"];
+    $_SESSION["dia"]=$_POST["dia"];
+    $_SESSION["hora"]=$_POST["hora"];
+    header("Location:index.php");
+    exit;
+}
+
+// Quitar grupo del horario
+if (isset($_POST["btnQuitar"])) {
+    try {
+        $consulta = "delete from horario_lectivo where id_horario='" . $_POST["btnQuitar"] . "'";
+        mysqli_query($conexion, $consulta);
+    } catch (Exception $e) {
+        session_destroy();
+        mysqli_close($conexion);
+        die(error_page("Práctica Examen 2", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+    }
+    $_SESSION["mensaje_accion"]="Grupo borrado con éxito";
+    $_SESSION["profesor"]=$_POST["profesor"];
+    $_SESSION["dia"]=$_POST["dia"];
+    $_SESSION["hora"]=$_POST["hora"];
+    header("Location:index.php");
+    exit;
+}
+
+if(isset($_SESSION["profesor"]))
+{
+    $_POST["dia"]=$_SESSION["dia"];
+    $_POST["hora"]=$_SESSION["hora"];
+    $_POST["profesor"]=$_SESSION["profesor"];
+    $mensaje_accion=$_SESSION["mensaje_accion"];
+    session_destroy();
 }
 
 // Consulta para listar usuarios
@@ -131,6 +166,10 @@ mysqli_close($conexion);
             margin: 0;
             margin-bottom: 1rem;
         }
+
+        select#grupo{
+            margin-right: 0.5rem;
+        }
     </style>
     <title>Examen2 PHP</title>
 </head>
@@ -216,12 +255,19 @@ mysqli_close($conexion);
             echo "</table>";
             mysqli_free_result($result_grupos);
 
+            echo "<form action='index.php' method='post'>";
+            echo "<input type='hidden' name='dia' value='" . $_POST["dia"] . "'/>";
+            echo "<input type='hidden' name='hora' value='" . $_POST["hora"] . "'/>";
+            echo "<input type='hidden' name='profesor' value='" . $_POST["profesor"] . "'/>";
+            echo "<p>";
             echo "<select name='grupo' id='grupo'>";
             while ($tupla = mysqli_fetch_assoc($result_grupos_restantes)) {
-                echo "<option value='" . $tupla["id_usuario"] . "'>" . $tupla["nombre"] . "</option>";
+                echo "<option value='" . $tupla["id_grupo"] . "'>" . $tupla["nombre"] . "</option>";
             }
             echo "</select>";
-            mysqli_free_result($result_grupos_restantes);
+            echo "<button type='submit' name='btnAgregar'>Añadir</button>";
+            echo "</p>";
+            echo "</form>";
         }
     }
     ?>
