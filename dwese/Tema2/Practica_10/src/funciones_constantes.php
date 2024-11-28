@@ -1,7 +1,7 @@
 <?php
 const SERVIDOR_BD = "localhost";
-const USUARIO_BD = "jose";
-const CLAVE_BD = "josefa";
+const USUARIO_BD = "root";
+const CLAVE_BD = "";
 const NOMBRE_BD = "bd_horarios_exam2";
 
 const INACTIVIDAD=5;
