@@ -108,7 +108,7 @@ if (isset($_POST["dia"])) {
         mysqli_close($conexion);
         die(error_page("Práctica Examen 2", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
-
+    
     //consulta para select de añadir grupo
     try {
         $consulta = "select * from grupos where id_grupo not in (select grupo from horario_lectivo where dia='" . $_POST["dia"] . "' and hora='" . $_POST["hora"] . "' and usuario='" . $_POST["profesor"] . "')";
