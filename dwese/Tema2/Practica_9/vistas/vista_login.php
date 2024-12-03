@@ -17,10 +17,8 @@ if (isset($_POST["btnLogin"])) {
         try {
             $consulta = "select usuario from usuarios where usuario='" . $_POST["usuario"] . "' AND clave='" . md5($_POST["clave"]) . "'";
             $resultado = mysqli_query($conexion, $consulta);
-            $n_tuplas = mysqli_num_rows($resultado);
             mysqli_free_result($resultado);
-            if ($n_tuplas > 0) {
-
+            if (mysqli_num_rows($resultado) > 0) {
                 mysqli_close($conexion);
                 $_SESSION["usuario"] = $_POST["usuario"];
                 $_SESSION["clave"] = md5($_POST["clave"]);

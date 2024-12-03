@@ -71,9 +71,6 @@ if (isset($_POST["btnContCrear"])) {
     $errores_form_crear = $error_nombre || $error_usuario || $error_dni || $error_foto || $error_clave;
 
     if (!$errores_form_crear) {
-        //inserto foto por defecto
-        //y si he subido foto, muevo la foto y actualizo el nombre de la foto en la bd (img_id.extension)
-
         try {
             $consulta = "insert into usuarios (nombre, usuario, clave, dni, sexo) values ('" . $_POST["nombre"] . "','" . $_POST["usuario"] . "','" . md5($_POST["clave"]) . "','" . strtoupper($_POST["dni"]) . "','" . $_POST["sexo"] . "')";
             mysqli_query($conexion, $consulta);
