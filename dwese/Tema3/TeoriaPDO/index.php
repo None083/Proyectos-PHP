@@ -8,13 +8,13 @@
 <body>
     <h1>Teoría PDO</h1>
     <?php
-    define("SERVIDOS_BD", "localhost");
+    define("SERVIDOR_BD", "localhost");
     define("USUARIO_BD", "jose");
     define("CLAVE_BD", "josefa");
     define("NOMBRE_BD", "bd_foro");
 
     try {
-        $conexion = new PDO("mysql:host=".SERVIDOS_BD.";dbname=".NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+        $conexion = new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
         die("<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>");
     }
@@ -64,8 +64,22 @@
         echo "</ol>";
     }
 
-    
+    $nombre = "Pepe Castro";
+    $usuario = "pepe88";
+    $clave = md5("123456");
+    $email = "sfdag@df.es";
 
+    try {
+        $consulta = "insert into usuarios(nombre,usuario,clave,email) values(?,?,?,?)";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$nombre, $usuario, $clave, $email]);
+    } catch (PDOException $e) {
+        $sentencia = null;
+        $conexion = null;
+        die("<p>No he podido conectarse a la base de batos: ".$e->getMessage()."</p></body></html>");
+    }
+
+    echo "<p>Usuario insertado con éxito con la id_usuario:<strong>".$conexion->lastInsertId()."</strong></p>";//equ. mysli_insert_id($conexion)
 
     //cerramos sentencia
     $sentencia = null;
