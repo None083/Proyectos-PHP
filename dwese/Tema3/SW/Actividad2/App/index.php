@@ -1,19 +1,28 @@
 <?php
-function consumir_servicios_REST($url, $metodo, $datos = null)
-{
-    $llamada = curl_init();
-    curl_setopt($llamada, CURLOPT_URL, $url);
-    curl_setopt($llamada, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($llamada, CURLOPT_CUSTOMREQUEST, $metodo);
-    if (isset($datos))
-        curl_setopt($llamada, CURLOPT_POSTFIELDS, http_build_query($datos));
-    $respuesta = curl_exec($llamada);
-    curl_close($llamada);
-    return $respuesta;
+require "src/funciones_ctes.php";
+
+if (isset($_POST["btn_detalles"])) {
+    $url = DIR_SERV . "/producto/" . $_POST["btn_detalles"];
+    $respuesta = consumir_servicios_REST($url, "GET");
+    $json_detalles = json_decode($respuesta, true);
+    if (!$json_detalles) {
+        die(error_page("Actividad2", "<p>Error consumiendo el servicio rest: " . $url . "</p>"));
+    }
+    if (isset($json_detalles["error"])) {
+        die(error_page("Actividad2", "<p>" . $json_detalles["error"] . "</p>"));
+    }
 }
 
-define("DIR_SERV", "http://localhost/Proyectos/dwese/Tema3/SW/Actividad1/servicios_rest");
-
+//Esto se va a hacer siempre
+$url = DIR_SERV . "/productos";
+$respuesta = consumir_servicios_REST($url, "GET");
+$json_productos = json_decode($respuesta, true);
+if (!$json_productos) {
+    die(error_page("Actividad2", "<p>Error consumiendo el servicio rest: " . $url . "</p>"));
+}
+if (isset($json_productos["error"])) {
+    die(error_page("Actividad2", "<p>" . $json_productos["error"] . "</p>"));
+}
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +32,15 @@ define("DIR_SERV", "http://localhost/Proyectos/dwese/Tema3/SW/Actividad1/servici
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        .centrado {
+            width: 85%;
+            margin: 1em auto;
+        }
+
+        .txt_centrado {
+            text-align: center;
+        }
+
         table,
         th,
         td {
@@ -36,10 +54,6 @@ define("DIR_SERV", "http://localhost/Proyectos/dwese/Tema3/SW/Actividad1/servici
             text-align: center
         }
 
-        img {
-            height: 100px
-        }
-
         .enlace {
             background: none;
             border: none;
@@ -48,34 +62,37 @@ define("DIR_SERV", "http://localhost/Proyectos/dwese/Tema3/SW/Actividad1/servici
             cursor: pointer;
         }
     </style>
-    <title>Productos de la Tienda</title>
+    <title>Actividad 2</title>
 </head>
 
 <body>
-    <h1>Listado de los Productos</h1>
+    <h1 class="centrado txt_centrado">Listado de los Productos</h1>
 
     <?php
 
-    if (condition) {
-        # code...
-    }
-
-    $url = DIR_SERV . "/productos";
-    $respuesta = consumir_servicios_REST($url, "GET");
-    $obj = json_decode($respuesta, true);
-    if (!$obj) {
-        die("<p>Error consumiendo el Servicio Web <strong>" . $url . "</strong></p></body></html>");
-    }
-
-    if (isset($obj->error)) {
-        die("<p>" . $obj_error . "</p></body></html>");
+    if (isset($_POST["btn_detalles"])) {
+        echo "<div class='centrado'>";
+        echo "<h2>Información del producto: " . $_POST["btn_detalles"] . "</h2>";
+        if (isset($json_detalles["mensaje"])) {
+            echo "<p>El producto ya no se encuentra en la bd</p>";
+        } else {
+            echo "<p>";
+            echo "<strong>Nombre:</strong> " . $json_detalles["producto"]["nombre"] . "<br>";
+            echo "<strong>Nombre corto:</strong> " . $json_detalles["producto"]["nombre_corto"] . "<br>";
+            echo "<strong>Descripción:</strong> " . $json_detalles["producto"]["descripcion"] . "<br>";
+            echo "<strong>PVP:</strong> " . $json_detalles["producto"]["PVP"] . "<br>";
+            echo "<strong>Familia:</strong> " . $json_detalles["producto"]["nombre_familia"] . "<br>";
+            echo "</p>";
+        }
+        echo "<form action='index.php' method='post'><button type='submit'>Volver</button></form>";
+        echo "</div>";
     }
 
     echo "<table>";
-    echo "<tr><th>Código</th><th>Nombre</th><th>PVP</th><th><button class='enlace'><strong>+Producto</strong></button></th></tr>";
-    foreach ($obj["productos"] as $tupla) {
+    echo "<tr><th>Código</th><th>Nombre</th><th>PVP (€)</th><th><button class='enlace'><strong>+Producto</strong></button></th></tr>";
+    foreach ($json_productos["productos"] as $tupla) {
         echo "<tr>";
-        echo "<td><button class='enlace' name='btnDetalle'>" . $tupla["cod"] . "</button></td>";
+        echo "<td><form action='index.php' method='post'><button class='enlace' name='btn_detalles' value='" . $tupla["cod"] . "' type='submit'>" . $tupla["cod"] . "</button></form></td>";
         echo "<td>" . $tupla["nombre_corto"] . "</td>";
         echo "<td>" . $tupla["PVP"] . "</td>";
         echo "<td><button class='enlace'>Borrar</button>-<button class='enlace'>Editar</button></td>";

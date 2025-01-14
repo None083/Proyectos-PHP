@@ -2,7 +2,7 @@
 
 require __DIR__ . '/Slim/autoload.php';
 
-require '../src/funciones_ctes.php';
+require '../App/src/funciones_ctes.php';
 
 $app = new \Slim\App;
 
