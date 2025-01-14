@@ -1,13 +1,15 @@
 <?php
 define("SERVIDOR_BD", "localhost");
-define("USUARIO_BD", "jose");
-define("CLAVE_BD", "josefa");
+//define("USUARIO_BD", "jose");
+define("USUARIO_BD", "root");
+//define("CLAVE_BD", "josefa");
+define("CLAVE_BD", "");
 define("NOMBRE_BD", "bd_tienda");
 
 function obtener_productos()
 {
     try {
-        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD);
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
         $respuesta["error"] = "Error al conectar con la base de datos: " . $e->getMessage();
         return $respuesta;
@@ -32,7 +34,7 @@ function obtener_productos()
 function obtener_producto($cod)
 {
     try {
-        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD);
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"), array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
         $respuesta["error"] = "Error al conectar con la base de datos: " . $e->getMessage();
         return $respuesta;
@@ -57,7 +59,7 @@ function obtener_producto($cod)
 function insertar_producto($datos)
 {
     try {
-        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD);
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
         $respuesta["error"] = "Error al conectar con la base de datos: " . $e->getMessage();
         return $respuesta;
@@ -82,7 +84,7 @@ function insertar_producto($datos)
 function actualizar_producto($datos)
 {
     try {
-        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD);
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
         $respuesta["error"] = "Error al conectar con la base de datos: " . $e->getMessage();
         return $respuesta;
@@ -107,7 +109,7 @@ function actualizar_producto($datos)
 function borrar_producto($cod)
 {
     try {
-        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD);
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
         $respuesta["error"] = "Error al conectar con la base de datos: " . $e->getMessage();
         return $respuesta;
@@ -132,7 +134,7 @@ function borrar_producto($cod)
 function obtener_familias()
 {
     try {
-        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD);
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
         $respuesta["error"] = "Error al conectar con la base de datos: " . $e->getMessage();
         return $respuesta;
@@ -157,7 +159,7 @@ function obtener_familias()
 function repetido_insertando($tabla, $columna, $valor)
 {
     try {
-        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD);
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
         $respuesta["error"] = "Error al conectar con la base de datos: " . $e->getMessage();
         return $respuesta;
@@ -182,7 +184,7 @@ function repetido_insertando($tabla, $columna, $valor)
 function repetido_editando($tabla, $columna, $valor, $columna_id, $valor_id)
 {
     try {
-        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD);
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
         $respuesta["error"] = "Error al conectar con la base de datos: " . $e->getMessage();
         return $respuesta;

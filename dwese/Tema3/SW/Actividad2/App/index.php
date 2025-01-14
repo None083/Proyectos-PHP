@@ -56,6 +56,10 @@ define("DIR_SERV", "http://localhost/Proyectos/dwese/Tema3/SW/Actividad1/servici
 
     <?php
 
+    if (condition) {
+        # code...
+    }
+
     $url = DIR_SERV . "/productos";
     $respuesta = consumir_servicios_REST($url, "GET");
     $obj = json_decode($respuesta, true);
@@ -71,7 +75,7 @@ define("DIR_SERV", "http://localhost/Proyectos/dwese/Tema3/SW/Actividad1/servici
     echo "<tr><th>Código</th><th>Nombre</th><th>PVP</th><th><button class='enlace'><strong>+Producto</strong></button></th></tr>";
     foreach ($obj["productos"] as $tupla) {
         echo "<tr>";
-        echo "<td><button class='enlace'>" . $tupla["cod"] . "</button></td>";
+        echo "<td><button class='enlace' name='btnDetalle'>" . $tupla["cod"] . "</button></td>";
         echo "<td>" . $tupla["nombre_corto"] . "</td>";
         echo "<td>" . $tupla["PVP"] . "</td>";
         echo "<td><button class='enlace'>Borrar</button>-<button class='enlace'>Editar</button></td>";
