@@ -1,9 +1,9 @@
 <?php
 define("SERVIDOR_BD", "localhost");
-define("USUARIO_BD", "jose");
-//define("USUARIO_BD", "root");
-define("CLAVE_BD", "josefa");
-//define("CLAVE_BD", "");
+//define("USUARIO_BD", "jose");
+define("USUARIO_BD", "root");
+//define("CLAVE_BD", "josefa");
+define("CLAVE_BD", "");
 define("NOMBRE_BD", "bd_tienda");
 
 define("DIR_SERV", "http://localhost/Proyectos/dwese/Tema3/SW/Actividad2/servicios_rest");
