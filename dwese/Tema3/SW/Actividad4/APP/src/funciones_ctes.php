@@ -1,7 +1,7 @@
 <?php
 define("INACTIVIDAD", 5);
 define("DIR_SERV_1", "http://localhost/Proyectos/dwese/Tema3/SW/Actividad3/API_login");
-define("DIR_SERV_2", "http://localhost/Proyectos/dwese/Tema3/SW/Actividad1/servivcios_rest");
+define("DIR_SERV_2", "http://localhost/Proyectos/dwese/Tema3/SW/Actividad1/servicios_rest");
 
 function consumir_servicios_REST($url, $metodo, $datos = null)
 {

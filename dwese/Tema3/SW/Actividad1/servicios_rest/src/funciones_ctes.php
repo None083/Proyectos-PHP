@@ -1,7 +1,9 @@
 <?php
 define("SERVIDOR_BD","localhost");
-define("USUARIO_BD","jose");
-define("CLAVE_BD","josefa");
+//define("USUARIO_BD","jose");
+//define("CLAVE_BD","josefa");
+define("USUARIO_BD","root");
+define("CLAVE_BD","");
 define("NOMBRE_BD","bd_tienda");
 
 function obtener_productos()
