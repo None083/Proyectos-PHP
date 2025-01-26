@@ -12,7 +12,7 @@ $app->get('/usuarios', function(){
 
 // b) Crear un nuevo usuario mediante una petición POST en la que aportaremos los datos del usuario mediante un array asociativo con los siguientes índices: “nombre”, “usuario”, “clave” y “email”). En caso de error por la BD el JSON devuelto será: { “error”: “Error….”}, en otro caso el JSON devolverá la clave con la cual el nuevo usuario ha sido insertado en la BD: { “ult_id” : id_usuario}
 // aparentemente si vas a insertar una nueva tupla, se necesita un request
-$app->post('/usuario/insertar', function($request){
+$app->post('/usuario/crearUsuario', function($request){
     $datos["nombre"] = $request->getParam("nombre");
     $datos["usuario"] = $request->getParam("usuario");
     $datos["clave"] = $request->getParam("clave");
@@ -20,6 +20,9 @@ $app->post('/usuario/insertar', function($request){
 
     echo json_encode(insertar_usuario($datos));
 });
+
+// c) Solicitar autenticación de un usuario mediante una petición POST en la que aportaremos los datos necesarios para la autenticación (usuario y clave encriptada en MD5) mediante un array asociativo con los índices: “usuario” y “clave”. En caso de error por la BD el JSON devuelto será: { “error” : “Error….”}, en caso de que el usuario no se encuentre registrado el JSON será: { “mensaje” : “Usuario no se encuentra registrado en ….”} y en el caso de que se encuentre registrado, el JSON será: { “usuario” : […]}
+
 
 $app->run();
 ?>
