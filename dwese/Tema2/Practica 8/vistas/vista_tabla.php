@@ -9,7 +9,7 @@ while ($tupla = mysqli_fetch_assoc($datos_usuario)) {
     echo "<td><form action='index.php' method='post'><button type='submit' class='enlace' name='btnDetalles' title='Ver detalles' value='" . $tupla["id_usuario"] . "'>" . $tupla["nombre"] . "</form></td>";
     echo "<td>
     <form action='index.php' method='post'>
-    <input name='id_usuario' type='hidden' value='" . $tupla["id_usuario"]."'>
+    <input name='id_usuario' type='hidden' value='" . $tupla["id_usuario"] . "'>
     <button type='submit' class='enlace' name='btnBorrar' title='Borrar usuario' alt='Borrar usuario'>Borrar</button> - 
     <button type='submit' class='enlace' name='btnEditar' title='Editar usuario' alt='Editar usuario'>Editar</button>
     </form>
