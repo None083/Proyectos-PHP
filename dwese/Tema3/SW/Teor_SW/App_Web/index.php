@@ -10,6 +10,7 @@
 <body>
     <h1>Aplicación para usar/probar mi primera API</h1>
     <?php
+
     function consumir_servicios_REST($url, $metodo, $datos = null)
     {
         $llamada = curl_init();
