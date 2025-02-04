@@ -9,7 +9,7 @@ $(function () {
 
 function obtener_productos() {
     $.ajax({
-        url: DIR_API2 + "/productos",  // Endpoint para obtener todos los productos
+        url: DIR_API2 + "/productos",
         dataType: "json",
         type: "GET"
     })
@@ -31,9 +31,8 @@ function obtener_productos() {
                 html_tabla_productos += "</table>";
                 $("#respuesta").html(html_tabla_productos);
 
-                // Agregar evento de clic a los enlaces
                 $(".producto").on("click", function (e) {
-                    e.preventDefault();  // Evita que el enlace recargue la página
+                    e.preventDefault()
                     let cod = $(this).data("cod");
                     obtener_detalles_producto(cod);
                 });
@@ -66,90 +65,6 @@ function obtener_detalles_producto(cod) {
         .fail(function (a, b) {
             $("#detalles").html(error_ajax_jquery(a, b));
         });
-}
-
-
-function llamada_get1() {
-    $.ajax({
-        url: DIR_API1 + "/saludo",
-        dataType: "json",
-        type: "GET"
-    })
-        .done(function (data) {
-            $("#respuesta").html(data.mensaje);
-        })
-        .fail(function (a, b) {
-            $("#respuesta").html(error_ajax_jquery(a, b));
-        });
-
-}
-
-
-function llamada_get2() {
-    let nombre_envio = "María José";
-    $.ajax({
-        url: DIR_API1 + "/saludo/" + nombre_envio,
-        dataType: "json",
-        type: "GET"
-    })
-        .done(function (data) {
-            $("#respuesta").html(data.mensaje);
-        })
-        .fail(function (a, b) {
-            $("#respuesta").html(error_ajax_jquery(a, b));
-        });
-
-}
-
-function llamada_post() {
-    let nombre_envio = "María José";
-    $.ajax({
-        url: DIR_API1 + "/saludo",
-        dataType: "json",
-        type: "POST",
-        data: { "name": nombre_envio }
-    })
-        .done(function (data) {
-            $("#respuesta").html(data.mensaje);
-        })
-        .fail(function (a, b) {
-            $("#respuesta").html(error_ajax_jquery(a, b));
-        });
-
-}
-
-function llamada_delete() {
-    let id = "9";
-    $.ajax({
-        url: DIR_API1 + "/borrar_saludo/" + id,
-        dataType: "json",
-        type: "DELETE"
-    })
-        .done(function (data) {
-            $("#respuesta").html(data.mensaje);
-        })
-        .fail(function (a, b) {
-            $("#respuesta").html(error_ajax_jquery(a, b));
-        });
-
-}
-
-function llamada_put() {
-    let id = "9";
-    let nuevo_nombre = "Juan José";
-    $.ajax({
-        url: DIR_API1 + "/actualizar_saludo/" + id,
-        dataType: "json",
-        type: "PUT",
-        data: { "name": nuevo_nombre }
-    })
-        .done(function (data) {
-            $("#respuesta").html(data.mensaje);
-        })
-        .fail(function (a, b) {
-            $("#respuesta").html(error_ajax_jquery(a, b));
-        });
-
 }
 
 function error_ajax_jquery(jqXHR, textStatus) {
