@@ -1,0 +1,9 @@
+// @prefix __app_post_login
+// @description
+
+\$app->post('/login', function (\$request) {
+
+\$usuario = \$request->getParam("usuario");
+\$clave = \$request->getParam("clave");
+echo json_encode(login(\$usuario, \$clave));
+});
