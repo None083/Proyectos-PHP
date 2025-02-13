@@ -1,0 +1,93 @@
+// @prefix __btn_cont_editar
+// @description
+
+if(isset(\$_POST["btnContEditar"]))
+{
+
+
+\$error_nombre_corto=\$_POST["nombre_corto"]=="";
+if(!\$error_nombre_corto)
+{
+\$headers[] = 'Authorization: Bearer '.\$_SESSION["token"];
+\$url=DIR_SERV."/repetido/producto/nombre_corto/".urlencode(\$_POST["nombre_corto"])."/cod/".urlencode(\$_POST["cod"]);
+\$respuesta=consumir_servicios_JWT_REST(\$url,"GET",\$headers);
+\$json_repetido=json_decode(\$respuesta,true);
+if(!\$json_repetido)
+{
+session_destroy();
+die(error_page("Actividad 6","<p>Error consumiendo el servico rest: <strong>".\$url."</strong></p>"));
+}
+
+if(isset(\$json_repetido["no_auth"]))
+{
+session_unset();
+\$_SESSION["mensaje_seguridad"]="El tiempo de sesión de la API ha caducado";
+header("Location:index.php");
+exit;
+}
+
+if(isset(\$json_repetido["error"]))
+{
+session_destroy();
+die(error_page("Actividad 6","<p>".\$json_repetido["error"]."</p>"));
+}
+
+if(isset(\$json_repetido["mensaje_baneo"]))
+{
+session_unset();//Me deslogueo
+\$_SESSION["mensaje_seguridad"]="Usted ya no se encuentra registrado en la BD";
+header("Location:index.php");
+exit;
+}
+
+\$error_nombre_corto=\$json_repetido["repetido"];
+}
+\$error_descripcion=\$_POST["descripcion"]=="";
+\$error_PVP=\$_POST["PVP"]=="" || !is_numeric(\$_POST["PVP"]) || \$_POST["PVP"]<=0;
+
+    \$error_form=\$error_nombre_corto || \$error_descripcion || \$error_PVP;
+
+    if(!\$error_form)
+    {
+    //edito y salto con mensaje
+    \$headers[]='Authorization: Bearer ' .\$_SESSION["token"];
+    \$url=DIR_SERV."/producto/actualizar/".urlencode(\$_POST["cod"]);
+    unset(\$_POST["btnContEditar"]);
+    unset(\$_POST["cod"]);
+    \$respuesta=consumir_servicios_JWT_REST(\$url,"PUT",\$headers,\$_POST);
+    \$json_actualizar=json_decode(\$respuesta,true);
+    if(!\$json_actualizar)
+    {
+    session_destroy();
+    die(error_page("Actividad 6","<p>Error consumiendo el servico rest: <strong>".\$url."</strong></p>"));
+    }
+
+    if(isset(\$json_actualizar["no_auth"]))
+    {
+    session_unset();
+    \$_SESSION["mensaje_seguridad"]="El tiempo de sesión de la API ha caducado";
+    header("Location:index.php");
+    exit;
+    }
+
+    if(isset(\$json_actualizar["error"]))
+    {
+    session_destroy();
+    die(error_page("Actividad 6","<p>".\$json_actualizar["error"]."</p>"));
+    }
+
+    if(isset(\$json_actualizar["mensaje_baneo"]))
+    {
+    session_unset();//Me deslogueo
+    \$_SESSION["mensaje_seguridad"]="Usted ya no se encuentra registrado en la BD";
+    header("Location:index.php");
+    exit;
+    }
+
+    \$_SESSION["mensaje"]="¡¡ Producto actualizado con éxito !!";
+    header("Location:index.php");
+    exit;
+
+    }
+
+    }

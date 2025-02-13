@@ -1,0 +1,7 @@
+// @prefix __header_authorization
+// @description
+
+\$headers[] = 'Authorization: Bearer '.\$_SESSION["token"];
+\$url=DIR_SERV."/producto/borrar/".urlencode(\$_POST["btnContBorrar"]);
+\$respuesta=consumir_servicios_JWT_REST(\$url,"DELETE",\$headers);
+\$json_borrar=json_decode(\$respuesta,true);
