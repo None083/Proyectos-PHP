@@ -1,0 +1,42 @@
+// @prefix __btn_detalles
+// @description
+
+if(isset(\$_POST["btnDetalles"]) || isset(\$_POST["btnEditar"]))
+{
+if(isset(\$_POST["btnDetalles"]))
+\$cod=\$_POST["btnDetalles"];
+else
+\$cod=\$_POST["btnEditar"];
+
+\$headers[] = 'Authorization: Bearer '.\$_SESSION["token"];
+\$url=DIR_SERV."/producto/".urlencode(\$cod);
+\$respuesta=consumir_servicios_JWT_REST(\$url,"GET",\$headers);
+\$json_detalles=json_decode(\$respuesta,true);
+if(!\$json_detalles)
+{
+session_destroy();
+die(error_page("Actividad 6","<p>Error consumiendo el servico rest: <strong>".\$url."</strong></p>"));
+}
+
+if(isset(\$json_detalles["no_auth"]))
+{
+session_unset();
+\$_SESSION["mensaje_seguridad"]="El tiempo de sesión de la API ha caducado";
+header("Location:index.php");
+exit;
+}
+
+if(isset(\$json_detalles["error"]))
+{
+session_destroy();
+die(error_page("Actividad 6","<p>".\$json_detalles["error"]."</p>"));
+}
+
+if(isset(\$json_detalles["mensaje_baneo"]))
+{
+session_unset();//Me deslogueo
+\$_SESSION["mensaje_seguridad"]="Usted ya no se encuentra registrado en la BD";
+header("Location:index.php");
+exit;
+}
+}

@@ -1,0 +1,24 @@
+// @prefix __app_post_producto_insertar
+// @description
+
+\$app->post('/producto/insertar', function (\$request) {
+
+\$test = validateToken();
+if (is_array(\$test))
+if (isset(\$test["usuario"]))
+if (\$test["usuario"]["tipo"] == "admin") {
+\$datos[] = \$request->getParam("cod");
+\$datos[] = \$request->getParam("nombre");
+\$datos[] = \$request->getParam("nombre_corto");
+\$datos[] = \$request->getParam("descripcion");
+\$datos[] = \$request->getParam("PVP");
+\$datos[] = \$request->getParam("familia");
+
+echo json_encode(insertar_producto(\$datos));
+} else
+echo json_encode(array("no_auth" => "No tienes permisos para usar este servicio"));
+else
+echo json_encode(\$test);
+else
+echo json_encode(array("no_auth" => "No tienes permisos para usar este servicio"));
+});

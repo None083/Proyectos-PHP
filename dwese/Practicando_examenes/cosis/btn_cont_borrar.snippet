@@ -1,0 +1,42 @@
+// @prefix __btn_cont_borrar
+// @description
+
+if(isset(\$_POST["btnContBorrar"]))
+{
+\$headers[] = 'Authorization: Bearer '.\$_SESSION["token"];
+\$url=DIR_SERV."/producto/borrar/".urlencode(\$_POST["btnContBorrar"]);
+\$respuesta=consumir_servicios_JWT_REST(\$url,"DELETE",\$headers);
+\$json_borrar=json_decode(\$respuesta,true);
+if(!\$json_borrar)
+{
+session_destroy();
+die(error_page("Actividad 6","<p>Error consumiendo el servico rest: <strong>".\$url."</strong></p>"));
+}
+
+if(isset(\$json_borrar["no_auth"]))
+{
+session_unset();
+\$_SESSION["mensaje_seguridad"]="El tiempo de sesión de la API ha caducado";
+header("Location:index.php");
+exit;
+}
+
+if(isset(\$json_borrar["error"]))
+{
+session_destroy();
+die(error_page("Actividad 6","<p>".\$json_borrar["error"]."</p>"));
+}
+
+if(isset(\$json_borrar["mensaje_baneo"]))
+{
+session_unset();//Me deslogueo
+\$_SESSION["mensaje_seguridad"]="Usted ya no se encuentra registrado en la BD";
+header("Location:index.php");
+exit;
+}
+
+\$_SESSION["mensaje"]="¡¡ Producto borrado con éxito !!";
+header("Location:index.php");
+exit;
+
+}

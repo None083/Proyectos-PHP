@@ -1,0 +1,35 @@
+// @prefix __obtener_producto_cod
+// @description 
+
+function obtener_producto(\$cod)
+{
+try{
+\$conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+}
+catch(PDOException \$e)
+{
+\$respuesta["error"]="No he podido conectarse a la base de batos: ".\$e->getMessage();
+return \$respuesta;
+}
+try{
+\$consulta="select producto.*, familia.nombre as nombre_familia from producto, familia where producto.familia=familia.cod and producto.cod=?";
+\$sentencia=\$conexion->prepare(\$consulta);
+\$sentencia->execute([\$cod]);
+
+}
+catch(PDOException \$e)
+{
+\$sentencia=null;
+\$conexion=null;
+\$respuesta["error"]="No he podido realizarse la consulta: ".\$e->getMessage();
+return \$respuesta;
+}
+if(\$sentencia->rowCount()<=0)
+    \$respuesta["mensaje"]="El producto con cod: " .\$cod." no se encuentra en la BD";
+    else
+    \$respuesta["producto"]=\$sentencia->fetch(PDO::FETCH_ASSOC);
+
+    \$sentencia=null;
+    \$conexion=null;
+    return \$respuesta;
+    }
