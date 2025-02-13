@@ -1,0 +1,22 @@
+// @prefix __app_get_repetido_editando
+// @description
+
+\$app->get('/repetido/{tabla}/{columna}/{valor}/{columna_id}/{valor_id}', function (\$request) {
+
+\$test = validateToken();
+if (is_array(\$test))
+if (isset(\$test["usuario"]))
+if (\$test["usuario"]["tipo"] == "admin") {
+\$tabla = \$request->getAttribute("tabla");
+\$columna = \$request->getAttribute("columna");
+\$valor = \$request->getAttribute("valor");
+\$columna_id = \$request->getAttribute("columna_id");
+\$valor_id = \$request->getAttribute("valor_id");
+echo json_encode(repetido_editando(\$tabla, \$columna, \$valor, \$columna_id, \$valor_id));
+} else
+echo json_encode(array("no_auth" => "No tienes permisos para usar este servicio"));
+else
+echo json_encode(\$test);
+else
+echo json_encode(array("no_auth" => "No tienes permisos para usar este servicio"));
+});
