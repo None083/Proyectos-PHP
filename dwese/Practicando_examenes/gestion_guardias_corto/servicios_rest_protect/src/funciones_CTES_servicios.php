@@ -98,3 +98,65 @@ function login($usario, $clave)
     $conexion = null;
     return $respuesta;
 }
+
+function getUsuario($id_usuario)
+{
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        $respuesta["error"] = "Imposible conectar:" . $e->getMessage();
+        return $respuesta;
+    }
+
+    try {
+        $consulta = "select * from usuarios where id_usuario=?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$id_usuario]);
+    } catch (PDOException $e) {
+        $respuesta["error"] = "Imposible realizar la consulta:" . $e->getMessage();
+        $sentencia = null;
+        $conexion = null;
+        return $respuesta;
+    }
+
+    if ($sentencia->rowCount() > 0) {
+        $respuesta["usuario"] = $sentencia->fetch(PDO::FETCH_ASSOC);
+    } else
+        $respuesta["mensaje"] = "El usuario con id:" . $id_usuario . " no se encuentra registrado en la BD";
+
+    $sentencia = null;
+    $conexion = null;
+    return $respuesta;
+}
+
+function getUsuariosGuardia($dia, $hora)
+{
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        $respuesta["error"] = "Imposible conectar:" . $e->getMessage();
+        return $respuesta;
+    }
+
+    try {
+        $consulta = "SELECT usuarios.* FROM usuarios 
+                 JOIN horario_lectivo ON usuarios.id_usuario = horario_lectivo.usuario 
+                 WHERE horario_lectivo.dia = ? AND horario_lectivo.hora = ?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$dia, $hora]);
+    } catch (PDOException $e) {
+        $respuesta["error"] = "Imposible realizar la consulta:" . $e->getMessage();
+        $sentencia = null;
+        $conexion = null;
+        return $respuesta;
+    }
+
+    if ($sentencia->rowCount() > 0) {
+        $respuesta["usuarios"] = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+    } else
+        $respuesta["mensaje"] = "No hay usuarios registrados para el dia:" . $dia . " y la hora:" . $hora;
+
+    $sentencia = null;
+    $conexion = null;
+    return $respuesta;
+}
