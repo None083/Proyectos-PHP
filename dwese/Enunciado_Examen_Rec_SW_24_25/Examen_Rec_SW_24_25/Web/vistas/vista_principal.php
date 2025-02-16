@@ -1,5 +1,5 @@
 <?php
-
+/*
 $headers[] = 'Authorization: Bearer ' . $_SESSION["token"];
 $url = DIR_SERV . "/usuario/" . $datos_usu_log["id_usuario"];
 $respuesta = consumir_servicios_JWT_REST($url, "GET", $headers);
@@ -20,7 +20,7 @@ if (isset($json_usuario["mensaje"])) {
     header("Location:index.php");
     exit;
 }
-
+*/
 /*
 $headers[] = 'Authorization: Bearer ' . $_SESSION["token"];
 $url = DIR_SERV . "/usuariosGuardia/" . urlencode(1) . "/" . urlencode(1);
@@ -48,19 +48,27 @@ $headers[] = 'Authorization: Bearer ' . $_SESSION["token"];
 $url = DIR_SERV . "/deGuardia/" . urlencode($datos_usu_log["id_usuario"]);
 $respuesta = consumir_servicios_JWT_REST($url, "GET", $headers);
 $json_dias_horas_guardia = json_decode($respuesta, true);
+
 if (!$json_dias_horas_guardia) {
     session_destroy();
-    die(error_page("Gestión de Guardias", "<h1>Gestión de Guardias</h1><p>Error consumiendo el servicio Rest: <strong>" . $url . "</strong></p>"));
+    die(error_page("Gestión de Guardias", "<p>Error consumiendo el servico rest: <strong>" . $url . "</strong></p>"));
 }
+
+if (isset($json_dias_horas_guardia["no_auth"])) {
+    session_unset();
+    $_SESSION["mensaje_seguridad"] = "El tiempo de sesión de la API ha caducado";
+    header("Location:index.php");
+    exit;
+}
+
 if (isset($json_dias_horas_guardia["error"])) {
     session_destroy();
-    die(error_page("Gestión de Guardias", "<h1>Gestión de Guardias</h1><p>" . $json_dias_horas_guardia["error"] . "</p>"));
+    die(error_page("Gestión de Guardias", "<p>" . $json_dias_horas_guardia["error"] . "</p>"));
 }
-if (isset($json_dias_horas_guardia["mensaje"])) {
-    $error_usuario = true;
-} else {
-    $_SESSION["token"] = $json_dias_horas_guardia["token"];
-    $_SESSION["ultm_accion"] = time();
+
+if (isset($json_dias_horas_guardia["mensaje_baneo"])) {
+    session_unset();
+    $_SESSION["mensaje_seguridad"] = "Usted ya no se encuentra registrado en la BD";
     header("Location:index.php");
     exit;
 }
@@ -97,10 +105,9 @@ if (isset($json_dias_horas_guardia["mensaje"])) {
     $dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
     $horas = ["1º Hora", "2º Hora", "3º Hora", "", "4º Hora", "5º Hora", "6º Hora"];
     echo $datos_usu_log["id_usuario"];
-    var_dump($json_usuario);
+    //var_dump($json_usuario);
     //var_dump($json_usuarios_guardia);
     var_dump($json_dias_horas_guardia);
-
 
     echo "<table>";
     echo "<tr>";
@@ -116,12 +123,17 @@ if (isset($json_dias_horas_guardia["mensaje"])) {
             echo "<td colspan='5'>RECREO</td>";
         } else {
             for ($dia = 1; $dia <= count($dias); $dia++) {
-                echo "<td>";
-                echo "<button type='submit'>Equipo " . ($hora * 5) + $dia . "</button>";
-                echo "</td>";
+                if ($hora < 3) {
+                    echo "<td>";
+                    echo "<button type='submit'>Equipo " . ($hora * 5) + $dia . "</button>";
+                    echo "</td>";
+                }else{
+                    echo "<td>";
+                    echo "<button type='submit'>Equipo " . ($hora * 5) + $dia - 5 . "</button>";
+                    echo "</td>";
+                }
             }
         }
-
         echo "</tr>";
     }
     echo "</table>";

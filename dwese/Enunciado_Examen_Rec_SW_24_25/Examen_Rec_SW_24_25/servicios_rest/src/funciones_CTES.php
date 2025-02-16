@@ -8,8 +8,8 @@ require 'Firebase/autoload.php';
 define("PASSWORD_API", "Una_clave_para_usar_para_encriptar");
 define("MINUTOS_API", 60);
 define("SERVIDOR_BD", "localhost");
-define("USUARIO_BD", "jose");
-define("CLAVE_BD", "josefa");
+define("USUARIO_BD", "root");
+define("CLAVE_BD", "");
 define("NOMBRE_BD", "bd_guardias_exam");
 
 
