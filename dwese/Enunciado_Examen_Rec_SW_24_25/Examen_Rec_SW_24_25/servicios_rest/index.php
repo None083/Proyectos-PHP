@@ -71,11 +71,12 @@ dónde id_usuario es un atributo pasado por la URL.
 $app->get('/deGuardia/{id_usuario}', function ($request) {
     $test = validateToken();
     if (is_array($test)) {
-        $id_usuario[] = $request->getParam("id_usuario");
+        $id_usuario = $request->getAttribute("id_usuario");
         echo json_encode(obtener_dias_horas_guardia($id_usuario));
     } else {
         echo json_encode(array("no_auth" => "No tienes permisos para usar este servicio"));
     }
 });
+
 
 $app->run();
