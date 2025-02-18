@@ -81,10 +81,6 @@ function borrar_producto(cod) {
     }
 }
 
-<<<<<<< HEAD
-function borrar_respuestas()
-{
-=======
 function obtener_detalles(cod) {
     if (((new Date() / 1000) - localStorage.ultm_accion) < MINUTOS * 60) {
         localStorage.setItem("ultm_accion", (new Date() / 1000));
@@ -144,29 +140,10 @@ function obtener_detalles(cod) {
 }
 
 function borrar_respuestas() {
->>>>>>> 0f2d882114a515686a6a4c647d3377f2eaed1d25
     $("#respuestas").html("");
 }
 
 
-<<<<<<< HEAD
-function montar_vista_borrar(cod)
-{
-    if(((new Date()/1000)-localStorage.ultm_accion)<MINUTOS*60)
-    {
-        localStorage.setItem("ultm_accion",(new Date()/1000));
-
-        let html_vista_borrar="<p class='txt_centrado'>Se dispone usted a borrar el producto: <strong>"+cod+"</strong></p>";
-        html_vista_borrar+="<p class='txt_centrado'>¿Estás seguro?</p>";
-        html_vista_borrar+="<p class='txt_centrado'><button onclick='borrar_respuestas()'>Cancelar</button> <button onclick='borrar_producto(\""+cod+"\")'>Continuar</button></p>";
-        $("#respuestas").html(html_vista_borrar);
-    }
-    else
-    {
-        localStorage.clear();
-        cargar_vista_login("Su tiempo de sesión ha expirado");
-    }
-=======
 function montar_vista_borrar(cod) {
     if (((new Date() / 1000) - localStorage.ultm_accion) < MINUTOS * 60) {
         localStorage.setItem("ultm_accion", (new Date() / 1000));
@@ -484,5 +461,4 @@ function error_ajax_jquery(jqXHR, textStatus) {
 
     }
     return respuesta;
->>>>>>> 0f2d882114a515686a6a4c647d3377f2eaed1d25
 }
