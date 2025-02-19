@@ -1,0 +1,1 @@
+export const PHPLOGIN = "../../PHP/login.php";

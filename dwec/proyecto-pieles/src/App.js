@@ -2,6 +2,8 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Component } from 'react';
 import { Button, Container, Navbar, NavbarBrand, Nav, NavItem, NavLink, Collapse, NavbarToggler, Form, FormGroup, Label, Input } from 'reactstrap';
+import axios from 'axios';
+import { PHPLOGIN } from './componentes/datos';
 
 class Header extends Component {
   render() {
@@ -58,7 +60,7 @@ class Login extends Component {
     e.preventDefault();
     const { username, password } = this.state;
 
-    fetch('http://localhost/auth.php', {
+    fetch('http://localhost/Proyectos/dwec/proyecto-pieles/src/componentes/auth.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -107,15 +109,29 @@ class App extends Component {
     };
   }
 
+  logIn(datos) {
+    var md5 = require('md5');
+    axios.post(PHPLOGIN, JSON.stringify({
+      usuario: datos[0],
+      password: md5(datos[1])
+    }))
+      .then(res => {
+        if (res.data.mensaje === "Acceso correcto") {
+          this.setState({ message: "", logged: true, isOpen: false });
+        } else {
+          this.setState({ message: res.data.mensaje });
+        }
+      });
+  }
+
   componentDidMount() {
     this.fetchProductos();
   }
 
   fetchProductos = () => {
-    fetch('/2daw/pieles.json')
-      .then((response) => response.json())
-      .then((data) => {
-        this.setState({ productos: data.productos });
+    axios.get('/2daw/pieles.json')
+      .then(response => {
+        this.setState({ productos: response.data.productos });
       })
       .catch((error) => console.error('Error al cargar los datos:', error));
   };
