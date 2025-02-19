@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
+
+body {
+  font-family: "Lora", serif;
+  font-optical-sizing: auto;
+}
+
+.App {
+  text-align: center;
+}
+
+.categories-button {
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .categories-button {
+    display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .categories-button {
+    display: none;
+  }
+
+}
