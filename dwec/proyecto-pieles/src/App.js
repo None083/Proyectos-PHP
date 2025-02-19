@@ -1,40 +1,69 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Container, Navbar, NavbarBrand, Nav, NavItem, NavLink, Collapse, NavbarToggler, Form, FormGroup, Label, Input } from 'reactstrap';
 import axios from 'axios';
 import { PHPLOGIN } from './componentes/datos';
+import md5 from 'md5';
 
-class Header extends Component {
-  render() {
-    const { isOpen, toggleNavbar, productos } = this.props;
-    const categorias = [...new Set(productos.map((producto) => producto.categoria.toUpperCase()))];
+const Header = ({ isOpen, toggleNavbar, productos }) => {
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false); // Estado para abrir/cerrar categorías
+  const categorias = [...new Set(productos.map((producto) => producto.categoria.toUpperCase()))];
 
-    return (
-      <Navbar style={{ backgroundColor: '#191000' }} dark expand="md">
-        <NavbarBrand href="/">
-          <img src={process.env.PUBLIC_URL + '/images/logo2.png'} alt="Logo" style={{ height: '60px' }} onError={(e) => e.target.style.display = 'none'} />
-        </NavbarBrand>
-        <NavbarToggler onClick={toggleNavbar} />
-        <Collapse isOpen={isOpen} navbar>
-          <Nav className="ml-auto" navbar>
-            <NavItem className="mx-2">
-              <NavLink href="#" style={{ color: '#f2dcb8' }}><strong>HOME</strong></NavLink>
+  const toggleCategories = () => {
+    setIsCategoriesOpen(!isCategoriesOpen); // Cambiar el estado para abrir/cerrar categorías
+  };
+
+  return (
+    <Navbar style={{ backgroundColor: '#191000' }} dark expand="md">
+      <NavbarBrand href="/">
+        <img src={process.env.PUBLIC_URL + '/images/logo2.png'} alt="Logo" style={{ height: '60px' }} onError={(e) => e.target.style.display = 'none'} />
+      </NavbarBrand>
+      <NavbarToggler onClick={toggleNavbar} />
+      <Collapse isOpen={isOpen} navbar>
+        <Nav className="ml-auto" navbar>
+          <NavItem className="mx-2">
+            <NavLink href="#" style={{ color: '#f2dcb8' }} onMouseOver={(e) => e.target.style.color = 'white'} onMouseOut={(e) => e.target.style.color = '#f2dcb8'}>
+              <strong>HOME</strong>
+            </NavLink>
+          </NavItem>
+          <NavItem className="mx-2">
+            <NavLink href="#" style={{ color: '#f2dcb8' }} onMouseOver={(e) => e.target.style.color = 'white'} onMouseOut={(e) => e.target.style.color = '#f2dcb8'}>
+              <strong>ABOUT</strong>
+            </NavLink>
+          </NavItem>
+
+          {/* Botón "Categorías" solo en dispositivos móviles */}
+          <NavItem className="mx-2 d-md-none">
+            <NavLink href="#" className="categories-button" onClick={toggleCategories} style={{ color: '#f2dcb8' }} onMouseOver={(e) => e.target.style.color = 'white'} onMouseOut={(e) => e.target.style.color = '#f2dcb8'}>
+              <strong>CATEGORIES ▼</strong>
+            </NavLink>
+            <Collapse isOpen={isCategoriesOpen} navbar>
+              <Nav className="ml-auto" navbar>
+                {categorias.map((categoria, index) => (
+                  <NavItem key={index} className="mx-2">
+                    <NavLink href={`#${categoria}`} style={{ color: '#efe5d5', borderBottom: "1px solid #efe5d5" }} onMouseOver={(e) => e.target.style.color = 'white'} onMouseOut={(e) => e.target.style.color = '#efe5d5'}>
+                      {categoria}
+                    </NavLink>
+                  </NavItem>
+                ))}
+              </Nav>
+            </Collapse>
+          </NavItem>
+
+          {/* Categorías visibles en dispositivos de escritorio */}
+          {categorias.map((categoria, index) => (
+            <NavItem key={index} className="mx-2 d-none d-md-block">
+              <NavLink href={`#${categoria}`} style={{ color: '#efe5d5' }} onMouseOver={(e) => e.target.style.color = 'white'} onMouseOut={(e) => e.target.style.color = '#efe5d5'}>
+                {categoria}
+              </NavLink>
             </NavItem>
-            <NavItem className="mx-2">
-              <NavLink href="#" style={{ color: '#f2dcb8' }}><strong>ABOUT</strong></NavLink>
-            </NavItem>
-            {categorias.map((categoria, index) => (
-              <NavItem key={index} className="mx-2">
-                <NavLink href={`#${categoria}`} style={{ color: '#efe5d5' }}>{categoria}</NavLink>
-              </NavItem>
-            ))}
-          </Nav>
-        </Collapse>
-      </Navbar>
-    );
-  }
-}
+          ))}
+        </Nav>
+      </Collapse>
+    </Navbar>
+  );
+};
 
 const Footer = () => (
   <footer className="text-center py-3 mt-5" style={{ backgroundColor: '#191000', color: '#EDD2A7' }}>
@@ -42,130 +71,116 @@ const Footer = () => (
   </footer>
 );
 
-class Login extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: '',
-      password: '',
-      error: ''
-    };
-  }
+const Login = ({ onLogin }) => {
+  const [usuario, setUsuario] = useState('');
+  const [password, setPassword] = useState('');
+  const [mensaje, setMensaje] = useState('');
 
-  handleChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "usuario") setUsuario(value);
+    if (name === "password") setPassword(value);
   };
 
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const { username, password } = this.state;
-
-    fetch('http://localhost/Proyectos/dwec/proyecto-pieles/src/componentes/auth.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username, password })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          this.props.onLogin();
-        } else {
-          this.setState({ error: data.message });
-        }
-      })
-      .catch(() => this.setState({ error: 'Server error' }));
+    onLogin(usuario, password);
   };
 
-  render() {
-    return (
-      <Container className="mt-5">
+  return (
+    <div className="login-container" style={{ marginTop: '50px' }}>
+      <Container>
         <h2>Login</h2>
-        <Form onSubmit={this.handleSubmit}>
+        {mensaje && <div className="alert alert-danger">{mensaje}</div>}
+        <Form onSubmit={handleSubmit}>
           <FormGroup>
-            <Label for="username">Username</Label>
-            <Input type="text" name="username" id="username" onChange={this.handleChange} required />
+            <Label for="usuario">Usuario</Label>
+            <Input
+              type="text"
+              name="usuario"
+              id="usuario"
+              placeholder="Ingresa tu usuario"
+              value={usuario}
+              onChange={handleInputChange}
+            />
           </FormGroup>
           <FormGroup>
-            <Label for="password">Password</Label>
-            <Input type="password" name="password" id="password" onChange={this.handleChange} required />
+            <Label for="password">Contraseña</Label>
+            <Input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Ingresa tu contraseña"
+              value={password}
+              onChange={handleInputChange}
+            />
           </FormGroup>
-          {this.state.error && <p style={{ color: 'red' }}>{this.state.error}</p>}
-          <Button type="submit" color="primary">Login</Button>
+          <Button type="submit" color="primary">Entrar</Button>
         </Form>
       </Container>
-    );
-  }
-}
+    </div>
+  );
+};
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isOpen: false,
-      productos: [],
-      isAuthenticated: false
-    };
-  }
+const App = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [productos, setProductos] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [mensaje, setMensaje] = useState('');
 
-  logIn(datos) {
-    var md5 = require('md5');
-    axios.post(PHPLOGIN, JSON.stringify({
-      usuario: datos[0],
-      password: md5(datos[1])
-    }))
-      .then(res => {
-        if (res.data.mensaje === "Acceso correcto") {
-          this.setState({ message: "", logged: true, isOpen: false });
-        } else {
-          this.setState({ message: res.data.mensaje });
-        }
-      });
-  }
+  useEffect(() => {
+    fetchProductos();
+  }, []);
 
-  componentDidMount() {
-    this.fetchProductos();
-  }
-
-  fetchProductos = () => {
+  const fetchProductos = () => {
     axios.get('/2daw/pieles.json')
       .then(response => {
-        this.setState({ productos: response.data.productos });
+        setProductos(response.data.productos);
       })
       .catch((error) => console.error('Error al cargar los datos:', error));
   };
 
-  toggleNavbar = () => {
-    this.setState({ isOpen: !this.state.isOpen });
+  const logIn = (usuario, password) => {
+    axios.post(PHPLOGIN, JSON.stringify({
+      usuario: usuario,
+      password: md5(password)
+    }))
+      .then(res => {
+        if (res.data.mensaje === "Acceso correcto") {
+          setIsAuthenticated(true);
+        } else {
+          setMensaje(res.data.mensaje);
+        }
+      })
+      .catch(err => {
+        setMensaje("Error en la conexión al servidor");
+      });
   };
 
-  handleLogin = () => {
-    this.setState({ isAuthenticated: true });
+  const toggleNavbar = () => {
+    setIsOpen(!isOpen);
   };
 
-  render() {
-    if (!this.state.isAuthenticated) {
-      return <Login onLogin={this.handleLogin} />;
-    }
-
-    return (
-      <div className="App">
-        <Header
-          isOpen={this.state.isOpen}
-          toggleNavbar={this.toggleNavbar}
-          productos={this.state.productos}
-        />
-
-        <Container className="mt-4 text-center">
-          <h1>Welcome to Leather for Artisans</h1>
-          <Button color="secondary">Dale</Button>
-        </Container>
-
-        <Footer />
-      </div>
-    );
+  if (!isAuthenticated) {
+    return <Login onLogin={logIn} />;
   }
-}
+
+  return (
+    <div className="App">
+      <Header
+        isOpen={isOpen}
+        toggleNavbar={toggleNavbar}
+        productos={productos}
+      />
+
+      <Container className="mt-4 text-center">
+        <h1>Welcome to Leather for Artisans</h1>
+        <Button color="secondary">Dale</Button>
+      </Container>
+
+      <Footer />
+    </div>
+  );
+};
 
 export default App;
