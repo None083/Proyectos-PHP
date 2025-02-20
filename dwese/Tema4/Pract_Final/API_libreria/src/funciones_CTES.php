@@ -138,9 +138,41 @@ function obtener_libros()
     }
 
     $respuesta["libros"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
-        
+    
+    $sentencia=null;
+    $conexion=null;
+    return $respuesta;
+}
 
-   
+function crear_libro($datos_libro)
+{
+    try{
+        $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    }
+    catch(PDOException $e)
+    {
+        $respuesta["error"]="No he podido conectarse a la base de batos: ".$e->getMessage();
+        return $respuesta;
+    }
+
+    try{
+        $consulta="insert into libros values(?,?,?,?,?)";
+        $sentencia=$conexion->prepare($consulta);
+        $sentencia->execute($datos_libro);
+
+    }
+    catch(PDOException $e)
+    {
+        $sentencia=null;
+        $conexion=null;
+        $respuesta["error"]="No he podido realizarse la consulta: ".$e->getMessage();
+        return $respuesta;
+    }
+
+    if($sentencia->rowCount()>0)
+        $respuesta["mensaje"]="Libro insertado correctamente en la BD";
+    else
+        $respuesta["error"]="Error al insertar el libro";
     
     $sentencia=null;
     $conexion=null;
