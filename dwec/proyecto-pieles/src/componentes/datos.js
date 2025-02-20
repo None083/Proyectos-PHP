@@ -1,1 +1,1 @@
-export const PHPLOGIN = "http://localhost/Proyectos/DWEC/proyecto-pieles/php/login.php";
+export const PHPLOGIN = "http://localhost/Proyectos/dwec/proyecto-pieles/php/login.php";
