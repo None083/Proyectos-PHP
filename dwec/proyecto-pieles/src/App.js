@@ -8,6 +8,7 @@ import Header from './componentes/Header';
 import Footer from './componentes/Footer';
 import ShowProductos from './componentes/ShowProductos';
 import Login from './componentes/Login';
+import CarritoModal from './componentes/CarritoModal';
 
 class App extends Component {
   constructor(props) {
@@ -18,7 +19,8 @@ class App extends Component {
       isAuthenticated: false,
       mensaje: '',
       carrito: [],
-      categoriaSeleccionada: null // Nueva variable de estado para categoría activa
+      categoriaSeleccionada: null,
+      modalOpen: false
     };
   }
 
@@ -55,18 +57,36 @@ class App extends Component {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
-  seleccionarCategoria = (categoria) => {
-    this.setState({ categoriaSeleccionada: categoria });
+  toggleModal = () => {
+    this.setState(prevState => ({ modalOpen: !prevState.modalOpen }));
   };
 
   modificar = (producto, cantidad) => {
-    let c = this.state.carrito.map(e => {
-      if (e.id === producto) { e.cantidad += cantidad; }
-      return e;
+    this.setState(prevState => {
+      let nuevoCarrito = [...prevState.carrito];
+
+      // Usamos el nombre del producto como identificador único
+      let productoExistente = nuevoCarrito.find(item => item.nombre === producto.nombre);
+
+      if (productoExistente) {
+        // Si el producto ya está en el carrito, actualizamos la cantidad
+        productoExistente.cantidad += cantidad;
+
+        // Si la cantidad es menor o igual a 0, lo eliminamos del carrito
+        if (productoExistente.cantidad <= 0) {
+          nuevoCarrito = nuevoCarrito.filter(item => item.nombre !== producto.nombre);
+        }
+      } else if (cantidad > 0) {
+        // Si el producto NO está en el carrito, lo agregamos con la cantidad inicial
+        nuevoCarrito.push({ ...producto, cantidad });
+      }
+
+      return { carrito: nuevoCarrito };
     });
-    this.setState({ carrito: c });
-    console.log(c);
   };
+
+
+
 
   render() {
     if (!this.state.isAuthenticated) {
@@ -83,17 +103,14 @@ class App extends Component {
           isOpen={this.state.isOpen}
           toggleNavbar={this.toggleNavbar}
           productos={this.state.productos}
-          seleccionarCategoria={this.seleccionarCategoria} // Pasamos la función a Header
+          seleccionarCategoria={this.seleccionarCategoria}
+          carrito={this.state.carrito}
+          toggleModal={this.toggleModal}
         />
 
-        <h2 style={{ color: "#191000", textAlign: "left", margin: "1rem", borderBottom: "1px solid #191000", paddingBottom: "0.5rem" }}>
-          {this.state.categoriaSeleccionada ? this.state.categoriaSeleccionada : "Category"}
-        </h2>
+        <ShowProductos lista={productosFiltrados} modificar={this.modificar} />
 
-        <ShowProductos
-          lista={productosFiltrados}
-          modificar={this.modificar}
-        />
+        <CarritoModal isOpen={this.state.modalOpen} toggle={this.toggleModal} carrito={this.state.carrito} />
 
         <Footer />
       </div>

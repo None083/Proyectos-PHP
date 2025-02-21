@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Navbar, NavbarBrand, Nav, NavItem, NavLink, Collapse, NavbarToggler, DropdownToggle, DropdownMenu, DropdownItem, Dropdown } from 'reactstrap';
+import { Navbar, NavbarBrand, Nav, NavItem, NavLink, Collapse, NavbarToggler, DropdownToggle, DropdownMenu, DropdownItem, Dropdown, Button } from 'reactstrap';
+import { FaShoppingCart } from 'react-icons/fa';
 
-const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria }) => {
+const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito, toggleModal }) => {
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -10,7 +11,6 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria }) => {
     const toggleCategories = () => setIsCategoriesOpen(!isCategoriesOpen);
     const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
-    // Separar las primeras 3 categorías y el resto para el dropdown
     const categoriasVisibles = categorias.slice(0, 3);
     const categoriasDropdown = categorias.slice(3);
 
@@ -21,7 +21,9 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria }) => {
             </NavbarBrand>
             <NavbarToggler onClick={toggleNavbar} />
             <Collapse isOpen={isOpen} navbar>
-                <Nav className="ml-auto" navbar>
+                {/* Nav principal con categorías alineadas a la izquierda */}
+                <Nav className="me-auto" navbar>
+                    {/* Home y About */}
                     <NavItem className="mx-2">
                         <NavLink href="#" style={{ color: '#f2dcb8' }}><strong>HOME</strong></NavLink>
                     </NavItem>
@@ -29,7 +31,7 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria }) => {
                         <NavLink href="#" style={{ color: '#f2dcb8' }}><strong>ABOUT</strong></NavLink>
                     </NavItem>
 
-                    {/* Botón de categorías en móviles */}
+                    {/* Categorías en móviles */}
                     <NavItem className="mx-2 d-md-none">
                         <NavLink href="#" className="categories-button" onClick={toggleCategories} style={{ color: '#f2dcb8' }}>
                             <strong>CATEGORIES ▼</strong>
@@ -56,7 +58,7 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria }) => {
                         </NavItem>
                     ))}
 
-                    {/* Dropdown para más categorías en escritorio */}
+                    {/* Dropdown para más categorías */}
                     {categoriasDropdown.length > 0 && (
                         <Dropdown nav isOpen={dropdownOpen} toggle={toggleDropdown} className="d-none d-md-block">
                             <DropdownToggle nav caret style={{ color: '#f2dcb8' }}>
@@ -71,6 +73,15 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria }) => {
                             </DropdownMenu>
                         </Dropdown>
                     )}
+                </Nav>
+
+                {/* 🔹 Nuevo Nav solo para el carrito, alineado a la derecha */}
+                <Nav className="ms-auto" navbar>
+                    <NavItem className="mx-3">
+                        <Button color="warning" onClick={toggleModal}>
+                            <FaShoppingCart size={20} /> {carrito.length}
+                        </Button>
+                    </NavItem>
                 </Nav>
             </Collapse>
         </Navbar>

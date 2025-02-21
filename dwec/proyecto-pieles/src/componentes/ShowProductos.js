@@ -3,7 +3,7 @@ import Producto from './Producto';
 
 function ShowProductos({ lista, modificar }) {
     return (
-        <div className="row">
+        <div className="row m-2 mt-4">
             {lista.map((e, index) => (
                 <div key={index} className="col-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center">
                     <Producto
