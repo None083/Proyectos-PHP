@@ -29,6 +29,26 @@ $app->get('/obtenerLibros', function () {
     echo json_encode(obtener_libros());
 });
 
+$app->get('/obtenerLibro/{referencia}', function ($request) {
+    $test = validateToken();
+    if (is_array($test)) {
+        if (isset($test["usuario"])) {
+            if ($test["usuario"]["tipo"] == "admin") {
+                $respuesta = obtener_libro($request->getAttribute('referencia'));
+                $respuesta["token"] = $test["token"];
+                
+                echo json_encode($respuesta);
+            } else {
+                echo json_encode(array("no_auth" => "No tienes permiso para usar el servicio"));
+            }
+        } else {
+            echo json_encode($test);
+        }
+    } else {
+        echo json_encode(array("no_auth" => "No tienes permiso para usar el servicio"));
+    }
+});
+
 /* 
 Crear un nuevo libro mediante una petición POST en la que aportaremos los datos mediante un array asociativo con los siguientes índices: “referencia”, “titulo”, “autor”, “descripción” y “precio”. En caso de error por la BD el JSON devuelto será: { “error” : “Error….”}, en otro caso el JSON será: { “mensaje” : “Libro insertado correctamente en la BD”}
 URL de la petición: http://localhost/Proyectos/Examen_SW_24_25/API_libreria/crearLibro

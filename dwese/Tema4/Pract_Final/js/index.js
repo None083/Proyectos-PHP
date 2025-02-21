@@ -46,21 +46,66 @@ function cargar_libros_admin() {
                 $.each(data.libros, function (key, tupla) {
                     html_libros += "<tr>";
                     html_libros += "<td>" + tupla["referencia"] + "</td>";
-                    html_libros += "<td><button class='enlace' onClick='return false;'>" + tupla["titulo"] + "</button></td>";
+                    html_libros += "<td><button class='enlace' onClick='mostrar_detalles(" + tupla["referencia"] + ")'>" + tupla["titulo"] + "</button></td>";
                     html_libros += "<td><button class='enlace' onClick='return false;'>Borrar</button> - <button class='enlace' onClick='return false;'>Editar</button></td>";
                     html_libros += "</tr>";
                 });
                 html_libros += "</table>";
                 $('#libros').html(html_libros);
 
-                // Llamar al formulario de agregar libro
-                cargar_formulario_agregar();
             }
         })
         .fail(function (a, b) {
             $('#errores').html(error_ajax_jquery(a, b));
             $('#principal').html("");
         });
+}
+
+function mostrar_detalles(referencia) {
+    if (((new Date() / 1000) - localStorage.ultm_accion) < MINUTOS * 60) {
+        $.ajax({
+            url: DIR_API + "/obtenerLibro/" + referencia,
+            type: "GET",
+            dataType: "json",
+            headers: { Authorization: "Bearer " + localStorage.token }
+        })
+            .done(function (data) {
+                if (data.error) {
+                    $('#errores').html(data.error);
+                    $('#principal').html("");
+                }
+                else if (data.no_auth) {
+                    localStorage.clear();
+                    cargar_vista_login("El tiempo de sesión de la API ha expirado.");
+                }
+                else if (data.mensaje_baneo) {
+                    localStorage.clear();
+                    cargar_vista_login("Usted ya no se encuentra registrado en la BD.");
+                }
+                else {
+                    localStorage.setItem("ultm_accion", new Date() / 1000);
+                    localStorage.setItem("token", data.token);
+                    let html_detalles_libro = "<h2>Detalles del libro" + referencia + "</h2>";
+                    html_detalles_libro += "<p>";
+                    html_detalles_libro += "<strong>Referencia:</strong> " + data.libro["referencia"] + "<br>";
+                    html_detalles_libro += "<strong>Título:</strong> " + data.libro["titulo"] + "<br>";
+                    html_detalles_libro += "<strong>Autor:</strong> " + data.libro["autor"] + "<br>";
+                    html_detalles_libro += "<strong>Descripción:</strong> " + data.libro["descripcion"] + "<br>";
+                    html_detalles_libro += "<strong>Precio:</strong> " + data.libro["precio"] + "€<br>";
+                    html_detalles_libro += "<img src='images/" + data.libro["portada"] + "' alt='Portada' title='Portada'><br>";
+                    html_detalles_libro += "</p>";
+                    html_detalles_libro += "<p><button onClick='cargar_formulario_agregar()'>Volver</button></p>";
+                    $("respuestas").html(html_detalles_libro);
+                }
+            })
+            .fail(function (a, b) {
+                $('#errores').html(error_ajax_jquery(a, b));
+                $('#principal').html("");
+            });
+    } else {
+        localStorage.clear();
+        cargar_vista_login("Su tiempo e sesión ha cadicado");
+    }
 }
 
 
