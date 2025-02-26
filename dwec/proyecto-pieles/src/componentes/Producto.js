@@ -12,8 +12,8 @@ function Producto(props) {
                 </CardText>
                 <div className='mt-auto'>
                     <strong>{props.precio}€</strong><br />
-                    <Button className='mt-2' color="primary" onClick={() => props.clicar(props, 1)}>
-                        Comprar
+                    <Button className='mt-2 w-100' color='warning' onClick={() => props.clicar(props, 1)}>
+                        Add to cart
                     </Button>
                 </div>
             </CardBody>

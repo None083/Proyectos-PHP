@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink, Collapse, NavbarToggler, DropdownToggle, DropdownMenu, DropdownItem, Dropdown, Button } from 'reactstrap';
-import { FaShoppingCart } from 'react-icons/fa';
+import { FaBox, FaBoxOpen, FaShoppingCart } from 'react-icons/fa';
 
-const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito, toggleModal }) => {
+const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito, toggleModalCarrito, toggleModalPedidos }) => {
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -15,15 +15,22 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
     const categoriasDropdown = categorias.slice(3);
 
     return (
-        <Navbar style={{ backgroundColor: '#191000' }} dark expand="md">
+        <Navbar className="d-flex justify-content-between align-items-center w-100" style={{ backgroundColor: '#191000' }} dark expand="md">
             <NavbarBrand href="/">
                 <img src={process.env.PUBLIC_URL + '/images/logo2.png'} alt="Logo" style={{ height: '60px' }} />
             </NavbarBrand>
-            <NavbarToggler onClick={toggleNavbar} />
+
+            {/* Toggler para menú en móviles */}
+            <div className="d-flex d-md-none">
+                <NavbarToggler onClick={toggleNavbar} />
+                <Button color="warning" onClick={toggleModalCarrito} className="ms-2">
+                    <FaShoppingCart size={20} /> {carrito.reduce((total, item) => total + item.cantidad, 0)}
+                </Button>
+                <Button color="secondary" onClick={toggleModalPedidos} className="ms-2"><FaBoxOpen size={20} /></Button>
+            </div>
+
             <Collapse isOpen={isOpen} navbar>
-                {/* Nav principal con categorías alineadas a la izquierda */}
                 <Nav className="me-auto" navbar>
-                    {/* Home y About */}
                     <NavItem className="mx-2">
                         <NavLink href="#" style={{ color: '#f2dcb8' }}><strong>HOME</strong></NavLink>
                     </NavItem>
@@ -31,7 +38,6 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
                         <NavLink href="#" style={{ color: '#f2dcb8' }}><strong>ABOUT</strong></NavLink>
                     </NavItem>
 
-                    {/* Categorías en móviles */}
                     <NavItem className="mx-2 d-md-none">
                         <NavLink href="#" className="categories-button" onClick={toggleCategories} style={{ color: '#f2dcb8' }}>
                             <strong>CATEGORIES ▼</strong>
@@ -49,7 +55,6 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
                         </Collapse>
                     </NavItem>
 
-                    {/* Categorías visibles en escritorio */}
                     {categoriasVisibles.map((categoria, index) => (
                         <NavItem key={index} className="mx-2 d-none d-md-block">
                             <NavLink href="#" onClick={() => seleccionarCategoria(categoria)} style={{ color: '#f2dcb8' }}>
@@ -58,7 +63,6 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
                         </NavItem>
                     ))}
 
-                    {/* Dropdown para más categorías */}
                     {categoriasDropdown.length > 0 && (
                         <Dropdown nav isOpen={dropdownOpen} toggle={toggleDropdown} className="d-none d-md-block">
                             <DropdownToggle nav caret style={{ color: '#f2dcb8' }}>
@@ -74,16 +78,16 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
                         </Dropdown>
                     )}
                 </Nav>
-
-                {/* 🔹 Nuevo Nav solo para el carrito, alineado a la derecha */}
-                <Nav className="ms-auto" navbar>
-                    <NavItem className="mx-3">
-                        <Button color="warning" onClick={toggleModal}>
-                            <FaShoppingCart size={20} /> {carrito.length}
-                        </Button>
-                    </NavItem>
-                </Nav>
             </Collapse>
+
+            {/* Carrito en modo escritorio */}
+            <div className="d-none d-md-block">
+                <Button color="warning" onClick={toggleModalCarrito}>
+                    <FaShoppingCart size={20} /> {carrito.length}
+                </Button>
+                <Button color="secondary" onClick={toggleModalPedidos} className="ms-2"><FaBoxOpen size={20} /></Button>
+            </div>
+            
         </Navbar>
     );
 };
