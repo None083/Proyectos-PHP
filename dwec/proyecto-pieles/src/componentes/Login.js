@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Button, FormGroup, Label, Form, Input } from 'reactstrap';
+import { Container, Button, FormGroup, Label, Form, Input, Card, CardBody, CardTitle, Alert } from 'reactstrap';
 
 const Login = ({ onLogin }) => {
     const [usuario, setUsuario] = useState('');
@@ -18,35 +18,44 @@ const Login = ({ onLogin }) => {
     };
 
     return (
-        <div className="login-container" style={{ marginTop: '50px' }}>
+        <div className="d-flex flex-column justify-content-center align-items-center vh-100" style={{ backgroundColor: '#191000' }}>
+            <img src={process.env.PUBLIC_URL + '/images/logo2.png'} alt="Logo" style={{ height: '100px', marginBottom: "1rem" }} />
             <Container>
-                <h2>Login</h2>
-                {mensaje && <div className="alert alert-danger">{mensaje}</div>}
-                <Form onSubmit={handleSubmit}>
-                    <FormGroup>
-                        <Label for="usuario">Usuario</Label>
-                        <Input
-                            type="text"
-                            name="usuario"
-                            id="usuario"
-                            placeholder="Ingresa tu usuario"
-                            value={usuario}
-                            onChange={handleInputChange}
-                        />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="password">Contraseña</Label>
-                        <Input
-                            type="password"
-                            name="password"
-                            id="password"
-                            placeholder="Ingresa tu contraseña"
-                            value={password}
-                            onChange={handleInputChange}
-                        />
-                    </FormGroup>
-                    <Button type="submit" color="primary">Entrar</Button>
-                </Form>
+                <div className="d-flex justify-content-center w-100">
+                    <Card className="shadow p-4" style={{ width: '22rem', borderRadius: '12px' }}>
+                        <CardBody>
+                            <CardTitle tag="h3" className="text-center mb-4" style={{color: "#191000"}}>Log In</CardTitle>
+                            {mensaje && <Alert color="danger" className="text-center">{mensaje}</Alert>}
+                            <Form onSubmit={handleSubmit}>
+                                <FormGroup>
+                                    <Label for="usuario">Username</Label>
+                                    <Input
+                                        type="text"
+                                        name="usuario"
+                                        id="usuario"
+                                        placeholder="Ingresa tu usuario"
+                                        value={usuario}
+                                        onChange={handleInputChange}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="password">Password</Label>
+                                    <Input
+                                        type="password"
+                                        name="password"
+                                        id="password"
+                                        placeholder="Ingresa tu contraseña"
+                                        value={password}
+                                        onChange={handleInputChange}
+                                    />
+                                </FormGroup>
+                                <Button type="submit" color="warning" className="w-100 mt-3" style={{ borderRadius: '8px' }}>
+                                    Entrar
+                                </Button>
+                            </Form>
+                        </CardBody>
+                    </Card>
+                </div>
             </Container>
         </div>
     );

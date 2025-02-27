@@ -32,11 +32,9 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
             <Collapse isOpen={isOpen} navbar>
                 <Nav className="me-auto" navbar>
                     <NavItem className="mx-2">
-                        <NavLink href="#" style={{ color: '#f2dcb8' }}><strong>HOME</strong></NavLink>
+                        <NavLink href="#" style={{ color: '#f2dcb8' }} ><strong>HOME</strong></NavLink>
                     </NavItem>
-                    <NavItem className="mx-2">
-                        <NavLink href="#" style={{ color: '#f2dcb8' }}><strong>ABOUT</strong></NavLink>
-                    </NavItem>
+                    
 
                     <NavItem className="mx-2 d-md-none">
                         <NavLink href="#" className="categories-button" onClick={toggleCategories} style={{ color: '#f2dcb8' }}>
@@ -77,6 +75,13 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
                             </DropdownMenu>
                         </Dropdown>
                     )}
+
+                    <NavItem className="mx-2">
+                        <NavLink href="#" style={{ color: '#f2dcb8' }}><strong>ABOUT</strong></NavLink>
+                    </NavItem>
+                    <NavItem className="mx-2">
+                        <NavLink href="#" style={{ color: '#f2dcb8' }} onClick={() => window.location.reload()}><strong>LOG OUT</strong></NavLink>
+                    </NavItem>
                 </Nav>
             </Collapse>
 
