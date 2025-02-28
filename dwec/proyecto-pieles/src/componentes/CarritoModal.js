@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, ListGroup, ListGroupItem, Form, FormGroup, Label, Input, Card, CardTitle, CardText, CardBody } from 'reactstrap';
+import { FaShoppingCart } from 'react-icons/fa';
 
 const CarritoModal = ({ isOpen, toggle, carrito, modificar, guardarPedido }) => {
     const [pedidoData, setPedidoData] = useState({
@@ -16,10 +17,10 @@ const CarritoModal = ({ isOpen, toggle, carrito, modificar, guardarPedido }) => 
 
     return (
         <Modal isOpen={isOpen} toggle={toggle}>
-            <ModalHeader toggle={toggle}>🛒 Carrito de Compras</ModalHeader>
+            <ModalHeader toggle={toggle}><FaShoppingCart size={20} /> Shopping Cart</ModalHeader>
             <ModalBody>
                 {carrito.length === 0 ? (
-                    <p>Tu carrito está vacío.</p>
+                    <p>Your cart is empty.</p>
                 ) : (
                     <ListGroup>
                         {carrito.map((producto, index) => (
@@ -48,25 +49,25 @@ const CarritoModal = ({ isOpen, toggle, carrito, modificar, guardarPedido }) => 
 
                 <Card className="mt-3">
                     <CardBody>
-                        <CardTitle tag="h5">Información de Envío</CardTitle>
+                        <CardTitle tag="h5">Shipping Information</CardTitle>
                         <Form>
                             <FormGroup>
-                                <Label for="nombre">Nombre</Label>
+                                <Label for="nombre">Name</Label>
                                 <Input
                                     id="nombre"
                                     name="nombre"
-                                    placeholder="Ingresa tu nombre"
+                                    placeholder="Enter your name"
                                     type="text"
                                     value={pedidoData.nombre}
                                     onChange={handleInputChange}
                                 />
                             </FormGroup>
                             <FormGroup>
-                                <Label for="direccion">Dirección</Label>
+                                <Label for="direccion">Address</Label>
                                 <Input
                                     id="direccion"
                                     name="direccion"
-                                    placeholder="Ingresa tu dirección"
+                                    placeholder="Enter your address"
                                     type="text"
                                     value={pedidoData.direccion}
                                     onChange={handleInputChange}
@@ -78,9 +79,9 @@ const CarritoModal = ({ isOpen, toggle, carrito, modificar, guardarPedido }) => 
 
             </ModalBody>
             <ModalFooter>
-                <Button color="secondary" onClick={toggle}>Cerrar</Button>
+                <Button color="secondary" onClick={toggle}>Close</Button>
                 {carrito.length > 0 && (
-                    <Button color="warning" onClick={() => guardarPedido(pedidoData)}>Pagar</Button>
+                    <Button color="warning" onClick={() => guardarPedido(pedidoData)}>Checkout</Button>
                 )}
             </ModalFooter>
         </Modal>

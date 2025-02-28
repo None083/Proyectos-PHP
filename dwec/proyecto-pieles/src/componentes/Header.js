@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink, Collapse, NavbarToggler, DropdownToggle, DropdownMenu, DropdownItem, Dropdown, Button } from 'reactstrap';
-import { FaBox, FaBoxOpen, FaShoppingCart } from 'react-icons/fa';
+import { FaBox, FaBoxOpen, FaShoppingCart, FaUser } from 'react-icons/fa';
 
 const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito, toggleModalCarrito, toggleModalPedidos }) => {
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
@@ -80,7 +80,7 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
                         <NavLink href="#" style={{ color: '#f2dcb8' }}><strong>ABOUT</strong></NavLink>
                     </NavItem>
                     <NavItem className="mx-2">
-                        <NavLink href="#" style={{ color: '#f2dcb8' }} onClick={() => window.location.reload()}><strong>LOG OUT</strong></NavLink>
+                        <NavLink href="#" style={{ color: '#f2dcb8' }} onClick={() => window.location.reload()}><FaUser size={15} /> Log out</NavLink>
                     </NavItem>
                 </Nav>
             </Collapse>

@@ -24,7 +24,7 @@ const Login = ({ onLogin }) => {
                 <div className="d-flex justify-content-center w-100">
                     <Card className="shadow p-4" style={{ width: '22rem', borderRadius: '12px' }}>
                         <CardBody>
-                            <CardTitle tag="h3" className="text-center mb-4" style={{color: "#191000"}}>Log In</CardTitle>
+                            <CardTitle tag="h3" className="text-center mb-4" style={{color: "#191000"}}>Wellcome back</CardTitle>
                             {mensaje && <Alert color="danger" className="text-center">{mensaje}</Alert>}
                             <Form onSubmit={handleSubmit}>
                                 <FormGroup>
@@ -33,7 +33,7 @@ const Login = ({ onLogin }) => {
                                         type="text"
                                         name="usuario"
                                         id="usuario"
-                                        placeholder="Ingresa tu usuario"
+                                        placeholder="Enter your username"
                                         value={usuario}
                                         onChange={handleInputChange}
                                     />
@@ -44,13 +44,13 @@ const Login = ({ onLogin }) => {
                                         type="password"
                                         name="password"
                                         id="password"
-                                        placeholder="Ingresa tu contraseña"
+                                        placeholder="Enter your password"
                                         value={password}
                                         onChange={handleInputChange}
                                     />
                                 </FormGroup>
                                 <Button type="submit" color="warning" className="w-100 mt-3" style={{ borderRadius: '8px' }}>
-                                    Entrar
+                                    Log in
                                 </Button>
                             </Form>
                         </CardBody>
