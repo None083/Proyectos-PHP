@@ -124,16 +124,16 @@ function cargar_formulario_agregar() {
             }
             else {
                 html_form_agregar += "<form id='form_agregar' action='#' method='post'>";
-                html_form_agregar += "<label for='referencia'>Referencia: </label>";
-                html_form_agregar += "<input type='text' id='referencia' name='referencia' required><br>";
-                html_form_agregar += "<label for='titulo'>Título:</label>";
-                html_form_agregar += "<input type='text' id='titulo' name='titulo' required><br>";
-                html_form_agregar += "<label for='autor'>Autor: </label>";
-                html_form_agregar += "<input type='text' id='autor' name='autor' required><br>";
-                html_form_agregar += "<label for='descripcion'>Descripción: </label>";
-                html_form_agregar += "<input type='text' id='descripcion' name='descripcion' required><br>";
-                html_form_agregar += "<label for='precio'>Precio: </label>";
-                html_form_agregar += "<input type='number' id='precio' name='precio' required><br>";
+                html_form_agregar += "<p><label for='referencia'>Referencia: </label>";
+                html_form_agregar += "<input type='text' id='referencia' name='referencia' required></p>";
+                html_form_agregar += "<p><label for='titulo'>Título:</label>";
+                html_form_agregar += "<input type='text' id='titulo' name='titulo' required></p>";
+                html_form_agregar += "<p><label for='autor'>Autor: </label>";
+                html_form_agregar += "<input type='text' id='autor' name='autor' required></p>";
+                html_form_agregar += "<p><label for='descripcion'>Descripción: </label>";
+                html_form_agregar += "<input type='text' id='descripcion' name='descripcion' required></p>";
+                html_form_agregar += "<p><label for='precio'>Precio: </label>";
+                html_form_agregar += "<input type='number' id='precio' name='precio' required></p>";
                 html_form_agregar += "<input type='submit' value='Agregar'>";
                 html_form_agregar += "</form>";
                 $('#respuestas').html(html_form_agregar);

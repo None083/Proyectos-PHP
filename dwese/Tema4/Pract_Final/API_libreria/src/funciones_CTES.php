@@ -8,8 +8,10 @@ require 'Firebase/autoload.php';
 define("PASSWORD_API", "Una_clave_para_usar_para_encriptar");
 define("TIEMPO_MINUTOS_API", 60);
 define("SERVIDOR_BD", "localhost");
-define("USUARIO_BD", "jose");
-define("CLAVE_BD", "josefa");
+//define("USUARIO_BD", "jose");
+//define("CLAVE_BD", "josefa");
+define("USUARIO_BD", "root");
+define("CLAVE_BD", "");
 define("NOMBRE_BD", "bd_libreria_exam");
 
 
@@ -161,13 +163,13 @@ function crear_libro($datos_libro)
     }
 
     try {
-        $consulta = "insert into libros values(?,?,?,?,?)";
+        $consulta="insert into libros(referencia,titulo,autor,descripcion,precio) values(?,?,?,?,?)";
         $sentencia = $conexion->prepare($consulta);
         $sentencia->execute($datos_libro);
     } catch (PDOException $e) {
         $sentencia = null;
         $conexion = null;
-        $respuesta["error"] = "No he podido realizarse la consulta: " . $e->getMessage();
+        $respuesta["error"] = "No ha podido realizarse la consulta: " . $e->getMessage();
         return $respuesta;
     }
 
@@ -179,4 +181,34 @@ function crear_libro($datos_libro)
     $sentencia = null;
     $conexion = null;
     return $respuesta;
+}
+
+function actualizar_libro($datos)
+{
+    try{
+        $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")); 
+    }
+    catch(PDOException $e){
+        $respuesta["error_bd"]="Imposible conectar a la BD. Error:".$e->getMessage();
+        return $respuesta;
+    }
+
+    try{
+       
+        $consulta="update libros set titulo=?, autor=?, descripcion=?, precio=? where referencia=?";
+        $sentencia=$conexion->prepare($consulta);
+        $sentencia->execute($datos);
+        $respuesta["mensaje"]="Libro editado con éxito";
+        $sentencia=null;
+        $conexion=null;
+        return $respuesta;
+        
+    }
+    catch(PDOException $e){
+        $sentencia=null;
+        $conexion=null;
+        $respuesta["error_bd"]="Error en la consultaAQUI. Error:".$e->getMessage();
+        return $respuesta;
+    }
+
 }

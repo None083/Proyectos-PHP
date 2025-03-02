@@ -16,12 +16,12 @@ const PedidosModal = ({ isOpen, toggle, pedidos }) => {
             <strong>Order {index + 1} - {pedido.fecha}</strong>
             <p><strong>Name:</strong> {pedido.envio.nombre}</p>
             <p><strong>Address:</strong> {pedido.envio.direccion}</p>
-            <ul>
+            <ul className='mb-3'>
             {pedido.productos.map((prod, i) => (
               <li key={i}>{prod.nombre} ({prod.cantidad}x) - €{(prod.precio * prod.cantidad).toFixed(2)}</li>
             ))}
             </ul>
-            <strong>Total: €{pedido.total.toFixed(2)}</strong>
+            <strong >Total: €{pedido.total.toFixed(2)}</strong>
           </ListGroupItem>
           ))}
         </ListGroup>

@@ -2,7 +2,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from 'react';
 import axios from 'axios';
-import { PHPLOGIN } from './componentes/datos';
+import { PHPLOGIN, PHPGUARDARPEDIDO } from './componentes/datos';
 import md5 from 'md5';
 import Header from './componentes/Header';
 import Footer from './componentes/Footer';
@@ -59,12 +59,15 @@ class App extends Component {
   toggleNavbar = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
-  
+
   toggleModalCarrito = () => {
     this.setState(prevState => ({ modalOpenCarrito: !prevState.modalOpenCarrito }));
   };
 
   toggleModalPedidos = () => {
+    if (!this.state.modalOpenPedidos) {
+      this.fetchPedidos(); // Cargar pedidos antes de abrir el modal
+    }
     this.setState(prevState => ({ modalOpenPedidos: !prevState.modalOpenPedidos }));
   };
 
@@ -72,20 +75,20 @@ class App extends Component {
     this.setState(prevState => {
       let nuevoCarrito = prevState.carrito.map(item => {
         if (item.nombre === producto.nombre) {
-          return { ...item, cantidad: item.cantidad + cantidad }; 
+          return { ...item, cantidad: item.cantidad + cantidad };
         }
         return item;
       });
-  
+
       // Solo agrega el producto si no existe en el carrito
       if (!nuevoCarrito.some(item => item.nombre === producto.nombre)) {
         nuevoCarrito.push({ ...producto, cantidad });
       }
-  
+
       return { carrito: nuevoCarrito };
     });
   };
-  
+
 
   seleccionarCategoria = (categoria) => {
     this.setState({ categoriaSeleccionada: categoria.toUpperCase() });
@@ -94,41 +97,61 @@ class App extends Component {
   modificar = (productoNombre, cantidad) => {
     this.setState(prevState => {
       let nuevoCarrito = prevState.carrito.map(item => {
-        if (item.nombre === productoNombre) { 
+        if (item.nombre === productoNombre) {
           return { ...item, cantidad: item.cantidad + cantidad };
         }
         return item;
       });
-  
+
       // Elimina el producto si la cantidad llega a 0
       nuevoCarrito = nuevoCarrito.filter(item => item.cantidad > 0);
-  
+
       return { carrito: nuevoCarrito };
     });
   };
 
+
+  // Función para guardar pedido en el servidor
   guardarPedido = (pedidoData) => {
     if (this.state.carrito.length === 0 || !pedidoData.nombre || !pedidoData.direccion) {
       alert("Por favor, completa la información de envío.");
       return;
     }
-  
+
     const nuevoPedido = {
-      id: Date.now(), // ID único basado en la fecha actual
-      productos: [...this.state.carrito], // Copia los productos del carrito
+      id: Date.now(),
+      productos: [...this.state.carrito],
       total: this.state.carrito.reduce((total, item) => total + item.precio * item.cantidad, 0),
       fecha: new Date().toLocaleString(),
-      envio: pedidoData // Guarda la información del envío dentro del objeto pedido
+      envio: pedidoData
     };
-  
-    this.setState(prevState => ({
-      pedidos: [...prevState.pedidos, nuevoPedido], // Agrega el nuevo pedido
-      carrito: [], // Vacía el carrito
-      modalOpenCarrito: false // Cierra el modal
-    }));
+
+    axios.post(PHPGUARDARPEDIDO, JSON.stringify(nuevoPedido))
+      .then(res => {
+        if (res.data.mensaje === "Pedido guardado correctamente") {
+          this.setState({ carrito: [], modalOpenCarrito: false });
+        }
+        alert(res.data.mensaje);
+      })
+      .catch(err => {
+        alert("Error en la conexión con el servidor");
+      });
   };
-  
-  
+
+  // Nueva función para obtener pedidos del servidor
+  fetchPedidos = () => {
+    axios.get(PHPGUARDARPEDIDO)
+      .then(response => {
+        if (response.data.pedidos) {
+          this.setState({ pedidos: response.data.pedidos });
+        } else {
+          this.setState({ pedidos: [] });
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener los pedidos:', error);
+      });
+  };
 
   render() {
     if (!this.state.isAuthenticated) {
@@ -159,14 +182,14 @@ class App extends Component {
           isOpen={this.state.modalOpenCarrito}
           toggle={this.toggleModalCarrito}
           carrito={this.state.carrito}
-          modificar={this.modificar} 
+          modificar={this.modificar}
           guardarPedido={this.guardarPedido} />
 
         <PedidosModal
           isOpen={this.state.modalOpenPedidos}
           toggle={this.toggleModalPedidos}
-          pedidos={this.state.pedidos}/> 
-          
+          pedidos={this.state.pedidos} />
+
         <Footer />
       </div>
     );

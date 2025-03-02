@@ -49,11 +49,7 @@ $app->get('/obtenerLibro/{referencia}', function ($request) {
     }
 });
 
-/* 
-Crear un nuevo libro mediante una petición POST en la que aportaremos los datos mediante un array asociativo con los siguientes índices: “referencia”, “titulo”, “autor”, “descripción” y “precio”. En caso de error por la BD el JSON devuelto será: { “error” : “Error….”}, en otro caso el JSON será: { “mensaje” : “Libro insertado correctamente en la BD”}
-URL de la petición: http://localhost/Proyectos/Examen_SW_24_25/API_libreria/crearLibro
-debe estar protegido
-*/
+
 $app->post('/crearLibro', function ($request) {
     $test = validateToken();
     if (is_array($test)) {
@@ -66,6 +62,29 @@ $app->post('/crearLibro', function ($request) {
         echo json_encode(crear_libro($datos_libro));
     } else {
         echo json_encode(array("no_auth" => "No tienes permiso para usar el servicio"));
+    }
+});
+
+$app->put("/actualizarLibro/{referencia}",function($request){
+    session_id($request->getParam("api_key"));
+    session_start();
+    if(isset($_SESSION["usuario"]) && $_SESSION["tipo"]=="admin")
+    {
+        
+        $datos[]=$request->getParam("titulo");
+        $datos[]=$request->getParam("autor");
+        $datos[]=$request->getParam("descripcion");
+        $datos[]=$request->getParam("precio");
+        $datos[]=$request->getAttribute("referencia");
+     
+
+        echo json_encode( actualizar_libro($datos));
+    }
+    else
+    {
+        session_destroy();
+        $respuesta["no_auth"]="No tienes permiso para usar este servicio";
+        echo json_encode($respuesta);
     }
 });
 
