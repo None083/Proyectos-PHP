@@ -47,7 +47,7 @@ function cargar_libros_admin() {
                     html_libros += "<tr>";
                     html_libros += "<td>" + tupla["referencia"] + "</td>";
                     html_libros += "<td><button class='enlace' onclick='mostrar_detalles(" + tupla["referencia"] + ")';'>" + tupla["titulo"] + "</button></td>";
-                    html_libros += "<td><button class='enlace' onclick='borrar_libro("+ tupla["referencia"] +");'>Borrar</button> - <button class='enlace' onclick='return false;'>Editar</button></td>";
+                    html_libros += "<td><button class='enlace' onclick='borrar_libro(" + tupla["referencia"] + ");'>Borrar</button> - <button class='enlace' onclick='return false;'>Editar</button></td>";
                     html_libros += "</tr>";
                 });
                 $('#libros').html(html_libros);
@@ -61,7 +61,7 @@ function cargar_libros_admin() {
 }
 
 function cargar_formulario_agregar() {
-    let html_form_agregar = "<h2>Agregar un nuevo Libro owo</h2>";
+    let html_form_agregar = "<h2>Agregar un nuevo Libro</h2>";
     html_form_agregar += "<form id='form_agregar' action='#' method='post'>";
     html_form_agregar += "<p><label for='referencia'>Referencia: </label>";
     html_form_agregar += "<input type='text' id='referencia' name='referencia' required></p>";
@@ -89,32 +89,58 @@ function cargar_formulario_agregar() {
             precio: $('#precio').val()
         };
 
-        $.ajax({
-            url: DIR_API + "/crearLibro",
-            type: "POST",
-            dataType: "json",
-            data: formData,
-            headers: {
-                Authorization: "Bearer " + localStorage.token
+        // Verificar si el libro ya existe antes de enviarlo
+        revisar_libro_repetido(formData.referencia, function (existe) {
+            if (existe) {
+                $('#errores').html("Error: Ya existe un libro con esta referencia.");
+            } else {
+                // Si no existe, proceder con la inserción
+                $.ajax({
+                    url: DIR_API + "/crearLibro",
+                    type: "POST",
+                    dataType: "json",
+                    data: formData,
+                    headers: {
+                        Authorization: "Bearer " + localStorage.token
+                    }
+                })
+                    .done(function (data) {
+                        if (data.error) {
+                            $('#errores').html(data.error);
+                            $('#principal').html("");
+                            localStorage.clear();
+                        } else {
+                            cargar_libros_admin();
+                            $('#respuestas').html('Libro agregado correctamente :)');
+                            $('#form_agregar')[0].reset(); // Limpiar el formulario
+                        }
+                    })
+                    .fail(function (a, b) {
+                        $('#errores').html(error_ajax_jquery(a, b));
+                        $('#principal').html("");
+                    });
             }
-        })
-            .done(function (data) {
-                if (data.error) {
-                    $('#errores').html(data.error);
-                    $('#principal').html("");
-                    localStorage.clear();
-                } else {
-                    //alert('Libro agregado correctamente');
-                    $('#respuestas').html('Libro agregado correctamente :)');
-                    $('#form_agregar')[0].reset(); // Limpiar el formulario
-                }
-            })
-            .fail(function (a, b) {
-                $('#errores').html(error_ajax_jquery(a, b));
-                $('#principal').html("");
-            });
+        });
     });
 }
+
+// Función para verificar si un libro ya está registrado
+function revisar_libro_repetido(referencia, callback) {
+    $.ajax({
+        url: DIR_API + "/listarLibros",
+        type: "GET",
+        dataType: "json",
+        headers: { Authorization: "Bearer " + localStorage.token }
+    })
+        .done(function (data) {
+            let existe = data.some(libro => libro.referencia === referencia);
+            callback(existe);
+        })
+        .fail(function () {
+            callback(false); // En caso de error, asumir que no existe
+        });
+}
+
 
 function mostrar_detalles(referencia) {
 
@@ -170,26 +196,36 @@ function mostrar_detalles(referencia) {
 
 }
 
-function borrar_libro(cod) {
-    $.ajax({
-        url: DIR_API + "/borrarLibro/" + cod,
-        dataType: "json",
-        type: "DELETE"
-    })
-        .done(function (data) {
-            if (data.error) {
-                $("#errores").html(data.error);
-                $("#respuestas").html("");
-                $("#productos").html("");
-            }
-            else {
-                $("#respuestas").html("<p class='txt_centrado mensaje'>¡¡ Libro borrado con éxito !!"+ cod +"</p>");
-                obtener_productos();
-            }
-        })
-        .fail(function (a, b) {
-            $("#errores").html(error_ajax_jquery(a, b));
-            $("#respuestas").html("");
-            $("#productos").html("");
-        });
+function borrar_libro(referencia) {
+    if (((new Date() / 1000) - localStorage.ultm_accion) < MINUTOS * 60) {
+        if (confirm("¿Está seguro de que desea borrar el libro " + referencia + "?")) {
+            $.ajax({
+                url: DIR_API + "/borrarLibro/" + referencia,
+                type: "DELETE",
+                dataType: "json",
+                headers: {
+                    Authorization: "Bearer " + localStorage.token
+                }
+            })
+                .done(function (data) {
+                    if (data.error) {
+                        $('#errores').html(data.error);
+                        $('#principal').html("");
+                        localStorage.clear();
+                    } else {
+                        //alert('Libro borrado correctamente');
+                        cargar_libros_admin();
+                    }
+                })
+                .fail(function (a, b) {
+                    $('#errores').html(error_ajax_jquery(a, b));
+                    $('#principal').html("");
+                    localStorage.clear();
+                });
+        }
+    }
+    else {
+        localStorage.clear();
+        cargar_vista_login("Su tiempo de sesión ha expirado");
+    }
 }
