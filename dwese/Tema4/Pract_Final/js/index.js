@@ -47,7 +47,7 @@ function cargar_libros_admin() {
                     html_libros += "<tr>";
                     html_libros += "<td>" + tupla["referencia"] + "</td>";
                     html_libros += "<td><button class='enlace' onclick='mostrar_detalles(" + tupla["referencia"] + ")';'>" + tupla["titulo"] + "</button></td>";
-                    html_libros += "<td><button class='enlace' onclick='borrar_libro(" + tupla["referencia"] + ");'>Borrar</button> - <button class='enlace' onclick='return false;'>Editar</button></td>";
+                    html_libros += "<td><button class='enlace' onclick='montar_vista_borrar(" + tupla["referencia"] + ");'>Borrar</button> - <button class='enlace' onclick='cargar_formulario_editar(" + tupla["referencia"] + ");'>Editar</button></td>";
                     html_libros += "</tr>";
                 });
                 $('#libros').html(html_libros);
@@ -82,65 +82,58 @@ function cargar_formulario_agregar() {
         event.preventDefault(); // Prevenir el envío del formulario por defecto
 
         const formData = {
-            referencia: $('#referencia').val(),
-            titulo: $('#titulo').val(),
-            autor: $('#autor').val(),
-            descripcion: $('#descripcion').val(),
-            precio: $('#precio').val()
+            referencia: $('#referencia').val().trim(),
+            titulo: $('#titulo').val().trim(),
+            autor: $('#autor').val().trim(),
+            descripcion: $('#descripcion').val().trim(),
+            precio: $('#precio').val().trim()
         };
 
+        if (!formData.referencia) {
+            $('#errores').html("Error: La referencia no puede estar vacía.<br/><button onclick='borrar_errores()'>Aceptar</button>");
+            return;
+        }
+
         // Verificar si el libro ya existe antes de enviarlo
-        revisar_libro_repetido(formData.referencia, function (existe) {
-            if (existe) {
-                $('#errores').html("Error: Ya existe un libro con esta referencia.");
-            } else {
-                // Si no existe, proceder con la inserción
-                $.ajax({
-                    url: DIR_API + "/crearLibro",
-                    type: "POST",
-                    dataType: "json",
-                    data: formData,
-                    headers: {
-                        Authorization: "Bearer " + localStorage.token
-                    }
-                })
-                    .done(function (data) {
-                        if (data.error) {
-                            $('#errores').html(data.error);
-                            $('#principal').html("");
-                            localStorage.clear();
-                        } else {
-                            cargar_libros_admin();
-                            $('#respuestas').html('Libro agregado correctamente :)');
-                            $('#form_agregar')[0].reset(); // Limpiar el formulario
+        $.ajax({
+            url: DIR_API + "/repetido/libros/referencia/" + formData.referencia,
+            type: "GET",
+            dataType: "json",
+            headers: { Authorization: "Bearer " + localStorage.token }
+        })
+            .done(function (data) {
+                if (data.repetido) {
+                    $('#errores').html("Error: Ya existe un libro con esta referencia.<br/><button onclick='borrar_errores()'>Aceptar</button>");
+                } else {
+                    // Si no existe, proceder con la inserción
+                    $.ajax({
+                        url: DIR_API + "/crearLibro",
+                        type: "POST",
+                        dataType: "json",
+                        data: formData,
+                        headers: {
+                            Authorization: "Bearer " + localStorage.token
                         }
                     })
-                    .fail(function (a, b) {
-                        $('#errores').html(error_ajax_jquery(a, b));
-                        $('#principal').html("");
-                    });
-            }
-        });
+                        .done(function (data) {
+                            if (data.error) {
+                                $('#errores').html(data.error);
+                            } else {
+                                cargar_libros_admin();
+                                $('#respuestas').html("<p class='mensaje'>¡¡ Libro agregado con éxito !!</p><p><button onclick='cargar_formulario_agregar()'>Aceptar</button></p>");
+                                $('#form_agregar')[0].reset(); // Limpiar el formulario
+                            }
+                        })
+                        .fail(function (a, b) {
+                            $('#errores').html("Error al agregar el libro: " + error_ajax_jquery(a, b));
+                        });
+                }
+            })
+            .fail(function () {
+                $('#errores').html("Error al verificar si el libro ya existe.<br/><button onclick='borrar_errores()'>Aceptar</button>");
+            });
     });
 }
-
-// Función para verificar si un libro ya está registrado
-function revisar_libro_repetido(referencia, callback) {
-    $.ajax({
-        url: DIR_API + "/listarLibros",
-        type: "GET",
-        dataType: "json",
-        headers: { Authorization: "Bearer " + localStorage.token }
-    })
-        .done(function (data) {
-            let existe = data.some(libro => libro.referencia === referencia);
-            callback(existe);
-        })
-        .fail(function () {
-            callback(false); // En caso de error, asumir que no existe
-        });
-}
-
 
 function mostrar_detalles(referencia) {
 
@@ -196,36 +189,155 @@ function mostrar_detalles(referencia) {
 
 }
 
-function borrar_libro(referencia) {
+function borrar_respuestas() {
+    $("#respuestas").html("");
+}
+
+function borrar_errores() {
+    $("#errores").html("");
+}
+
+function montar_vista_borrar(referencia) {
     if (((new Date() / 1000) - localStorage.ultm_accion) < MINUTOS * 60) {
-        if (confirm("¿Está seguro de que desea borrar el libro " + referencia + "?")) {
-            $.ajax({
-                url: DIR_API + "/borrarLibro/" + referencia,
-                type: "DELETE",
-                dataType: "json",
-                headers: {
-                    Authorization: "Bearer " + localStorage.token
-                }
-            })
-                .done(function (data) {
-                    if (data.error) {
-                        $('#errores').html(data.error);
-                        $('#principal').html("");
-                        localStorage.clear();
-                    } else {
-                        //alert('Libro borrado correctamente');
-                        cargar_libros_admin();
-                    }
-                })
-                .fail(function (a, b) {
-                    $('#errores').html(error_ajax_jquery(a, b));
-                    $('#principal').html("");
-                    localStorage.clear();
-                });
-        }
+        localStorage.setItem("ultm_accion", (new Date() / 1000));
+
+        let html_vista_borrar = "<p class='txt_centrado'>Se dispone usted a borrar el libro: <strong>" + referencia + "</strong></p>";
+        html_vista_borrar += "<p class='txt_centrado'>¿Estás seguro?</p>";
+        html_vista_borrar += "<p class='txt_centrado'><button onclick='borrar_respuestas()'>Cancelar</button> <button onclick='borrar_libro(\"" + referencia + "\")'>Continuar</button></p>";
+        $("#respuestas").html(html_vista_borrar);
     }
     else {
         localStorage.clear();
         cargar_vista_login("Su tiempo de sesión ha expirado");
     }
+}
+
+function borrar_libro(referencia) {
+    if (((new Date() / 1000) - localStorage.ultm_accion) < MINUTOS * 60) {
+        localStorage.setItem("ultm_accion", (new Date() / 1000));
+        $.ajax({
+            url: DIR_API + "/borrarLibro/" + referencia,
+            dataType: "json",
+            type: "DELETE",
+            headers: { Authorization: "Bearer " + localStorage.token }
+        })
+
+            .done(function (data) {
+                if (data.error) {
+                    $("#errores").html(data.error);
+                    $("#respuestas").html("");
+                    $("#principal").html("");
+                }
+                else if (data.no_auth) {
+                    localStorage.clear();
+                    cargar_vista_login("El tiempo de sesión de la API ha expirado.");
+                }
+                else if (data.mensaje_baneo) {
+                    localStorage.clear();
+                    cargar_vista_login("Usted ya no se encuentra registrado en la BD");
+                }
+                else {
+                    $("#respuestas").html("<p class='mensaje'>¡¡ Libro borrado con éxito !!</p><p><button onclick='cargar_formulario_agregar()'>Aceptar</button></p>");
+                    cargar_libros_admin();
+                }
+            })
+            .fail(function (a, b) {
+                $("#errores").html(error_ajax_jquery(a, b));
+                $("#respuestas").html("");
+                $("#principal").html("");
+            });
+    }
+    else {
+        localStorage.clear();
+        cargar_vista_login("Su tiempo de sesión ha expirado");
+    }
+}
+
+function cargar_formulario_editar(referencia) {
+    $.ajax({
+        url: DIR_API + "/obtenerLibro/" + referencia,
+        type: "GET",
+        dataType: "json",
+        headers: { Authorization: "Bearer " + localStorage.token }
+    })
+    .done(function (data) {
+        if (data.error) {
+            $('#errores').html(data.error);
+            return;
+        }
+
+        let libro = data.libro;
+        let html_form_editar = "<h2>Editar Libro</h2>";
+        html_form_editar += "<form id='form_editar' action='#' method='post'>";
+        html_form_editar += "<p><label for='referencia'>Referencia: </label>";
+        html_form_editar += "<input type='text' id='referencia' name='referencia' value='" + libro.referencia + "' readonly required></p>";
+        html_form_editar += "<p><label for='titulo'>Título:</label>";
+        html_form_editar += "<input type='text' id='titulo' name='titulo' value='" + libro.titulo + "' required></p>";
+        html_form_editar += "<p><label for='autor'>Autor: </label>";
+        html_form_editar += "<input type='text' id='autor' name='autor' value='" + libro.autor + "' required></p>";
+        html_form_editar += "<p><label for='descripcion'>Descripción: </label>";
+        html_form_editar += "<input type='text' id='descripcion' name='descripcion' value='" + libro.descripcion + "' required></p>";
+        html_form_editar += "<p><label for='precio'>Precio: </label>";
+        html_form_editar += "<input type='number' id='precio' name='precio' value='" + libro.precio + "' required></p>";
+        html_form_editar += "<input type='submit' value='Actualizar'>";
+        html_form_editar += "</form>";
+        $('#respuestas').html(html_form_editar);
+
+        // Manejar el envío del formulario
+        $('#form_editar').on('submit', function (event) {
+            event.preventDefault();
+
+            const formData = {
+                referencia: $('#referencia').val().trim(),
+                titulo: $('#titulo').val().trim(),
+                autor: $('#autor').val().trim(),
+                descripcion: $('#descripcion').val().trim(),
+                precio: $('#precio').val().trim()
+            };
+
+            if (!formData.titulo) {
+                $('#errores').html("Error: El título no puede estar vacío.<br/><button onclick='borrar_errores()'>Aceptar</button>");
+                return;
+            }
+
+            // Verificar si el libro con la misma referencia y un título diferente ya existe
+            $.ajax({
+                url: `${DIR_API}/repetido/libros/titulo/${formData.titulo}/referencia/${formData.referencia}`,
+                type: "GET",
+                dataType: "json",
+                headers: { Authorization: "Bearer " + localStorage.token }
+            })
+            .done(function (data) {
+                if (data.repetido) {
+                    $('#errores').html("Error: Ya existe otro libro con este título.<br/><button onclick='borrar_errores()'>Aceptar</button>");
+                } else {
+                    // Si no hay repetición, actualizar el libro
+                    $.ajax({
+                        url: `${DIR_API}/actualizarLibro/${formData.referencia}`,
+                        type: "PUT",
+                        dataType: "json",
+                        data: formData,
+                        headers: { Authorization: "Bearer " + localStorage.token }
+                    })
+                    .done(function (data) {
+                        if (data.error) {
+                            $('#errores').html(data.error);
+                        } else {
+                            cargar_libros_admin();
+                            $('#respuestas').html("<p class='mensaje'>¡¡ Libro editado con éxito !!</p><p><button onclick='cargar_formulario_agregar()'>Aceptar</button></p>");
+                        }
+                    })
+                    .fail(function (a, b) {
+                        $('#errores').html("Error al actualizar el libro: " + error_ajax_jquery(a, b));
+                    });
+                }
+            })
+            .fail(function () {
+                $('#errores').html("Error al verificar si el título ya existe.<br/><button onclick='borrar_errores()'>Aceptar</button>");
+            });
+        });
+    })
+    .fail(function (a, b) {
+        $('#errores').html(error_ajax_jquery(a, b));
+    });
 }

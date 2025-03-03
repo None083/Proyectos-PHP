@@ -159,22 +159,17 @@ function obtener_libro($referencia)
 
 function crear_libro($datos_libro)
 {
-    // Comprobar si la referencia ya existe
-    $repetido = repetido_insertando("libros", "referencia", end($datos_libro));
-
-    if ($repetido["error"]) {
-        return ["error" => $repetido["error"]];
-    }
-
-    if ($repetido["repetido"]) {
-        return ["error" => "El libro con referencia " . $datos_libro[0] . " ya existe en la base de datos."];
-    }
-
     // Conexión a la BD
     try {
         $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
         return ["error" => "No se pudo conectar a la base de datos: " . $e->getMessage()];
+    }
+
+    // Verificar si la referencia ya existe
+    $verificar = repetido_insertando("libros", "referencia", $datos_libro[0]);
+    if ($verificar["repetido"]) {
+        return ["error" => "Error: Ya existe un libro con esta referencia."];
     }
 
     // Insertar el libro
@@ -186,6 +181,8 @@ function crear_libro($datos_libro)
         return ["error" => "Error al insertar el libro: " . $e->getMessage()];
     }
 
+    $sentencia = null;
+    $conexion = null;
     return ["mensaje" => "Libro agregado correctamente."];
 }
 
