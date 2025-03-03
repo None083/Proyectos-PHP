@@ -40,21 +40,28 @@ class App extends Component {
   };
 
   logIn = (usuario, password) => {
+    console.log("Intentando iniciar sesión con:", usuario, password);
+
     axios.post(PHPLOGIN, JSON.stringify({
       usuario: usuario,
       password: md5(password)
     }))
       .then(res => {
-        if (res.data.mensaje === "Acceso correcto") {
+        console.log("Respuesta del servidor:", res.data);
+
+        if (res.data.mensaje === "Acceso correcto" || res.data.mensaje === "Usuario creado correctamente") {
           this.setState({ isAuthenticated: true });
         } else {
           this.setState({ mensaje: res.data.mensaje });
         }
       })
       .catch(err => {
+        console.error("Error en la conexión al servidor:", err);
         this.setState({ mensaje: "Error en la conexión al servidor" });
       });
   };
+
+
 
   toggleNavbar = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
@@ -113,6 +120,7 @@ class App extends Component {
 
   // Función para guardar pedido en el servidor
   guardarPedido = (pedidoData) => {
+    
     if (this.state.carrito.length === 0 || !pedidoData.nombre || !pedidoData.direccion) {
       alert("Por favor, completa la información de envío.");
       return;
@@ -126,12 +134,19 @@ class App extends Component {
       envio: pedidoData
     };
 
+    console.log("Pedido enviado:", JSON.stringify(nuevoPedido, null, 2));
+
+
     axios.post(PHPGUARDARPEDIDO, JSON.stringify(nuevoPedido))
       .then(res => {
+        console.log("Respuesta del servidor:", res.data);
         if (res.data.mensaje === "Pedido guardado correctamente") {
           this.setState({ carrito: [], modalOpenCarrito: false });
+        } else {
+          
+          alert(res.data.mensaje);
         }
-        alert(res.data.mensaje);
+        console.log(nuevoPedido);
       })
       .catch(err => {
         alert("Error en la conexión con el servidor");

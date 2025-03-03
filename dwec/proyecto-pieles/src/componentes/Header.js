@@ -34,7 +34,7 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
                     <NavItem className="mx-2">
                         <NavLink href="#" style={{ color: '#f2dcb8' }} ><strong>HOME</strong></NavLink>
                     </NavItem>
-                    
+
 
                     <NavItem className="mx-2 d-md-none">
                         <NavLink href="#" className="categories-button" onClick={toggleCategories} style={{ color: '#f2dcb8' }}>
@@ -92,7 +92,7 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
                 </Button>
                 <Button color="secondary" onClick={toggleModalPedidos} className="ms-2"><FaBoxOpen size={20} /></Button>
             </div>
-            
+
         </Navbar>
     );
 };

@@ -24,14 +24,14 @@ body {
   cursor: pointer;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1058px) {
   .categories-button {
     display: block;
   }
 
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1059px) {
   .categories-button {
     display: none;
   }
