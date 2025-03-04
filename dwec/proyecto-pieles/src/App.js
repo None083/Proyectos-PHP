@@ -23,7 +23,8 @@ class App extends Component {
       categoriaSeleccionada: null,
       isOpen: false,
       modalOpenCarrito: false,
-      modalOpenPedidos: false
+      modalOpenPedidos: false,
+      usuarioAutenticado: null
     };
   }
 
@@ -50,7 +51,13 @@ class App extends Component {
         console.log("Respuesta del servidor:", res.data);
 
         if (res.data.mensaje === "Acceso correcto" || res.data.mensaje === "Usuario creado correctamente") {
-          this.setState({ isAuthenticated: true });
+          this.setState({
+            isAuthenticated: true,
+            usuarioAutenticado: {
+              nombre: res.data.usuario,
+              tipo: res.data.tipo // Guardamos el tipo de usuario
+            }
+          });
         } else {
           this.setState({ mensaje: res.data.mensaje });
         }
@@ -63,6 +70,7 @@ class App extends Component {
 
 
 
+
   toggleNavbar = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
@@ -72,6 +80,7 @@ class App extends Component {
   };
 
   toggleModalPedidos = () => {
+    console.log("toggleModalPedidos");
     if (!this.state.modalOpenPedidos) {
       this.fetchPedidos(); // Cargar pedidos antes de abrir el modal
     }
@@ -120,7 +129,7 @@ class App extends Component {
 
   // Función para guardar pedido en el servidor
   guardarPedido = (pedidoData) => {
-    
+
     if (this.state.carrito.length === 0 || !pedidoData.nombre || !pedidoData.direccion) {
       alert("Por favor, completa la información de envío.");
       return;
@@ -143,7 +152,7 @@ class App extends Component {
         if (res.data.mensaje === "Pedido guardado correctamente") {
           this.setState({ carrito: [], modalOpenCarrito: false });
         } else {
-          
+
           alert(res.data.mensaje);
         }
         console.log(nuevoPedido);
@@ -186,7 +195,8 @@ class App extends Component {
           seleccionarCategoria={this.seleccionarCategoria}
           carrito={this.state.carrito}
           toggleModalCarrito={this.toggleModalCarrito}
-          toggleModalPedidos={this.toggleModalPedidos} />
+          toggleModalPedidos={this.toggleModalPedidos}
+          usuario={this.state.usuarioAutenticado} />
 
         <ShowProductos
           lista={productosFiltrados}

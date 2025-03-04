@@ -21,16 +21,20 @@ $usuario = $_POST["usuario"];
 $password = md5($_POST["password"]);
 
 if (isset($usuarios[$usuario])) {
-    if ($usuarios[$usuario] === $password) {
+    if ($usuarios[$usuario]["password"] === $password) {
         $respuesta["usuario"] = $usuario;
+        $respuesta["tipo"] = $usuarios[$usuario]["tipo"];
         $respuesta["mensaje"] = "Acceso correcto";
     } else {
         $respuesta["mensaje"] = "Contraseña incorrecta.";
     }
 } else {
-    $usuarios[$usuario] = $password;
+    // Si el usuario no existe, se registra con tipo 'normal'
+    $usuarios[$usuario] = ["password" => $password, "tipo" => "normal"];
     file_put_contents($usuariosFile, json_encode($usuarios, JSON_PRETTY_PRINT));
+
     $respuesta["usuario"] = $usuario;
+    $respuesta["tipo"] = "normal";
     $respuesta["mensaje"] = "Usuario creado correctamente.";
 }
 
