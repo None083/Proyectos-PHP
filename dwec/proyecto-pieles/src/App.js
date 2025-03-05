@@ -68,9 +68,6 @@ class App extends Component {
       });
   };
 
-
-
-
   toggleNavbar = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
@@ -208,13 +205,15 @@ class App extends Component {
           toggle={this.toggleModalCarrito}
           carrito={this.state.carrito}
           modificar={this.modificar}
-          guardarPedido={this.guardarPedido} />
+          guardarPedido={this.guardarPedido}
+          usuario={this.state.usuarioAutenticado}/>
 
         <PedidosModal
           isOpen={this.state.modalOpenPedidos}
           toggle={this.toggleModalPedidos}
-          pedidos={this.state.pedidos} />
-
+          pedidos={this.state.pedidos}
+          usuario={this.state.usuarioAutenticado} />
+          
         <Footer />
       </div>
     );

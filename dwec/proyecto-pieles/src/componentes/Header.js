@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink, Collapse, NavbarToggler, DropdownToggle, DropdownMenu, DropdownItem, Dropdown, Button } from 'reactstrap';
-import { FaBoxOpen, FaShoppingCart, FaUser } from 'react-icons/fa';
+import { FaBoxOpen, FaShoppingCart, FaUser, FaSignOutAlt } from 'react-icons/fa';
 
 const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito, toggleModalCarrito, toggleModalPedidos, usuario }) => {
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
@@ -29,6 +29,11 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
         };
     }, [userMenuOpen]);
 
+    const handleMenuOptionClick = (callback) => {
+        callback();
+        setUserMenuOpen(false);
+    };
+
     return (
         <Navbar className="d-flex justify-content-between align-items-center w-100" style={{ backgroundColor: '#191000' }} dark expand="md">
             <NavbarBrand href="/">
@@ -38,31 +43,28 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
             <div className="d-flex d-md-none">
                 <NavbarToggler onClick={toggleNavbar} />
                 <div className="position-relative">
-                    <Button color="success" onClick={toggleUserMenu} className="d-flex flex-row justify-content-center align-items-center ms-2">
-                        <FaUser className='me-1' size={20} /> {usuario.nombre}
+                    <Button color="success" onClick={toggleUserMenu} className="d-flex flex-row justify-content-center align-items-center ms-2 h-100">
+                        <FaUser className='me-1' size={13} /> {usuario.nombre}
                     </Button>
 
                     {/* Menú manual sin DropdownMenu */}
                     {userMenuOpen && (
-                        <div className="position-absolute bg-dark text-light p-2 rounded shadow mt-1 menu-container"
+                        <div className="position-absolute bg-light text-light p-2 rounded shadow mt-1 menu-container"
                             style={{ right: 0, minWidth: "150px", zIndex: 9999 }}>
-                            <button className="btn btn-dark w-100 text-start" onClick={toggleModalPedidos}>
-                                My Orders
+                            <button className="btn btn-light w-80 text-start" onClick={() => handleMenuOptionClick(toggleModalPedidos)}>
+                                My Orders <FaBoxOpen className='mx-1' size={15} />
                             </button>
-                            <hr className="text-light" />
-                            <a href="/logout" className="btn btn-dark w-100 text-start">
-                                Logout
+                            <hr className="text-dark" />
+                            <a href="/logout" className="btn btn-light w-80 text-start">
+                                Logout <FaSignOutAlt className='mx-1' size={15} />
                             </a>
                         </div>
                     )}
 
                 </div>
-                <Button color="warning" onClick={toggleModalCarrito} className="ms-2">
-                    <FaShoppingCart size={20} /> {carrito.reduce((total, item) => total + item.cantidad, 0)}
+                <Button color="warning" onClick={toggleModalCarrito} className="d-flex flex-row justify-content-center align-items-center ms-2">
+                    <FaShoppingCart className='me-1' size={20} /> {carrito.reduce((total, item) => total + item.cantidad, 0)}
                 </Button>
-                {/*<Button color="secondary" onClick={toggleModalPedidos} className="ms-2">
-                    <FaBoxOpen size={20} />
-                </Button>*/}
             </div>
 
             <Collapse isOpen={isOpen} navbar>
@@ -118,29 +120,28 @@ const Header = ({ isOpen, toggleNavbar, productos, seleccionarCategoria, carrito
 
             <div className="d-none d-md-flex flex-row flex-nowrap">
                 <div className="position-relative">
-                    <Button color="success" onClick={toggleUserMenu} className="d-flex flex-row justify-content-center align-items-center ms-2">
-                        <FaUser className='me-1' size={20} /> {usuario.nombre}
+                    <Button color="success" onClick={toggleUserMenu} className="d-flex flex-row justify-content-center align-items-center ms-2 h-100">
+                        <FaUser className='me-1' size={13} /> {usuario.nombre}
                     </Button>
 
                     {/* Menú manual sin DropdownMenu */}
                     {userMenuOpen && (
-                        <div className="position-absolute bg-dark text-light p-2 rounded shadow mt-1 menu-container"
+                        <div className="position-absolute bg-light text-light p-2 rounded shadow mt-1 menu-container"
                             style={{ right: 0, minWidth: "150px", zIndex: 9999 }}>
-                            <button className="btn btn-dark w-100 text-start" onClick={toggleModalPedidos}>
-                                My Orders
+                            <button className="btn btn-light w-80 text-start" onClick={() => handleMenuOptionClick(toggleModalPedidos)}>
+                                My Orders <FaBoxOpen className='mx-1' size={15} />
                             </button>
-                            <hr className="text-light" />
-                            <a href="/logout" className="btn btn-dark w-100 text-start">
-                                Logout
+                            <hr className="text-dark" />
+                            <a href="/logout" className="btn btn-light w-80 text-start">
+                                Logout <FaSignOutAlt className='mx-1' size={15} />
                             </a>
                         </div>
                     )}
 
                 </div>
-                <Button color="warning" onClick={toggleModalCarrito} className="ms-2">
-                    <FaShoppingCart size={20} /> {carrito.length}
+                <Button color="warning" onClick={toggleModalCarrito} className="d-flex flex-row justify-content-center align-items-center ms-2">
+                    <FaShoppingCart className='me-1' size={20} /> {carrito.reduce((total, item) => total + item.cantidad, 0)}
                 </Button>
-                {/*<Button color="secondary" onClick={toggleModalPedidos} className="ms-2"><FaBoxOpen size={20} /></Button>*/}
             </div>
         </Navbar>
     );

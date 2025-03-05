@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, ListGroup, ListGroupItem, Form, FormGroup, Label, Input, Card, CardTitle, CardText, CardBody } from 'reactstrap';
 import { FaShoppingCart } from 'react-icons/fa';
 
-const CarritoModal = ({ isOpen, toggle, carrito, modificar, guardarPedido }) => {
+const CarritoModal = ({ isOpen, toggle, carrito, modificar, guardarPedido, usuario }) => {
     const [pedidoData, setPedidoData] = useState({
-        nombre: '',
+        nombre: usuario.nombre,
         direccion: ''
     });
 
@@ -59,7 +59,7 @@ const CarritoModal = ({ isOpen, toggle, carrito, modificar, guardarPedido }) => 
                                     placeholder="Enter your name"
                                     type="text"
                                     value={pedidoData.nombre}
-                                    onChange={handleInputChange}
+                                    
                                 />
                             </FormGroup>
                             <FormGroup>
