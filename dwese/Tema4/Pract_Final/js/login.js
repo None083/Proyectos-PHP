@@ -60,7 +60,7 @@ function cargar_vista_oportuna(datos_usu_log)
     let html_principal="<div id='saludo'>Bienvenido <strong>"+datos_usu_log["lector"]+"</strong> - <button onclick='cerrar_sesion();' class='enlace'>Salir</button></div>";
     if(datos_usu_log["tipo"]=="admin")
     {
-        html_principal+="<h2>Listado de los Libros</h2><div id='libros'></div><div id='respuestas'></div>";
+        html_principal+="<h2>Listado de los Libros</h2><div id='libros'></div>";
         $('#principal').html(html_principal);
         cargar_libros_admin();
         cargar_formulario_agregar();
