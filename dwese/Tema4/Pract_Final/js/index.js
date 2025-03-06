@@ -64,7 +64,7 @@ function cargar_formulario_agregar() {
     let html_form_agregar = "<h2>Agregar un nuevo Libro</h2>";
     html_form_agregar += "<form id='form_agregar' action='#' method='post'>";
     html_form_agregar += "<p><label for='referencia'>Referencia: </label>";
-    html_form_agregar += "<input type='text' id='referencia' name='referencia' required></p>";
+    html_form_agregar += "<input type='text' id='referencia' name='referencia' required><span id='error_referencia' class='error'></span></p>";
     html_form_agregar += "<p><label for='titulo'>Título:</label>";
     html_form_agregar += "<input type='text' id='titulo' name='titulo' required></p>";
     html_form_agregar += "<p><label for='autor'>Autor: </label>";
@@ -75,7 +75,7 @@ function cargar_formulario_agregar() {
     html_form_agregar += "<input type='number' id='precio' name='precio' required></p>";
     html_form_agregar += "<input type='submit' value='Agregar'>";
     html_form_agregar += "</form>";
-    $('#respuestas').html(html_form_agregar);
+    $('#formulario').html(html_form_agregar);
 
     // Manejar el envío del formulario
     $('#form_agregar').on('submit', function (event) {
@@ -90,7 +90,7 @@ function cargar_formulario_agregar() {
         };
 
         if (!formData.referencia) {
-            $('#errores').html("Error: La referencia no puede estar vacía.<br/><button onclick='borrar_errores()'>Aceptar</button>");
+            $('error_referencia').html("Error: La referencia no puede estar vacía.");
             return;
         }
 
@@ -103,7 +103,7 @@ function cargar_formulario_agregar() {
         })
             .done(function (data) {
                 if (data.repetido) {
-                    $('#errores').html("Error: Ya existe un libro con esta referencia.<br/><button onclick='borrar_errores()'>Aceptar</button>");
+                    $('#error_referencia').html("Error: Ya existe un libro con esta referencia");
                 } else {
                     // Si no existe, proceder con la inserción
                     $.ajax({
@@ -120,8 +120,10 @@ function cargar_formulario_agregar() {
                                 $('#errores').html(data.error);
                             } else {
                                 cargar_libros_admin();
-                                $('#respuestas').html("<p class='mensaje'>¡¡ Libro agregado con éxito !!</p><p><button onclick='cargar_formulario_agregar()'>Aceptar</button></p>");
+                                $('#respuestas').html("<p class='mensaje'>¡¡ Libro agregado con éxito !!</p>");
+                                cargar_formulario_agregar();
                                 $('#form_agregar')[0].reset(); // Limpiar el formulario
+
                             }
                         })
                         .fail(function (a, b) {
@@ -130,7 +132,7 @@ function cargar_formulario_agregar() {
                 }
             })
             .fail(function () {
-                $('#errores').html("Error al verificar si el libro ya existe.<br/><button onclick='borrar_errores()'>Aceptar</button>");
+                $('#errores').html("Error al verificar si el libro ya existe.");
             });
     });
 }
@@ -237,7 +239,7 @@ function borrar_libro(referencia) {
                     cargar_vista_login("Usted ya no se encuentra registrado en la BD");
                 }
                 else {
-                    $("#respuestas").html("<p class='mensaje'>¡¡ Libro borrado con éxito !!</p><p><button onclick='cargar_formulario_agregar()'>Aceptar</button></p>");
+                    $("#respuestas").html("<p class='mensaje'>¡¡ Libro borrado con éxito !!</p>");
                     cargar_libros_admin();
                 }
             })
@@ -260,84 +262,73 @@ function cargar_formulario_editar(referencia) {
         dataType: "json",
         headers: { Authorization: "Bearer " + localStorage.token }
     })
-    .done(function (data) {
-        if (data.error) {
-            $('#errores').html(data.error);
-            return;
-        }
-
-        let libro = data.libro;
-        let html_form_editar = "<h2>Editar Libro</h2>";
-        html_form_editar += "<form id='form_editar' action='#' method='post'>";
-        html_form_editar += "<p><label for='referencia'>Referencia: </label>";
-        html_form_editar += "<input type='text' id='referencia' name='referencia' value='" + libro.referencia + "' readonly required></p>";
-        html_form_editar += "<p><label for='titulo'>Título:</label>";
-        html_form_editar += "<input type='text' id='titulo' name='titulo' value='" + libro.titulo + "' required></p>";
-        html_form_editar += "<p><label for='autor'>Autor: </label>";
-        html_form_editar += "<input type='text' id='autor' name='autor' value='" + libro.autor + "' required></p>";
-        html_form_editar += "<p><label for='descripcion'>Descripción: </label>";
-        html_form_editar += "<input type='text' id='descripcion' name='descripcion' value='" + libro.descripcion + "' required></p>";
-        html_form_editar += "<p><label for='precio'>Precio: </label>";
-        html_form_editar += "<input type='number' id='precio' name='precio' value='" + libro.precio + "' required></p>";
-        html_form_editar += "<input type='submit' value='Actualizar'>";
-        html_form_editar += "</form>";
-        $('#respuestas').html(html_form_editar);
-
-        // Manejar el envío del formulario
-        $('#form_editar').on('submit', function (event) {
-            event.preventDefault();
-
-            const formData = {
-                referencia: $('#referencia').val().trim(),
-                titulo: $('#titulo').val().trim(),
-                autor: $('#autor').val().trim(),
-                descripcion: $('#descripcion').val().trim(),
-                precio: $('#precio').val().trim()
-            };
-
-            if (!formData.titulo) {
-                $('#errores').html("Error: El título no puede estar vacío.<br/><button onclick='borrar_errores()'>Aceptar</button>");
+        .done(function (data) {
+            if (data.error) {
+                $('#errores').html(data.error);
                 return;
             }
 
-            // Verificar si el libro con la misma referencia y un título diferente ya existe
-            $.ajax({
-                url: `${DIR_API}/repetido/libros/titulo/${formData.titulo}/referencia/${formData.referencia}`,
-                type: "GET",
-                dataType: "json",
-                headers: { Authorization: "Bearer " + localStorage.token }
-            })
-            .done(function (data) {
-                if (data.repetido) {
-                    $('#errores').html("Error: Ya existe otro libro con este título.<br/><button onclick='borrar_errores()'>Aceptar</button>");
-                } else {
-                    // Si no hay repetición, actualizar el libro
-                    $.ajax({
-                        url: `${DIR_API}/actualizarLibro/${formData.referencia}`,
-                        type: "PUT",
-                        dataType: "json",
-                        data: formData,
-                        headers: { Authorization: "Bearer " + localStorage.token }
-                    })
+            let libro = data.libro;
+            let html_form_editar = "<h2>Editar Libro</h2>";
+            html_form_editar += "<form id='form_editar' action='#' method='post'>";
+            html_form_editar += "<p><label for='referencia'>Referencia: </label>";
+            html_form_editar += "<input type='text' id='referencia' name='referencia' value='" + libro.referencia + "' readonly required></p>";
+            html_form_editar += "<p><label for='titulo'>Título:</label>";
+            html_form_editar += "<input type='text' id='titulo' name='titulo' value='" + libro.titulo + "' required></p>";
+            html_form_editar += "<p><label for='autor'>Autor: </label>";
+            html_form_editar += "<input type='text' id='autor' name='autor' value='" + libro.autor + "' required></p>";
+            html_form_editar += "<p><label for='descripcion'>Descripción: </label>";
+            html_form_editar += "<input type='text' id='descripcion' name='descripcion' value='" + libro.descripcion + "' required></p>";
+            html_form_editar += "<p><label for='precio'>Precio: </label>";
+            html_form_editar += "<input type='number' id='precio' name='precio' value='" + libro.precio + "' required></p>";
+            html_form_editar += "<input type='submit' value='Actualizar'>";
+            html_form_editar += "</form>";
+
+            // Insertar el formulario de edición en el contenedor
+            $('#formulario').html(html_form_editar);
+
+            // Manejar el envío del formulario
+            $('#form_editar').on('submit', function (event) {
+                event.preventDefault();
+
+                const formData = {
+                    referencia: $('#referencia').val().trim(),
+                    titulo: $('#titulo').val().trim(),
+                    autor: $('#autor').val().trim(),
+                    descripcion: $('#descripcion').val().trim(),
+                    precio: $('#precio').val().trim()
+                };
+
+                if (!formData.titulo) {
+                    $('#errores').html("Error: El título no puede estar vacío.");
+                    return;
+                }
+
+                $.ajax({
+                    url: `${DIR_API}/actualizarLibro/${formData.referencia}`,
+                    type: "PUT",
+                    dataType: "json",
+                    data: formData,
+                    headers: { Authorization: "Bearer " + localStorage.token }
+                })
                     .done(function (data) {
                         if (data.error) {
                             $('#errores').html(data.error);
                         } else {
                             cargar_libros_admin();
-                            $('#respuestas').html("<p class='mensaje'>¡¡ Libro editado con éxito !!</p><p><button onclick='cargar_formulario_agregar()'>Aceptar</button></p>");
+                            $('#respuestas').html("<p class='mensaje'>¡¡ Libro editado con éxito !!</p>");
+
+                            // Volver a mostrar el formulario de agregar
+                            cargar_formulario_agregar();
                         }
                     })
                     .fail(function (a, b) {
                         $('#errores').html("Error al actualizar el libro: " + error_ajax_jquery(a, b));
                     });
-                }
-            })
-            .fail(function () {
-                $('#errores').html("Error al verificar si el título ya existe.<br/><button onclick='borrar_errores()'>Aceptar</button>");
             });
+        })
+        .fail(function (a, b) {
+            $('#errores').html(error_ajax_jquery(a, b));
         });
-    })
-    .fail(function (a, b) {
-        $('#errores').html(error_ajax_jquery(a, b));
-    });
 }
+
