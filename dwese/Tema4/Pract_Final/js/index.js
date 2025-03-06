@@ -75,7 +75,7 @@ function cargar_formulario_agregar() {
     html_form_agregar += "<input type='number' id='precio' name='precio' required></p>";
     html_form_agregar += "<input type='submit' value='Agregar'>";
     html_form_agregar += "</form>";
-    $('#formulario').html(html_form_agregar);
+    $('#respuestas').html(html_form_agregar);
 
     // Manejar el envío del formulario
     $('#form_agregar').on('submit', function (event) {
@@ -120,7 +120,7 @@ function cargar_formulario_agregar() {
                                 $('#errores').html(data.error);
                             } else {
                                 cargar_libros_admin();
-                                $('#respuestas').html("<p class='mensaje'>¡¡ Libro agregado con éxito !!</p>");
+                                $('#mensajes').html("<p class='mensaje'>¡¡ Libro agregado con éxito !!</p>");
                                 cargar_formulario_agregar();
                                 $('#form_agregar')[0].reset(); // Limpiar el formulario
 
@@ -205,7 +205,7 @@ function montar_vista_borrar(referencia) {
 
         let html_vista_borrar = "<p class='txt_centrado'>Se dispone usted a borrar el libro: <strong>" + referencia + "</strong></p>";
         html_vista_borrar += "<p class='txt_centrado'>¿Estás seguro?</p>";
-        html_vista_borrar += "<p class='txt_centrado'><button onclick='borrar_respuestas()'>Cancelar</button> <button onclick='borrar_libro(\"" + referencia + "\")'>Continuar</button></p>";
+        html_vista_borrar += "<p class='txt_centrado'><button>Cancelar</button> <button onclick='borrar_libro(\"" + referencia + "\")'>Continuar</button></p>";
         $("#respuestas").html(html_vista_borrar);
     }
     else {
@@ -239,7 +239,7 @@ function borrar_libro(referencia) {
                     cargar_vista_login("Usted ya no se encuentra registrado en la BD");
                 }
                 else {
-                    $("#respuestas").html("<p class='mensaje'>¡¡ Libro borrado con éxito !!</p>");
+                    $("#mensajes").html("<p class='mensaje'>¡¡ Libro borrado con éxito !!</p>");
                     cargar_libros_admin();
                 }
             })
@@ -285,7 +285,7 @@ function cargar_formulario_editar(referencia) {
             html_form_editar += "</form>";
 
             // Insertar el formulario de edición en el contenedor
-            $('#formulario').html(html_form_editar);
+            $('#respuestas').html(html_form_editar);
 
             // Manejar el envío del formulario
             $('#form_editar').on('submit', function (event) {
@@ -316,7 +316,7 @@ function cargar_formulario_editar(referencia) {
                             $('#errores').html(data.error);
                         } else {
                             cargar_libros_admin();
-                            $('#respuestas').html("<p class='mensaje'>¡¡ Libro editado con éxito !!</p>");
+                            $('#mensajes').html("<p class='mensaje'>¡¡ Libro editado con éxito !!</p>");
 
                             // Volver a mostrar el formulario de agregar
                             cargar_formulario_agregar();
