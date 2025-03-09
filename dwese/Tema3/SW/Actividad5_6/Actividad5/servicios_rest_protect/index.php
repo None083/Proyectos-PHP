@@ -131,9 +131,6 @@ $app->delete('/producto/borrar/{codigo}',function($request){
     else
         echo json_encode(array("no_auth"=>"No tienes permisos para usar este servicio"));
 
-
-
-    
 });
 
 
