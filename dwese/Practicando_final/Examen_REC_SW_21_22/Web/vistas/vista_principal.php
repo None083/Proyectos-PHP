@@ -63,6 +63,14 @@ if (isset($_POST["btnHorario"]) || isset($_POST["btn_editar"]) || isset($_POST["
         header("Location:index.php");
         exit;
     }
+
+    foreach ($json_horario["horario"] as $tupla) {
+        if (isset($horario_grupo[$tupla["dia"]][$tupla["hora"]])) {
+            $horario_grupo[$tupla["dia"]][$tupla["hora"]] = "<br>" . $tupla["usuario"] . " (" . $tupla["aula"] . ")";
+        } else {
+            $horario_grupo[$tupla["dia"]][$tupla["hora"]] = $tupla["usuario"] . " (" . $tupla["aula"] . ")";
+        }
+    }
 }
 
 if (isset($_POST["btnQuitar"])) {
@@ -184,8 +192,15 @@ if (isset($json_grupos["mensaje_baneo"])) {
             <label for="grupo">Elija el grupo: </label>
             <select name="grupo" id="grupo">
                 <?php
-                foreach ($json_grupos["grupos"] as $tupla) {
+                /*foreach ($json_grupos["grupos"] as $tupla) {
                     echo "<option value='" . $tupla["id_grupo"] . "' " . (isset($_POST["btnHorario"]) && $_POST["grupo"] == $tupla["id_grupo"] ? 'selected' : '') . ">" . $tupla["nombre"] . "</option>";
+                }*/
+                foreach ($json_grupos["grupos"] as $tupla) {
+                    if (isset($_POST["grupo"]) && $_POST["grupo"] == $tupla["id_grupo"]) {
+                        echo "<option value='" . $tupla["id_grupo"] . "' selected>" . $tupla["nombre"] . "</option>";
+                    } else {
+                        echo "<option value='" . $tupla["id_grupo"] . "'>" . $tupla["nombre"] . "</option>";
+                    }
                 }
                 ?>
             </select>
@@ -199,7 +214,7 @@ if (isset($json_grupos["mensaje_baneo"])) {
         unset($_SESSION["mensaje"]);
     }
 
-    if (isset($_POST["btnHorario"]) || isset($_POST["btn_editar"]) || isset($_POST["btnQuitar"])) {
+    if (isset($_POST["grupo"]) || isset($_POST["btn_editar"]) || isset($_POST["btnQuitar"])) {
         $id_grupo = $_POST["grupo"];
         $nombre_grupo = "";
         foreach ($json_grupos["grupos"] as $tupla) {
@@ -208,17 +223,16 @@ if (isset($json_grupos["mensaje_baneo"])) {
                 break;
             }
         }
-        echo "<h3>Horario del grupo: " . $nombre_grupo . $id_grupo . "</h3>";
-
+        echo "<h3>Horario del grupo: " . $nombre_grupo . "</h3>";
+        /*
         $horas = ["", "8:15 - 9:15", "9:15 - 10:15", "10:15 - 11:15", "11:15 - 11:45", "11:45 - 12:45", "12:45 - 13:45", "13:45 - 14:45"];
         $dias = ["", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
         $horario = $json_horario["horario"];
-
+        
         echo "<table>";
         echo "<tr><th></th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th></tr>";
         for ($hora = 1; $hora <= 7; $hora++) {
             echo "<tr>";
-
             echo "<td>" . $horas[$hora] . "</td>";
             if ($hora == 4) {
                 echo "<td colspan='5'>Recreo</td>";
@@ -231,6 +245,44 @@ if (isset($json_grupos["mensaje_baneo"])) {
                         echo $datos["usuario"] . " (" . $datos["nombre"] . ")<br>";
                     }
                     echo "<form method='post'><button type='submit' name='btn_editar'>Editar</button><input type='hidden' name='grupo' value='" . $id_grupo . "'/><input type='hidden' name='dia' value='" . $dia . "'/><input type='hidden' name='hora' value='" . $hora . "'/></form></td>";
+                }
+            }
+            echo "</tr>";
+        }
+        echo "</table>";
+        */
+        $horas[1] = "8:15 - 9:15";
+        $horas[2] = "9:15 - 10:15";
+        $horas[3] = "10:15 - 11:15";
+        $horas[4] = "11:15 - 11:45";
+        $horas[5] = "11:45 - 12:45";
+        $horas[6] = "12:45 - 13:45";
+        $horas[7] = "13:45 - 14:45";
+        $dias[1] = "Lunes";
+        $dias[2] = "Martes";
+        $dias[3] = "Miércoles";
+        $dias[4] = "Jueves";
+        $dias[5] = "Viernes";
+        echo "<table>";
+        echo "<tr>";
+        echo "<th></th>";
+        for ($k = 1; $k <= count($dias); $k++) {
+            echo "<th>" . $dias[$k] . "</th>";
+        }
+        echo "</tr>";
+        for ($hora = 1; $hora <= count($horas); $hora++) {
+            echo "<tr>";
+            echo "<td>" . $horas[$hora] . "</td>";
+            if ($hora == 4) {
+                echo "<td colspan='5'>RECREO</td>";
+            } else {
+                for ($dia = 1; $dia <= count($dias); $dia++) {
+                    if (isset($horario_grupo[$dia][$hora])) {
+                        echo "<td>" . $horario_grupo[$dia][$hora];
+                    }else{
+                        "</td>";
+                    }
+                    
                 }
             }
             echo "</tr>";
@@ -254,10 +306,9 @@ if (isset($json_grupos["mensaje_baneo"])) {
 
             echo "<form method='post'>";
             echo "<p><label for='agregar_profesor'>Elija profesor: </label><select name='agregar_profesor' id='agregar_profesor'>";
-            
+
             echo "</form>";
         }
-        
     }
 
 

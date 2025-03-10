@@ -145,7 +145,7 @@ function obtener_grupos()
     $conexion = null;
     return $respuesta;
 }
-
+/*
 function obtener_horario($id_grupo)
 {
     try {
@@ -157,6 +157,32 @@ function obtener_horario($id_grupo)
 
     try {
         $consulta = "select * from horario_lectivo where grupo=?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$id_grupo]);
+    } catch (PDOException $e) {
+        $sentencia = null;
+        $conexion = null;
+        $respuesta["error"] = "No ha podido realizarse la consulta: " . $e->getMessage();
+        return $respuesta;
+    }
+
+    $respuesta["horario"] = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+    $sentencia = null;
+    $conexion = null;
+    return $respuesta;
+}
+*/
+function obtener_horario($id_grupo)
+{
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        $respuesta["error"] = "No ha podido conectarse a la base de batos: " . $e->getMessage();
+        return $respuesta;
+    }
+
+    try {
+        $consulta = "select horario_lectivo.dia, horario_lectivo.hora, usuarios.usuario, aulas.nombre as aula from horario_lectivo, usuarios, aulas where horario_lectivo.usuario = usuarios.id_usuario and horario_lectivo.aula = aulas.id_aula and horario_lectivo.grupo=?";
         $sentencia = $conexion->prepare($consulta);
         $sentencia->execute([$id_grupo]);
     } catch (PDOException $e) {
