@@ -34,6 +34,6 @@ function error_page($title,$body)
     return $html;
 }
 
-define("DIR_SERV","http://localhost/Proyectos/DWESE/Practicando_final/Examen_REC_SW_21_22/servicios_rest");
+define("DIR_SERV","http://localhost/Proyectos/dwese/Practicando_final/Examen_REC_SW_21_22/servicios_rest");
 define("INACTIVIDAD",10);
 ?>

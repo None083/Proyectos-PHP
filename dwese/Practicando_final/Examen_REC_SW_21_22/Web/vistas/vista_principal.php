@@ -224,9 +224,8 @@ if (isset($_POST["editarProfe"])) {
     if (!$error_usuario_profe) {
         //edito y salto con mensaje
         $headers[] = 'Authorization: Bearer ' . $_SESSION["token"];
-        $url = DIR_SERV . "/profesor/editar/" . urlencode($_POST["usuario_profe"]);
-        unset($_POST["editarProfe"]);
-        unset($_POST["usuario_profe"]);
+        $url = DIR_SERV . "/profesor/editar/" . urlencode($_POST["editarProfe"]);
+        
         $respuesta = consumir_servicios_JWT_REST($url, "PUT", $headers, $_POST);
         $json_actualizar = json_decode($respuesta, true);
         if (!$json_actualizar) {
@@ -254,7 +253,6 @@ if (isset($_POST["editarProfe"])) {
         }
 
         $_SESSION["mensaje"] = "¡¡ Profesor actualizado con éxito !!";
-        
     }
 }
 
@@ -498,11 +496,12 @@ if (isset($json_todos_profesores["mensaje_baneo"])) {
             <label for='clave_profe'>Clave: </label>
             <input type='password' name='clave_profe' id='clave_profe'>
             </p>
-            <button type='submit' name='editarProfe'>Editar profesor</button></form>";
+            <button type='submit' value='". $_POST["todos_profesores"]."' name='editarProfe'>Editar profesor</button></form>";
         if (isset($_POST["seleccionarProfe"]) && $_POST["seleccionarProfe"] &&  $error_usuario_profe) {
             echo "<p>El usuario ya existe</p>";
         }
     }
+    
     ?>
 </body>
 

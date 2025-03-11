@@ -251,7 +251,8 @@ function borrar_profesor($dia, $hora, $id_grupo, $id_usuario)
     return $respuesta;
 }
 
-function horario_profesor($id_usuario){
+function horario_profesor($id_usuario)
+{
     try {
         $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
@@ -275,7 +276,8 @@ function horario_profesor($id_usuario){
     return $respuesta;
 }
 
-function obtener_profesores_libres($dia, $hora, $id_grupo){
+function obtener_profesores_libres($dia, $hora, $id_grupo)
+{
     try {
         $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
@@ -326,7 +328,8 @@ function obtener_aulas()
     return $respuesta;
 }
 
-function insertar_profesor($dia, $hora, $id_grupo, $id_usuario, $id_aula){
+function insertar_profesor($dia, $hora, $id_grupo, $id_usuario, $id_aula)
+{
     try {
         $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
     } catch (PDOException $e) {
@@ -351,66 +354,62 @@ function insertar_profesor($dia, $hora, $id_grupo, $id_usuario, $id_aula){
     return $respuesta;
 }
 
-function editar_profesor($datos){
-    try{
-        $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
-    }
-    catch(PDOException $e)
-    {
-        $respuesta["error"]="No he podido conectarse a la base de batos: ".$e->getMessage();
+function editar_profesor($datos)
+{
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        $respuesta["error"] = "No he podido conectarse a la base de batos: " . $e->getMessage();
         return $respuesta;
     }
-    try{
-        $consulta="update usuarios set usuario=?, clave=? where id_usuario=?";
-        $sentencia=$conexion->prepare($consulta);
+    try {
+        $consulta = "update usuarios set usuario=?, clave=? where id_usuario=?";
+        $sentencia = $conexion->prepare($consulta);
         $sentencia->execute($datos);
-
-    }
-    catch(PDOException $e)
-    {
-        $sentencia=null;
-        $conexion=null;
-        $respuesta["error"]="No he podido realizarse la consulta: ".$e->getMessage();
+    } catch (PDOException $e) {
+        $sentencia = null;
+        $conexion = null;
+        $respuesta["error"] = "No he podido realizarse la consulta: " . $e->getMessage();
         return $respuesta;
     }
-   
-    $respuesta["mensaje"]="El profesor con cod: ".end($datos)." se ha actualizado correctamente";
-   
 
-    $sentencia=null;
-    $conexion=null;
+    $filas_afectadas = $sentencia->rowCount();
+    if ($filas_afectadas == 0) {
+        $respuesta["error"] = "No se realizó ninguna actualización, puede que los datos sean los mismos." . $datos[0] . " ----" . $datos[1] . " " . $datos[2];
+        return $respuesta;
+    } else {
+        $respuesta["mensaje"] = "El profesor con cod: " . end($datos) . " se ha actualizado correctamente";
+    }
+
+    $sentencia = null;
+    $conexion = null;
     return $respuesta;
 }
 
-function repetido_editando($tabla,$columna,$valor,$columna_id,$valor_id)
+function repetido_editando($tabla, $columna, $valor, $columna_id, $valor_id)
 {
-    try{
-        $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
-    }
-    catch(PDOException $e)
-    {
-        $respuesta["error"]="No he podido conectarse a la base de batos: ".$e->getMessage();
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        $respuesta["error"] = "No he podido conectarse a la base de batos: " . $e->getMessage();
         return $respuesta;
     }
 
-    try{
-        $consulta="select ".$columna." from ".$tabla." where ".$columna."=? and ".$columna_id."<>?" ;
-        $sentencia=$conexion->prepare($consulta);
-        $sentencia->execute([$valor,$valor_id]);
-
-    }
-    catch(PDOException $e)
-    {
-        $sentencia=null;
-        $conexion=null;
-        $respuesta["error"]="No he podido realizarse la consulta: ".$e->getMessage();
+    try {
+        $consulta = "select " . $columna . " from " . $tabla . " where " . $columna . "=? and " . $columna_id . "<>?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$valor, $valor_id]);
+    } catch (PDOException $e) {
+        $sentencia = null;
+        $conexion = null;
+        $respuesta["error"] = "No he podido realizarse la consulta: " . $e->getMessage();
         return $respuesta;
     }
 
-    $respuesta["repetido"]=$sentencia->rowCount()>0;
-        
-    
-    $sentencia=null;
-    $conexion=null;
+    $respuesta["repetido"] = $sentencia->rowCount() > 0;
+
+
+    $sentencia = null;
+    $conexion = null;
     return $respuesta;
 }
