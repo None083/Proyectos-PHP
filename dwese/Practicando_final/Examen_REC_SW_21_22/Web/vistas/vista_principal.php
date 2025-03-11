@@ -32,7 +32,97 @@ function servicio_mostrar_profesores($dia, $hora, $id_grupo)
     return $json_profesores;
 }
 
-if (isset($_POST["btnHorario"]) || isset($_POST["btn_editar"]) || isset($_POST["btnQuitar"])) {
+if (isset($_POST["btn_editar"]) || isset($_POST["btnAgregar"])) {
+    $headers[] = 'Authorization: Bearer ' . $_SESSION["token"];
+    $url = DIR_SERV . "/profesoresLibres/" . $_POST["dia"] . "/" . $_POST["hora"] . "/" . $_POST["grupo"];
+    $respuesta = consumir_servicios_JWT_REST($url, "GET", $headers);
+    $json_profesores_libres = json_decode($respuesta, true);
+    if (!$json_profesores_libres) {
+        session_destroy();
+        die(error_page("Examen5 PHP", "<p>Error consumiendo el servicio rest: <strong>" . $url . "</strong></p>"));
+    }
+
+    if (isset($json_profesores_libres["no_auth"])) {
+        session_unset();
+        $_SESSION["mensaje_seguridad"] = "El tiempo de sesión de la API ha caducado";
+        header("Location:index.php");
+        exit;
+    }
+
+    if (isset($json_profesores_libres["error"])) {
+        session_destroy();
+        die(error_page("Examen5 PHP", "<p>" . $json_profesores_libres["error"] . "</p>"));
+    }
+
+    if (isset($json_profesores_libres["mensaje_baneo"])) {
+        session_unset();
+        $_SESSION["mensaje_seguridad"] = "Usted ya no se encuentra registrado en la BD";
+        header("Location:index.php");
+        exit;
+    }
+
+    $headers[] = 'Authorization: Bearer ' . $_SESSION["token"];
+    $url = DIR_SERV . "/aulas";
+    $respuesta = consumir_servicios_JWT_REST($url, "GET", $headers);
+    $json_aulas = json_decode($respuesta, true);
+    if (!$json_aulas) {
+        session_destroy();
+        die(error_page("Examen5 PHP", "<p>Error consumiendo el servicio rest: <strong>" . $url . "</strong></p>"));
+    }
+
+    if (isset($json_aulas["no_auth"])) {
+        session_unset();
+        $_SESSION["mensaje_seguridad"] = "El tiempo de sesión de la API ha caducado";
+        header("Location:index.php");
+        exit;
+    }
+
+    if (isset($json_aulas["error"])) {
+        session_destroy();
+        die(error_page("Examen5 PHP", "<p>" . $json_aulas["error"] . "</p>"));
+    }
+
+    if (isset($json_aulas["mensaje_baneo"])) {
+        session_unset();
+        $_SESSION["mensaje_seguridad"] = "Usted ya no se encuentra registrado en la BD";
+        header("Location:index.php");
+        exit;
+    }
+}
+
+if (isset($_POST["btnAgregar"])) {
+    $headers[] = 'Authorization: Bearer ' . $_SESSION["token"];
+    $url = DIR_SERV . "/insertarProfesor";
+    $respuesta = consumir_servicios_JWT_REST($url, "POST", $headers, $_POST);
+    $json_agregar = json_decode($respuesta, true);
+    if (!$json_agregar) {
+        session_destroy();
+        die(error_page("Examen5 PHP", "<p>Error consumiendo el servicio rest: <strong>" . $url . "</strong></p>"));
+    }
+
+    if (isset($json_agregar["no_auth"])) {
+        session_unset();
+        $_SESSION["mensaje_seguridad"] = "El tiempo de sesión de la API ha caducado";
+        header("Location:index.php");
+        exit;
+    }
+
+    if (isset($json_agregar["error"])) {
+        session_destroy();
+        die(error_page("Examen5 PHP", "<p>" . $json_agregar["error"] . "</p>"));
+    }
+
+    if (isset($json_agregar["mensaje_baneo"])) {
+        session_unset();
+        $_SESSION["mensaje_seguridad"] = "Usted ya no se encuentra registrado en la BD";
+        header("Location:index.php");
+        exit;
+    }
+
+    $_SESSION["mensaje"] = "¡¡ Profesor agregado con éxito !!";
+}
+
+if (isset($_POST["btnHorario"]) || isset($_POST["btn_editar"]) || isset($_POST["btnQuitar"]) || isset($_POST["btnAgregar"])) {
     if (isset($_POST["btnEditar"])) {
         $_POST["grupo"] = $_POST["btn_editar"];
     }
@@ -62,14 +152,6 @@ if (isset($_POST["btnHorario"]) || isset($_POST["btn_editar"]) || isset($_POST["
         $_SESSION["mensaje_seguridad"] = "Usted ya no se encuentra registrado en la BD";
         header("Location:index.php");
         exit;
-    }
-
-    foreach ($json_horario["horario"] as $tupla) {
-        if (isset($horario_grupo[$tupla["dia"]][$tupla["hora"]])) {
-            $horario_grupo[$tupla["dia"]][$tupla["hora"]] = "<br>" . $tupla["usuario"] . " (" . $tupla["aula"] . ")";
-        } else {
-            $horario_grupo[$tupla["dia"]][$tupla["hora"]] = $tupla["usuario"] . " (" . $tupla["aula"] . ")";
-        }
     }
 }
 
@@ -105,6 +187,77 @@ if (isset($_POST["btnQuitar"])) {
     $_SESSION["mensaje"] = "¡¡ Profesor quitado con éxito !!";
 }
 
+if (isset($_POST["editarProfe"])) {
+    $error_usuario_vacio = $_POST["usuario_profe"] == "";
+    if (!$error_usuario_vacio) {
+        $headers[] = 'Authorization: Bearer ' . $_SESSION["token"];
+        $url = DIR_SERV . "/repetido/usuarios/usuario/" . urlencode($_POST["usuario_profe"]) . "/id_usuario/" . urlencode($_POST["usuario_profe"]);
+        $respuesta = consumir_servicios_JWT_REST($url, "GET", $headers);
+        $json_repetido = json_decode($respuesta, true);
+        if (!$json_repetido) {
+            session_destroy();
+            die(error_page("Examen5 PHP", "<p>Error consumiendo el servico rest: <strong>" . $url . "</strong></p>"));
+        }
+
+        if (isset($json_repetido["no_auth"])) {
+            session_unset();
+            $_SESSION["mensaje_seguridad"] = "El tiempo de sesión de la API ha caducado";
+            header("Location:index.php");
+            exit;
+        }
+
+        if (isset($json_repetido["error"])) {
+            session_destroy();
+            die(error_page("Examen5 PHP", "<p>" . $json_repetido["error"] . "</p>"));
+        }
+
+        if (isset($json_repetido["mensaje_baneo"])) {
+            session_unset(); //Me deslogueo
+            $_SESSION["mensaje_seguridad"] = "Usted ya no se encuentra registrado en la BD";
+            header("Location:index.php");
+            exit;
+        }
+
+        $error_usuario_profe = $json_repetido["repetido"];
+    }
+
+    if (!$error_usuario_profe) {
+        //edito y salto con mensaje
+        $headers[] = 'Authorization: Bearer ' . $_SESSION["token"];
+        $url = DIR_SERV . "/profesor/editar/" . urlencode($_POST["usuario_profe"]);
+        unset($_POST["editarProfe"]);
+        unset($_POST["usuario_profe"]);
+        $respuesta = consumir_servicios_JWT_REST($url, "PUT", $headers, $_POST);
+        $json_actualizar = json_decode($respuesta, true);
+        if (!$json_actualizar) {
+            session_destroy();
+            die(error_page("Examen5 PHP", "<p>Error consumiendo el servico rest: <strong>" . $url . "</strong></p>"));
+        }
+
+        if (isset($json_actualizar["no_auth"])) {
+            session_unset();
+            $_SESSION["mensaje_seguridad"] = "El tiempo de sesión de la API ha caducado";
+            header("Location:index.php");
+            exit;
+        }
+
+        if (isset($json_actualizar["error"])) {
+            session_destroy();
+            die(error_page("Examen5 PHP", "<p>" . $json_actualizar["error"] . "</p>"));
+        }
+
+        if (isset($json_actualizar["mensaje_baneo"])) {
+            session_unset(); //Me deslogueo
+            $_SESSION["mensaje_seguridad"] = "Usted ya no se encuentra registrado en la BD";
+            header("Location:index.php");
+            exit;
+        }
+
+        $_SESSION["mensaje"] = "¡¡ Profesor actualizado con éxito !!";
+        
+    }
+}
+
 //peticion grupos
 $headers[] = 'Authorization: Bearer ' . $_SESSION["token"];
 $url = DIR_SERV . "/grupos";
@@ -128,6 +281,34 @@ if (isset($json_grupos["error"])) {
 }
 
 if (isset($json_grupos["mensaje_baneo"])) {
+    session_unset();
+    $_SESSION["mensaje_seguridad"] = "Usted ya no se encuentra registrado en la BD";
+    header("Location:index.php");
+    exit;
+}
+
+$headers[] = 'Authorization: Bearer ' . $_SESSION["token"];
+$url = DIR_SERV . "/profesores";
+$respuesta = consumir_servicios_JWT_REST($url, "GET", $headers);
+$json_todos_profesores = json_decode($respuesta, true);
+if (!$json_todos_profesores) {
+    session_destroy();
+    die(error_page("Examen5 PHP", "<p>Error consumiendo el servicio rest: <strong>" . $url . "</strong></p>"));
+}
+
+if (isset($json_todos_profesores["no_auth"])) {
+    session_unset();
+    $_SESSION["mensaje_seguridad"] = "El tiempo de sesión de la API ha caducado";
+    header("Location:index.php");
+    exit;
+}
+
+if (isset($json_todos_profesores["error"])) {
+    session_destroy();
+    die(error_page("Examen5 PHP", "<p>" . $json_todos_profesores["error"] . "</p>"));
+}
+
+if (isset($json_todos_profesores["mensaje_baneo"])) {
     session_unset();
     $_SESSION["mensaje_seguridad"] = "Usted ya no se encuentra registrado en la BD";
     header("Location:index.php");
@@ -224,11 +405,11 @@ if (isset($json_grupos["mensaje_baneo"])) {
             }
         }
         echo "<h3>Horario del grupo: " . $nombre_grupo . "</h3>";
-        /*
+
         $horas = ["", "8:15 - 9:15", "9:15 - 10:15", "10:15 - 11:15", "11:15 - 11:45", "11:45 - 12:45", "12:45 - 13:45", "13:45 - 14:45"];
         $dias = ["", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
         $horario = $json_horario["horario"];
-        
+
         echo "<table>";
         echo "<tr><th></th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th></tr>";
         for ($hora = 1; $hora <= 7; $hora++) {
@@ -250,46 +431,8 @@ if (isset($json_grupos["mensaje_baneo"])) {
             echo "</tr>";
         }
         echo "</table>";
-        */
-        $horas[1] = "8:15 - 9:15";
-        $horas[2] = "9:15 - 10:15";
-        $horas[3] = "10:15 - 11:15";
-        $horas[4] = "11:15 - 11:45";
-        $horas[5] = "11:45 - 12:45";
-        $horas[6] = "12:45 - 13:45";
-        $horas[7] = "13:45 - 14:45";
-        $dias[1] = "Lunes";
-        $dias[2] = "Martes";
-        $dias[3] = "Miércoles";
-        $dias[4] = "Jueves";
-        $dias[5] = "Viernes";
-        echo "<table>";
-        echo "<tr>";
-        echo "<th></th>";
-        for ($k = 1; $k <= count($dias); $k++) {
-            echo "<th>" . $dias[$k] . "</th>";
-        }
-        echo "</tr>";
-        for ($hora = 1; $hora <= count($horas); $hora++) {
-            echo "<tr>";
-            echo "<td>" . $horas[$hora] . "</td>";
-            if ($hora == 4) {
-                echo "<td colspan='5'>RECREO</td>";
-            } else {
-                for ($dia = 1; $dia <= count($dias); $dia++) {
-                    if (isset($horario_grupo[$dia][$hora])) {
-                        echo "<td>" . $horario_grupo[$dia][$hora];
-                    }else{
-                        "</td>";
-                    }
-                    
-                }
-            }
-            echo "</tr>";
-        }
-        echo "</table>";
 
-        if (isset($_POST["btn_editar"])) {
+        if (isset($_POST["btn_editar"]) || isset($_POST["btnAgregar"])) {
             $dia = $_POST["dia"];
             $hora = $_POST["hora"];
             $id_grupo = $_POST["grupo"];
@@ -305,17 +448,62 @@ if (isset($json_grupos["mensaje_baneo"])) {
             echo "</table>";
 
             echo "<form method='post'>";
-            echo "<p><label for='agregar_profesor'>Elija profesor: </label><select name='agregar_profesor' id='agregar_profesor'>";
-
+            echo "<p><label for='profesor'>Elija profesor: </label><select name='profesor' id='profesor'>";
+            foreach ($json_profesores_libres["profesores_libres"] as $tupla) {
+                echo "<option value='" . $tupla["id_usuario"] . "'>" . $tupla["usuario"] . "</option>";
+            }
+            echo "</select>";
+            echo "<label for='aula'> Elija aula: </label><select name='aula' id='aula'>";
+            foreach ($json_aulas["aulas"] as $tupla) {
+                echo "<option value='" . $tupla["id_aula"] . "'>" . $tupla["nombre"] . "</option>";
+            }
+            echo "</select> ";
+            echo "<button type='submit' name='btnAgregar'>Agregar</button><input type='hidden' name='grupo' value='" . $id_grupo . "'/><input type='hidden' name='dia' value='" . $dia . "'/><input type='hidden' name='hora' value='" . $hora . "'/></p>";
             echo "</form>";
+
+            if (isset($_POST["btnAgregar"])) {
+                echo "Datos enviados: " . $_POST["grupo"] . " - " . $_POST["dia"] . " - " . $_POST["hora"] . " - " . $_POST["profesor"] . " - " . $_POST["aula"];
+            }
         }
     }
-
-
-
     ?>
-
-
+    <form method="post">
+        <p>
+            <label for="todos_profesores">Elija el profesor: </label>
+            <select name="todos_profesores" id="todos_profesores">
+                <?php
+                foreach ($json_todos_profesores["profesores"] as $tupla) {
+                    if (isset($_POST["todos_profesores"]) && $_POST["todos_profesores"] == $tupla["id_usuario"]) {
+                        echo "<option value='" . $tupla["id_usuario"] . "' selected>" . $tupla["usuario"] . "</option>";
+                    } else {
+                        echo "<option value='" . $tupla["id_usuario"] . "'>" . $tupla["usuario"] . "</option>";
+                    }
+                }
+                ?>
+            </select>
+            <button type="submit" name="seleccionarProfe">Editar profe</button>
+        </p>
+    </form>
+    <?php
+    if (isset($_POST["seleccionarProfe"]) || isset($_POST["editarProfe"])) {
+        echo "<form method='post'><p>
+            <label for='usuario_profe'>Usuario: </label>
+            <input type='text' value='";
+        if (isset($_POST["todos_profesores"])) {
+            echo $_POST["todos_profesores"];
+        }
+        echo "' name='usuario_profe' id='usuario_profe'>";
+        echo "</p>
+            <p>
+            <label for='clave_profe'>Clave: </label>
+            <input type='password' name='clave_profe' id='clave_profe'>
+            </p>
+            <button type='submit' name='editarProfe'>Editar profesor</button></form>";
+        if (isset($_POST["seleccionarProfe"]) && $_POST["seleccionarProfe"] &&  $error_usuario_profe) {
+            echo "<p>El usuario ya existe</p>";
+        }
+    }
+    ?>
 </body>
 
 </html>

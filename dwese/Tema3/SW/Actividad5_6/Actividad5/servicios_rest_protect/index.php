@@ -172,11 +172,6 @@ $app->get('/repetido/{tabla}/{columna}/{valor}',function($request){
             echo json_encode($test);
     else
         echo json_encode(array("no_auth"=>"No tienes permisos para usar este servicio"));
-
-
-
-
-
     
 });
 
